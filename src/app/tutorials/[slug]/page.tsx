@@ -1,0 +1,197 @@
+// src/app/tutorials/[slug]/page.tsx
+// 投研研报详情页 (task-0046)
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
+function renderMarkdown(md: string) {
+  // 极简 Markdown 渲染 (标题/列表/表格/段落/粗体)
+  const lines = md.split("\n");
+  const out: any[] = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (line.startsWith("# ")) {
+      out.push(<h1 key={i} className="text-3xl font-bold mt-0 mb-6">{line.slice(2)}</h1>);
+    } else if (line.startsWith("## ")) {
+      out.push(<h2 key={i} className="text-2xl font-semibold mt-10 mb-4 pb-2 border-b border-border">{line.slice(3)}</h2>);
+    } else if (line.startsWith("### ")) {
+      out.push(<h3 key={i} className="text-xl font-semibold mt-6 mb-3">{line.slice(4)}</h3>);
+    } else if (line.startsWith("|") && line.trim().endsWith("|")) {
+      // 表格行
+      const cells = line.split("|").map(c => c.trim()).filter(c => c);
+      const isSep = cells.every(c => /^[-:]+$/.test(c));
+      if (!isSep) {
+        out.push(
+          <tr key={i}>
+            {cells.map((c, idx) => (
+              <td key={idx} className="border border-border px-3 py-2 text-sm" dangerouslySetInnerHTML={{ __html: boldify(c) }} />
+            ))}
+          </tr>
+        );
+      }
+    } else if (line.startsWith("- ") || line.startsWith("* ")) {
+      out.push(<li key={i} className="ml-6 list-disc text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: boldify(line.slice(2)) }} />);
+    } else if (line.trim() === "") {
+      // skip
+    } else if (line.trim() === "---") {
+      out.push(<hr key={i} className="my-8 border-border" />);
+    } else {
+      out.push(<p key={i} className="text-sm leading-relaxed mb-3" dangerouslySetInnerHTML={{ __html: boldify(line) }} />);
+    }
+    i++;
+  }
+  // 收集表格行 (tr) 合成 table
+  const blocks: any[] = [];
+  let buf: any[] = [];
+  for (const el of out) {
+    if (el && el.type === "tr") {
+      buf.push(el);
+    } else {
+      if (buf.length > 0) {
+        blocks.push(
+          <table key={`t${blocks.length}`} className="w-full border-collapse my-4">
+            <tbody>{buf}</tbody>
+          </table>
+        );
+        buf = [];
+      }
+      blocks.push(el);
+    }
+  }
+  if (buf.length > 0) {
+    blocks.push(
+      <table key={`t${blocks.length}`} className="w-full border-collapse my-4">
+        <tbody>{buf}</tbody>
+      </table>
+    );
+  }
+  return blocks;
+}
+
+function boldify(s: string) {
+  return s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+}
+
+const RISK_BADGE: Record<string, string> = {
+  低: "bg-green-500/15 text-green-700 border-green-500/30",
+  中: "bg-amber-500/15 text-amber-700 border-amber-500/30",
+  高: "bg-red-500/15 text-red-700 border-red-500/30",
+};
+
+export default async function TutorialDetail({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const t = await prisma.openSourceTutorial.findUnique({
+    where: { slug },
+    include: {
+      release: {
+        select: { id: true, title: true, license: true, originalSource: true },
+      },
+    },
+  });
+  if (!t) return notFound();
+
+  // 自增 view
+  await prisma.openSourceTutorial.update({
+    where: { id: t.id },
+    data: { viewCount: { increment: 1 } },
+  });
+
+  const warnings: string[] = t.riskWarnings ? JSON.parse(t.riskWarnings) : [];
+
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-12">
+      <Link href="/tutorials" className="text-sm text-muted-foreground hover:text-foreground">
+        ← 返回研报列表
+      </Link>
+
+      <article className="mt-6">
+        {/* === 顶部徽章条 === */}
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <span className="px-2.5 py-1 rounded bg-primary/10 text-primary border border-primary/30 text-xs font-semibold uppercase tracking-wider">
+            CProTrading 投研
+          </span>
+          <span className="px-2.5 py-1 rounded bg-muted text-xs">
+            {t.marketRegime}
+          </span>
+          {t.timeframe && (
+            <span className="px-2.5 py-1 rounded bg-muted text-xs">
+              {t.timeframe}
+            </span>
+          )}
+          {t.riskLevel && (
+            <span className={`px-2.5 py-1 rounded border text-xs ${RISK_BADGE[t.riskLevel] ?? "bg-muted"}`}>
+              {t.riskLevel}风险
+            </span>
+          )}
+          {t.maxDrawdownPct && (
+            <span className="px-2.5 py-1 rounded bg-red-500/10 text-red-700 border border-red-500/30 text-xs">
+              最大回撤 {Number(t.maxDrawdownPct)}%
+            </span>
+          )}
+        </div>
+
+        {/* === 作者署名 === */}
+        <div className="text-xs text-muted-foreground mb-6 pb-6 border-b border-border">
+          <span className="font-semibold text-foreground">作者：CProTrading 投研团队</span>
+          <span className="mx-2">·</span>
+          <span>来源：{t.release.originalSource}</span>
+          <span className="mx-2">·</span>
+          <span>协议：{t.release.license}</span>
+          <span className="mx-2">·</span>
+          <span>{t.viewCount.toLocaleString()} 次阅读</span>
+        </div>
+
+        {/* === 正文 Markdown 渲染 === */}
+        <div className="prose-content">
+          {renderMarkdown(t.content)}
+        </div>
+
+        {/* === 风险提示醒目块 === */}
+        {warnings.length > 0 && (
+          <aside className="mt-10 p-4 rounded border-2 border-red-500/40 bg-red-500/5">
+            <h3 className="text-red-700 font-bold mt-0 mb-2">⚠️ 实盘风险提示</h3>
+            <ul className="text-sm space-y-1 list-disc list-inside">
+              {warnings.map((w, i) => (
+                <li key={i}>{w}</li>
+              ))}
+            </ul>
+          </aside>
+        )}
+
+        {/* === 商业 CTA === */}
+        <aside className="mt-10 p-6 rounded border border-border bg-card">
+          <h3 className="font-bold mt-0 mb-2">📄 阅读关联开源资源</h3>
+          <p className="text-sm text-muted-foreground mb-3">
+            本研报基于 <code className="font-mono">{t.release.title}</code> 源码撰写。
+            付费会员可下载该 EA 的双署名版本 (含中文 input 注释 + 启动弹窗)。
+          </p>
+          <Link
+            href={`/open-source/${t.release.id}`}
+            className="inline-block px-4 py-2 rounded bg-primary text-primary-foreground hover:bg-primary/90 text-sm"
+          >
+            → 查看开源资源
+          </Link>
+        </aside>
+
+        {/* === 底部免责声明 === */}
+        <footer className="mt-10 pt-6 border-t border-border text-xs text-muted-foreground">
+          <p>
+            <strong>免责声明：</strong>
+            本研报由 CProTrading 城诺科技投研团队基于开源源码分析撰写, 仅作编程学习与历史数据回测用途。
+            实盘市场环境复杂多变, 任何使用本站工具导致的交易亏损, 均由用户自行承担。
+          </p>
+          <p className="mt-2">
+            联系方式：微信 Lookee333 · 法律维权：同上
+          </p>
+        </footer>
+      </article>
+    </div>
+  );
+}

@@ -1,0 +1,324 @@
+@import "tailwindcss";
+@source "../components/**/*.{ts,tsx}";
+@source "./**/*.{ts,tsx}";
+
+/* Tailwind v4 Theme - design tokens using @theme block */
+@theme {
+  /* Tailwind v4 spacing scale (required for pt-16, px-4, etc.) */
+  --spacing: 4px;
+
+  /* Tiffany Blue Colors */
+  --color-accent: #00E5DD;
+  --color-accent-secondary: #7B61FF;
+  --color-accent-light: rgba(0, 229, 221, 0.8);
+  --color-accent-dim: rgba(0, 229, 221, 0.12);
+  --color-accent-glow: 0 0 30px rgba(0, 229, 221, 0.5);
+  --color-accent-glow-strong: 0 0 60px rgba(0, 229, 221, 0.6), 0 0 120px rgba(0, 229, 221, 0.3);
+
+  /* Background Colors */
+  --color-bg-primary: #0a0a0f;
+  --color-bg-secondary: #0f0f16;
+  --color-bg-card: #14141c;
+  --color-bg-card-hover: #1a1a24;
+
+  /* Text Colors */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #b0b0c0;
+  --color-text-muted: #707080;
+
+  /* Border Colors */
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-accent: rgba(0, 229, 221, 0.35);
+
+  /* Custom shadow values */
+  --shadow-glow: 0 0 20px rgba(0, 229, 221, 0.4);
+  --shadow-glow-strong: 0 0 50px rgba(0, 229, 221, 0.5), 0 0 100px rgba(0, 229, 221, 0.3);
+}
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  padding: 0;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Background decorations */
+.bg-gradient {
+  background: radial-gradient(ellipse at top right, rgba(0, 229, 221, 0.12) 0%, rgba(123, 97, 255, 0.06) 40%, transparent 70%);
+}
+
+.bg-grid {
+  background-image: radial-gradient(rgba(0, 229, 221, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Ambient glow - subtle Tiffany Blue radial base */
+.ambient-glow {
+  background: radial-gradient(ellipse at 30% 0%, rgba(0, 229, 221, 0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 20%, rgba(123, 97, 255, 0.04) 0%, transparent 40%),
+              var(--color-bg-primary);
+}
+
+/* ── Hero Section ─────────────────────────────────────────────── */
+.hero-section-bg {
+  background: linear-gradient(180deg, rgba(0, 229, 221, 0.025) 0%, transparent 50%);
+}
+
+.hero-glow-orb {
+  top: -20%;
+  right: -10%;
+  width: 800px;
+  height: 600px;
+  background: radial-gradient(ellipse at center, rgba(0, 229, 221, 0.15) 0%, rgba(123, 97, 255, 0.08) 40%, transparent 70%);
+}
+
+.hero-top-line {
+  background: linear-gradient(90deg, transparent 0%, var(--color-accent) 50%, var(--color-accent-secondary) 100%, transparent 100%);
+  opacity: 0.7;
+}
+
+.badge-glow {
+  background: linear-gradient(135deg, rgba(0, 229, 221, 0.15), rgba(0, 229, 221, 0.08));
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+  box-shadow: 0 0 40px rgba(0, 229, 221, 0.4), inset 0 0 30px rgba(0, 229, 221, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.hero-title {
+  font-size: 4.5rem;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  text-shadow: 0 0 60px rgba(0, 229, 221, 0.3);
+}
+
+.accent-glow-text {
+  color: var(--color-accent);
+  text-shadow: 0 0 80px rgba(0, 229, 221, 0.8), 0 0 120px rgba(0, 229, 221, 0.4);
+}
+
+.btn-cta {
+  background: linear-gradient(135deg, var(--color-accent) 0%, #00D4DD 100%);
+  color: var(--color-bg-primary);
+  box-shadow: 0 0 50px rgba(0, 229, 221, 0.5), 0 0 100px rgba(0, 229, 221, 0.3);
+  font-weight: 700;
+}
+
+.btn-outline-accent {
+  border-color: rgba(0, 229, 221, 0.4);
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────── */
+.sidebar-bg {
+  background-color: rgba(10, 10, 15, 0.6);
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sidebar-logo-accent {
+  color: var(--color-accent);
+  text-shadow: 0 0 20px rgba(0, 229, 221, 0.5);
+}
+
+/* Glossy Tiffany badge */
+.glossy-badge {
+  background: linear-gradient(135deg, #00D4DD 0%, #00E5DD 40%, #7B61FF 100%);
+  color: #0a0a0f;
+  box-shadow: 0 4px 20px rgba(0, 229, 221, 0.4), 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+}
+
+.sidebar-nav-hover-bg {
+  background: linear-gradient(90deg, rgba(0, 229, 221, 0.08) 0%, transparent 100%);
+  box-shadow: inset 0 0 20px rgba(0, 229, 221, 0.05);
+}
+
+.sidebar-cta {
+  background: linear-gradient(135deg, rgba(0, 229, 221, 0.1), rgba(123, 97, 255, 0.1));
+  border: 1px solid var(--color-border-accent);
+  box-shadow: 0 0 30px rgba(0, 229, 221, 0.1), inset 0 0 30px rgba(0, 229, 221, 0.05);
+}
+
+.sidebar-cta-title {
+  color: var(--color-accent);
+  text-shadow: 0 0 20px rgba(0, 229, 221, 0.5);
+}
+
+.sidebar-cta-btn {
+  background: linear-gradient(135deg, var(--color-accent), #00C4CC);
+  color: var(--color-bg-primary);
+  box-shadow: 0 0 20px rgba(0, 229, 221, 0.4);
+}
+
+/* ── Product Card ───────────────────────────────────────────── */
+.product-card {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  transition: all 0.3s ease;
+}
+
+.product-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 229, 221, 0.1);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.product-card-glow {
+  background: radial-gradient(ellipse at center, rgba(0, 229, 221, 0.06) 0%, transparent 70%);
+}
+
+.product-card-top-line {
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-secondary));
+  box-shadow: 0 0 12px rgba(0, 229, 221, 0.4);
+}
+
+.product-card-icon {
+  background: linear-gradient(135deg, rgba(0, 229, 221, 0.12), rgba(123, 97, 255, 0.08));
+  border: 1px solid rgba(0, 229, 221, 0.15);
+  box-shadow: 0 0 12px rgba(0, 229, 221, 0.15);
+}
+
+.product-card-tag {
+  background: rgba(0, 229, 221, 0.08);
+  border: 1px solid rgba(0, 229, 221, 0.2);
+  color: var(--color-accent);
+}
+
+/* ── Stats Bar ─────────────────────────────────────────────── */
+.stats-bar-grid {
+  border-top: none;
+}
+
+.stats-cell {
+  background-color: rgba(255, 255, 255, 0.015);
+  transition: background-color 0.3s ease;
+}
+
+.stats-cell:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.stats-top-line {
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 229, 221, 0.6) 50%, transparent 100%);
+  opacity: 0.6;
+}
+
+.stat-number {
+  font-size: 2.75rem;
+  color: var(--color-accent);
+  text-shadow: 0 0 30px rgba(0, 229, 221, 0.5);
+  line-height: 1;
+}
+
+.stat-label {
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+}
+
+/* ── CTA Section ───────────────────────────────────────────── */
+.cta-section-bg {
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 229, 221, 0.025) 100%);
+}
+
+.cta-title-text {
+  background: linear-gradient(135deg, var(--color-text-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cta-btn {
+  background: linear-gradient(135deg, var(--color-accent), #00C4CC);
+  color: var(--color-bg-primary);
+  box-shadow: var(--shadow-glow-strong);
+}
+
+/* ── Content Card ─────────────────────────────────────────── */
+.content-card {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.content-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 0 20px rgba(0, 229, 221, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.header-logo-accent {
+  color: var(--color-accent);
+  text-shadow: 0 0 20px rgba(0, 229, 221, 0.5);
+}
+
+.header-register-btn {
+  box-shadow: 0 0 20px rgba(0, 229, 221, 0.4);
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.footer {
+  color: var(--color-text-muted);
+  background-color: rgba(10, 10, 15, 0.4);
+}
+
+/* ── Quick Links Card ────────────────────────────────────── */
+.quick-link-card {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.quick-link-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Page Header ─────────────────────────────────────────── */
+.page-header {
+  border-color: var(--color-border);
+}
+
+/* ── About Page ───────────────────────────────────────────── */
+.value-card {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.value-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Auth Form ───────────────────────────────────────────── */
+.auth-form-card {
+  background-color: var(--color-bg-card);
+  border-color: var(--color-border);
+}
+
+.auth-btn {
+  background: linear-gradient(135deg, var(--color-accent), #00C4CC);
+  color: var(--color-bg-primary);
+}
+
+.auth-link {
+  color: var(--color-accent);
+}
+
+.auth-checkbox {
+  accent-color: var(--color-accent);
+}

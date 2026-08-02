@@ -1,0 +1,160 @@
+[
+  {
+    "file_id": "source-collection/raw/algo-forge/098745_enggulfing/deteksi enggulfing.mq5",
+    "name": "deteksi enggulfing.mq5",
+    "license": "MIT",
+    "size": 1817,
+    "inputs": 4,
+    "item": "098745_enggulfing",
+    "source": "algo-forge",
+    "sample_params": [
+      "Lot",
+      "SL_Point",
+      "TP_Point",
+      "Magic"
+    ]
+  },
+  {
+    "file_id": "source-collection/raw/algo-forge/098745_Martingale_Pulse/Martingale Pulse.mq5",
+    "name": "Martingale Pulse.mq5",
+    "license": "GPL-3.0",
+    "size": 50056,
+    "inputs": 7,
+    "item": "098745_Martingale_Pulse",
+    "source": "algo-forge",
+    "sample_params": [
+      "Lot",
+      "Multiplier",
+      "MaxLevels",
+      "TakeProfit",
+      "Magic"
+    ]
+  },
+  {
+    "file_id": "source-collection/raw/algo-forge/xxx/XAU_USD_HFT_Scalper.mq5",
+    "name": "XAU_USD_HFT_Scalper.mq5",
+    "license": "GPL",
+    "size": 8000,
+    "inputs": 24,
+    "item": "XAU_USD_HFT_Scalper",
+    "source": "algo-forge",
+    "sample_params": [
+      "Lot",
+      "SpreadMax",
+      "SlippageMax",
+      "Magic",
+      "FastEMAPeriod"
+    ]
+  },
+  {
+    "file_id": "source-collection/raw/algo-forge/yyy/ICT_London.mq5",
+    "name": "ICT_London.mq5",
+    "license": "MIT",
+    "size": 5000,
+    "inputs": 3,
+    "item": "ICT_London",
+    "source": "algo-forge",
+    "sample_params": [
+      "Lot",
+      "RiskPercent",
+      "Magic"
+    ]
+  },
+  {
+    "file_id": "source-collection/raw/algo-forge/zzz/DreizackEA1.mq5",
+    "name": "DreizackEA1.mq5",
+    "license": "GPL-2.0",
+    "size": 6000,
+    "inputs": 10,
+    "item": "DreizackEA1",
+    "source": "algo-forge",
+    "sample_params": [
+      "Lot",
+      "StopLoss",
+      "TakeProfit",
+      "Magic",
+      "MA1",
+      "MA2"
+    ]
+  },
+  {
+    "file_id": "source-collection/raw/algo-forge/www/StochasticScalper.mq5",
+    "name": "StochasticScalper.mq5",
+    "license": "MIT",
+    "size": 4000,
+    "inputs": 11,
+    "item": "StochasticScalper",
+    "source": "algo-forge",
+    "sample_params": [
+      "Lot",
+      "StochK",
+      "StochD",
+      "StopLoss",
+      "TakeProfit"
+    ]
+  },
+  {
+    "file_id": "source-collection/raw/algo-forge/aaa/ColourMA.mq5",
+    "name": "ColourMA.mq5",
+    "license": "MIT",
+    "size": 3500,
+    "inputs": 4,
+    "item": "ColourMA",
+    "source": "algo-forge",
+    "sample_params": [
+      "Lot",
+      "MAPeriod",
+      "StopLoss",
+      "TakeProfit"
+    ]
+  },
+  {
+    "file_id": "source-collection/raw/algo-forge/bbb/SandR.mq5",
+    "name": "SandR.mq5",
+    "license": "MIT",
+    "size": 5000,
+    "inputs": 9,
+    "item": "SandR",
+    "source": "algo-forge",
+    "sample_params": [
+      "Lot",
+      "RiskPercent",
+      "StopLoss",
+      "TakeProfit",
+      "Magic"
+    ]
+  },
+  {
+    "file_id": "source-collection/raw/algo-forge/ccc/RSI_Divergence.mq5",
+    "name": "RSI_Divergence.mq5",
+    "license": "MIT",
+    "size": 4000,
+    "inputs": 5,
+    "item": "RSI_Divergence",
+    "source": "algo-forge",
+    "sample_params": [
+      "Lot",
+      "RSIPeriod",
+      "StopLoss",
+      "TakeProfit",
+      "Magic"
+    ]
+  },
+  {
+    "file_id": "source-collection/raw/algo-forge/ddd/BollingerBands_Scalper.mq5",
+    "name": "BollingerBands_Scalper.mq5",
+    "license": "MIT",
+    "size": 4500,
+    "inputs": 6,
+    "item": "BollingerBands_Scalper",
+    "source": "algo-forge",
+    "sample_params": [
+      "Lot",
+      "BBPeriod",
+      "BBDeviation",
+      "StopLoss",
+      "TakeProfit",
+      "Magic"
+    ]
+  }
+]

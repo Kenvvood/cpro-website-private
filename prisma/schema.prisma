@@ -1,0 +1,603 @@
+// CProTrading Prisma Schema
+// ARCHIVE v7.3 (task-0037): provider 从 PostgreSQL 改回 SQLite (libsql)
+// 修复半成品迁移状态 (与 CLAUDE.md §6.2 锁定路线一致)
+// ARCHIVE v2.0 原始 PostgreSQL 决策废弃
+//
+// 数据库: SQLite (libsql)
+// 关键决策:
+//   - USDT 6.6/16.6/36.6 三档定价
+//   - Decimal(18,8) 高精度金额
+//   - Order 状态机 (PENDING → CONFIRMED → ACTIVE → EXPIRED/REFUNDED)
+//   - Review 多维评分 (JSON 存储)
+//   - 4 小时 USDT 订单超时
+//   - 反洗钱: 单笔 ≤ 200, 单日 ≤ 1000 USDT
+//   - capabilityTags: String[] 改 String (JSON 序列化, 适配 SQLite)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ============================================================
+// 模块 A: User & Membership
+// ============================================================
+
+enum UserRole {
+  ADMIN
+  CREATOR
+  MEMBER
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+model User {
+  id            String  @id @default(cuid())
+  username      String  @unique
+  email         String? @unique
+  phone         String? @unique
+  passwordHash  String
+  wechatOpenid  String?
+  wechatUnionid String?
+
+  // 角色与状态
+  role   UserRole   @default(MEMBER)
+  status UserStatus @default(ACTIVE)
+
+  // 反洗钱 (USDT 累计)
+  kycVerified Boolean @default(false)
+  kycDocUrl   String?
+  totalSpent  Decimal @default(0) // SQLite: 应用层精度 (USDT 18 位整数 + 8 位小数)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关系
+  memberships          Membership[]
+  orders               Order[]
+  reviews              Review[]
+  reviewReplies        ReviewReply[]
+  downloadRecords      DownloadRecord[]
+  referralsGiven       Referral[]            @relation("Referrer")
+  referralsTaken       Referral[]            @relation("Referee")
+  openSourceAccessLogs OpenSourceAccessLog[]
+  upgradeConversions   UpgradeConversion[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([role])
+  @@index([status])
+}
+
+enum MembershipPlan {
+  FREE_TRIAL // 7 天试用
+  MONTHLY_16 // ¥99/月  → 6.6 USDT (task0001 决策)
+  ANNUAL_36 // ¥278/年 → 36.6 USDT
+}
+
+enum MembershipStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  REFUNDED
+}
+
+model Membership {
+  id         String           @id @default(cuid())
+  userId     String
+  plan       MembershipPlan
+  status     MembershipStatus @default(ACTIVE)
+  startAt    DateTime
+  expireAt   DateTime
+  autoRenew  Boolean          @default(false)
+  paidAmount Decimal // USDT, SQLite 应用层精度
+  paymentId  String?          @unique // 关联 Order
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment Order? @relation(fields: [paymentId], references: [id])
+
+  @@index([userId])
+  @@index([status, expireAt])
+  @@index([userId, status])
+}
+
+// ============================================================
+// 模块 B: USDT 支付订单 (核心)
+// ============================================================
+
+enum PayChannel {
+  USDT_BSC // BSC BEP20
+  USDT_TRC20 // TRC20
+}
+
+enum OrderStatus {
+  PENDING // 待支付 (4 小时窗口)
+  CONFIRMED // 链上确认
+  TIMEOUT // 超时作废
+  FAILED // 支付失败
+  REFUNDED // 已退款
+}
+
+model Order {
+  id      String @id @default(cuid())
+  orderNo String @unique // 业务前缀 + 时间戳 (Q3)
+  userId  String
+
+  // 金额 (高精度)
+  amount   Decimal // USDT, SQLite 应用层精度
+  currency String  @default("USDT")
+
+  // 支付通道
+  channel       PayChannel
+  walletAddress String // 收款地址
+  txHash        String? // 链上交易哈希
+  blockNumber   BigInt?
+
+  // 计划
+  plan         MembershipPlan
+  durationDays Int // 30 / 365
+
+  // 状态机
+  status      OrderStatus @default(PENDING)
+  expiresAt   DateTime // 4 小时超时
+  paidAt      DateTime?
+  confirmedAt DateTime? // 链上确认
+  failedAt    DateTime?
+  refundedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id])
+  membership Membership? // 1:1 (成功支付后创建)
+  refunds    Refund[]
+
+  @@index([userId, status])
+  @@index([status, expiresAt]) // 超时扫描
+  @@index([orderNo])
+  @@index([txHash])
+}
+
+enum RefundStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+model Refund {
+  id          String       @id @default(cuid())
+  orderId     String       @unique
+  userId      String
+  amount      Decimal // 退款金额, SQLite 应用层精度
+  reason      String
+  status      RefundStatus @default(PENDING)
+  txHash      String? // 退款链上交易
+  processedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([status])
+}
+
+// ============================================================
+// 模块 C: Products & Access Control
+// ============================================================
+
+enum ProductCategory {
+  EA
+  INDICATOR
+  SCRIPT
+  LIBRARY
+}
+
+model Product {
+  id          String          @id @default(cuid())
+  name        String
+  description String?
+  category    ProductCategory
+
+  // 文件
+  fileUrl String
+  ex5Url  String? // 编译后 MT5 产物
+  ex4Url  String? // 编译后 MT4 产物
+  version String?
+
+  // 会员权限锁 (Q5: 保留 fileUrl 向后兼容)
+  requiredPlan MembershipPlan @default(FREE_TRIAL)
+  isFree       Boolean        @default(false)
+
+  // 元数据
+  rating        Decimal @default(0) // 评分 0.00~5.00, SQLite 应用层精度
+  ratingCount   Int     @default(0)
+  downloadCount Int     @default(0)
+
+  // ===== task-0034 PDP/PLP 落地字段 (ARCHIVE v6.0 锁定的 5 区块 PDF) =====
+  tier                 String? // 'Tier 1 (Premium/VIP)' | 'Tier 2 (Pro)' | 'Tier 3 (Basic)' | 'N/A'
+  score                Int? // 0-20
+  positioning          String? // 1 句话定位
+  productHighlights    String? // PDF 2
+  algorithmicCore      String? // PDF 3
+  practicalApplication String? // PDF 4
+  riskControl          String? // PDF 5
+  subcategory          String? // 微观子类 (v6.1 极客专区)
+  capabilityTags       String? // JSON 序列化的字符串数组 (task-0028 深度提纯标签, SQLite 不支持 String[])
+
+  isActive    Boolean   @default(true)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // 关系
+  downloadRecords      DownloadRecord[]
+  reviews              Review[]
+  openSourceRelease    OpenSourceRelease?
+  upgradeConversions   UpgradeConversion[]
+  tutorial             OpenSourceTutorial? @relation(fields: [openSourceTutorialId], references: [id])
+  openSourceTutorialId String?
+
+  @@index([category, isActive])
+  @@index([requiredPlan])
+  @@index([isActive, publishedAt])
+  @@index([tier])
+}
+
+model DownloadRecord {
+  id           String   @id @default(cuid())
+  userId       String
+  productId    String
+  downloadedAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+}
+
+// ============================================================
+// 模块 D: Community & Reviews
+// ============================================================
+
+enum ReviewStatus {
+  PUBLISHED
+  HIDDEN
+  DELETED
+}
+
+model Review {
+  id           String       @id @default(cuid())
+  productId    String
+  userId       String
+  rating       Int // 1-5 总体
+  dimensions   String? // JSON: {profit, ease, stability, support} (Q6)
+  content      String
+  isVerified   Boolean      @default(false) // 是否购买过
+  helpfulCount Int          @default(0)
+  status       ReviewStatus @default(PUBLISHED)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User          @relation(fields: [userId], references: [id])
+  replies ReviewReply[]
+
+  @@index([productId, status])
+  @@index([userId])
+  @@index([productId, rating])
+}
+
+model ReviewReply {
+  id        String   @id @default(cuid())
+  reviewId  String
+  userId    String // 回复者
+  content   String
+  isAdmin   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([reviewId])
+}
+
+enum ReferralReward {
+  PRO_7DAYS
+  BASIC_7DAYS
+}
+
+model Referral {
+  id         String         @id @default(cuid())
+  referrerId String // 推荐人
+  refereeId  String // 被推荐人
+  reward     ReferralReward @default(PRO_7DAYS)
+  rewardSent Boolean        @default(false)
+  createdAt  DateTime       @default(now())
+
+  referrer User @relation("Referrer", fields: [referrerId], references: [id])
+  referee  User @relation("Referee", fields: [refereeId], references: [id])
+
+  @@unique([referrerId, refereeId])
+  @@index([referrerId])
+}
+
+// ============================================================
+// MQL5 模块积木系统 (保留, 来自原 schema)
+// ============================================================
+
+model Module {
+  id          String  @id @default(cuid())
+  name        String
+  displayName String
+  description String?
+  category    String // signal|execution|risk|trailing|breakeven|filter|multi|copytrade|registry|utility
+  version     String  @default("1.0.0")
+  author      String? @default("CPro Trading")
+  fileUrl     String
+  icon        String?
+  isRunnable  Boolean @default(true)
+  requiresMT5 Boolean @default(false)
+
+  downloadCount Int @default(0)
+  usageCount    Int @default(0)
+
+  parameters   String? // JSON Schema
+  dependencies String? // JSON 数组
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  eaConfigModules EAConfigModule[]
+
+  @@index([category])
+}
+
+model EAConfig {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  configJson  String
+  version     Int      @default(1)
+  isPublished Boolean  @default(false)
+  isTemplate  Boolean  @default(false)
+  usageCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  modules     EAConfigModule[]
+  runSessions EARunSession[]
+
+  @@index([userId])
+  @@index([isPublished])
+}
+
+model EAConfigModule {
+  id         String  @id @default(cuid())
+  eaConfigId String
+  moduleId   String
+  parameters String?
+  enabled    Boolean @default(true)
+  priority   Int     @default(0)
+
+  eaConfig EAConfig @relation(fields: [eaConfigId], references: [id], onDelete: Cascade)
+  module   Module   @relation(fields: [moduleId], references: [id])
+
+  @@unique([eaConfigId, moduleId])
+}
+
+model EARunSession {
+  id             String   @id @default(cuid())
+  eaConfigId     String
+  name           String
+  runMode        String // simulation | live
+  status         String // running | stopped | completed
+  symbol         String
+  timeframe      String
+  initialCapital Float?
+  totalPnl       Float    @default(0)
+  totalTrades    Int      @default(0)
+  winRate        Float    @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  eaConfig  EAConfig     @relation(fields: [eaConfigId], references: [id], onDelete: Cascade)
+  runLogs   EARunLog[]
+  positions EAPosition[]
+
+  @@index([eaConfigId])
+  @@index([status])
+}
+
+model EARunLog {
+  id         String   @id @default(cuid())
+  sessionId  String
+  timestamp  DateTime @default(now())
+  level      String // info|signal|risk|exec|warn|error
+  moduleName String?
+  message    String
+
+  session EARunSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+model EAPosition {
+  id           String    @id @default(cuid())
+  sessionId    String
+  ticket       String
+  symbol       String
+  type         String // buy | sell
+  volume       Float
+  openPrice    Float
+  currentPrice Float     @default(0)
+  stopLoss     Float?
+  takeProfit   Float?
+  pnl          Float     @default(0)
+  status       String // open | closed
+  openedAt     DateTime  @default(now())
+  closedAt     DateTime?
+
+  session EARunSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([status])
+}
+
+// ============================================================
+// 模块 Z: 开源合规再分发 (路径 D - task-0037 plan-0034 落地)
+// ============================================================
+// 战略: 不走净室重写伪合规路径, 走 GPL-3 §4 合规再分发
+// X 池 8,534 文件 → 注入 + 双署名 + 付费会员门控
+// 铁律 #283 (默认拒绝) / #284 (不透明主键代理) / #285 (商品溯源无真空)
+
+enum OpenSourceLicense {
+  GPL_2
+  GPL_3
+  APACHE_2_0
+  MIT
+  BSD_3
+  UNLICENSE
+  LGPL
+  MPL_2_0
+  PROPRIETARY
+  NO_LICENSE
+  UNKNOWN
+}
+
+enum OpenSourceAccessAction {
+  VIEW
+  DOWNLOAD
+  LIKE
+  UPGRADE_CLICK
+}
+
+model OpenSourceRelease {
+  id              String            @id @default(cuid())
+  // 关联 Product (升级目标, 可空: 有的开源版无对应付费版)
+  productId       String?           @unique
+  // master.db.mql_files.file_id (D:\... 全路径, 铁律 #284 不透明主键)
+  sourceFileId    String
+  license         OpenSourceLicense
+  // 双署名用: 原作者 + 原始仓库
+  originalAuthor  String
+  originalSource  String // "github" / "algo-forge" / ...
+  // 展示
+  title           String
+  description     String?
+  // 注入后产物 (cpro_patched_redistribute/ 隔离目录)
+  fileUrl         String
+  originalFileUrl String?
+  // 评分/标签
+  tier            String?
+  // 门控: 默认需要 MONTHLY_16 付费会员
+  requiredPlan    MembershipPlan    @default(MONTHLY_16)
+  isFeatured      Boolean           @default(false)
+  downloadCount   Int               @default(0)
+  viewCount       Int               @default(0)
+  publishedAt     DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // 关系
+  product            Product?              @relation(fields: [productId], references: [id], onDelete: SetNull)
+  accessLogs         OpenSourceAccessLog[]
+  openSourceTutorial OpenSourceTutorial?
+
+  @@index([license])
+  @@index([originalSource])
+  @@index([requiredPlan])
+  @@index([isFeatured, publishedAt])
+  @@index([publishedAt])
+}
+
+model OpenSourceAccessLog {
+  id        String                 @id @default(cuid())
+  userId    String? // 可空: 匿名浏览 (前 12 个公开预览)
+  releaseId String
+  action    OpenSourceAccessAction
+  ipAddress String?
+  userAgent String?
+  referrer  String?
+  createdAt DateTime               @default(now())
+
+  // 关系
+  user    User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  release OpenSourceRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([userId, action])
+  @@index([releaseId, action])
+  @@index([createdAt])
+}
+
+model UpgradeConversion {
+  id            String   @id @default(cuid())
+  userId        String
+  fromReleaseId String? // 可空: 直接付费 (无开源版触发)
+  toProductId   String
+  convertedAt   DateTime @default(now())
+
+  // 关系
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  toProduct Product @relation(fields: [toProductId], references: [id], onDelete: Cascade)
+
+  @@index([userId, convertedAt])
+  @@index([fromReleaseId])
+  @@index([toProductId])
+}
+
+// ============================================================
+// 模块 Z2: 投研研报 (Phase 6.2 教程内容引擎)
+// ============================================================
+
+enum TutorialStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model OpenSourceTutorial {
+  id             String         @id @default(cuid())
+  releaseId      String         @unique // 1:1 关联 OpenSourceRelease
+  slug           String         @unique
+  // B 为主: 实盘应用
+  marketRegime   String // trend/range/volatile/breakout
+  symbols        String?
+  timeframe      String?
+  // B 为主: 风险
+  riskLevel      String // 高/中/低
+  maxDrawdownPct Decimal?
+  riskWarnings   String // JSON 数组
+  // A 为证: 关键参数
+  keyParameters  String // JSON
+  strategyLogic  String // 一句话算法
+  // 主内容
+  content        String // Markdown
+  productCta     String?
+  // 元数据
+  author         String         @default("CProTrading 投研团队")
+  status         TutorialStatus @default(DRAFT)
+  publishedAt    DateTime?
+  viewCount      Int            @default(0)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  release  OpenSourceRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@index([status, publishedAt])
+  @@index([riskLevel])
+}
