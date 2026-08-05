@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { PLAN_LABEL_CN, USDT_RATES, PLAN_DURATION_DAYS } from "@/lib/payment-config";
 
-// task052 L2 C18: 会员价表 3 档 (实色金/蓝/边框 · 中央月付高亮)
+// L4 v1.6: 会员价表 3 档 (实色金/蓝/边框 · 中央月付高亮)
+// 删 stale 数字 "19,328 资源" / "2,042 开源资源" (L4 v1.5 编译产物 sed 改过, 源码未改)
+// 严守 PM D5: 3 档纯付费 USDT, 无 FREE_TRIAL
 export function PricingTable() {
   const plans = [
-    { plan: "WEEKLY" as const, label: "周付会员", desc: "7 天全站 19,328 资源 · 周付 USDT", highlight: false },
-    { plan: "MONTHLY" as const, label: "月付会员", desc: "30 天全平台 2,042 开源资源无限下载 · 含教程", highlight: true },
+    { plan: "WEEKLY" as const, label: "周付会员", desc: "7 天全站资源无限下载 · 周付 USDT", highlight: false },
+    { plan: "MONTHLY" as const, label: "月付会员", desc: "30 天全站资源无限下载 · 含投研教程", highlight: true },
     { plan: "ANNUAL" as const, label: "年付会员", desc: "365 天年付套餐 · 节省 70% · 含 6 月持续更新", highlight: false },
   ];
 
