@@ -44,7 +44,7 @@ const cooperationModels = [
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-bg-primary">
-      <main className="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-12 lg:space-y-16">
+      <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-12 lg:py-16 space-y-12 lg:space-y-16">
         {/* Page Header */}
         <header className="border-b border-border pb-8">
           <h1 className="text-3xl lg:text-4xl font-bold mb-3 text-text-primary">

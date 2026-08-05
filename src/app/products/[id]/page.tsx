@@ -33,7 +33,7 @@ export default async function ProductDetail({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-bg-primary">
-      <article className="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <article className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-8 lg:py-12">
         <Link
           href="/products"
           className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-accent-blue transition-colors mb-6"

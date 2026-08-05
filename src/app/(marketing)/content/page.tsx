@@ -14,7 +14,7 @@ const articles = [
 export default function ContentPage() {
   return (
     <div className="min-h-screen bg-bg-primary">
-      <main className="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-12">
+      <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-12 lg:py-16 space-y-12">
         <header className="border-b border-border pb-6">
           <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-text-primary">内容中心</h1>
           <p className="text-sm lg:text-base text-text-secondary">

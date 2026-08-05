@@ -96,7 +96,7 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-8 space-y-8">
       <header className="border-b border-border pb-6">
         <h1 className="text-2xl md:text-3xl font-bold mb-2 text-text-primary">总览仪表盘</h1>
         <p className="text-sm text-text-secondary">CProTrading 商业化中枢实时监控 · 数据来源 master.db</p>

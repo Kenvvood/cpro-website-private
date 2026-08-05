@@ -15,7 +15,7 @@ export default function Home() {
     <div className="min-h-screen bg-bg-primary">
       <TickerBar />
 
-      <main className="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-12 lg:space-y-16">
+      <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-8 lg:py-12 space-y-12 lg:space-y-16">
         {/* 区块 1: Hero (简洁版, 黄金外汇专精) */}
         <Hero />
 

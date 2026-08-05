@@ -41,7 +41,7 @@ export default async function OpenSourcePage({
 
   return (
     <div className="min-h-screen bg-bg-primary">
-      <main className="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-12">
         <header className="mb-8 border-b border-border pb-6">
           <h1 className="text-2xl md:text-3xl font-bold mb-2 text-text-primary">开源合规再分发专区</h1>
           <p className="text-sm text-text-secondary">

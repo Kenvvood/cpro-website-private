@@ -18,13 +18,13 @@ export default async function ProductsPage({ searchParams }: Props) {
   return (
     <div className="min-h-screen bg-bg-primary">
       <header className="border-b border-border bg-bg-secondary">
-        <div className="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-8">
           <h1 className="text-2xl lg:text-3xl font-bold mb-2 text-text-primary">产品中心</h1>
           <p className="text-sm text-text-secondary">19,328 个量化武器 · 注册会员可下载</p>
         </div>
       </header>
 
-      <main className="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1">
             <FilterPanel
