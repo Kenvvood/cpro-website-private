@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import {
@@ -95,7 +95,7 @@ export default function AdminPage() {
       <div>
         {/* Admin Header */}
         <header className="border-b border-border bg-bg-secondary">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <h1 className="text-2xl lg:text-3xl font-bold mb-2 text-text-primary">管理后台</h1>
             <p className="text-sm text-text-secondary">管理用户、产品推广和消息推送</p>
           </div>

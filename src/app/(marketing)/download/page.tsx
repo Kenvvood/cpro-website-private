@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 // task052 L3: download/page.tsx TV 风格拉平 (移除 Sidebar + bg-gradient + value-card + ProductCard)
 import * as React from "react";
 import { useEffect, useState } from "react";
@@ -89,7 +89,7 @@ export default function DownloadPage() {
 
   return (
     <div className="min-h-screen bg-bg-primary">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-8">
+      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-8">
         <header className="border-b border-border pb-6">
           <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-text-primary">下载中心</h1>
           <p className="text-sm lg:text-base text-text-secondary">

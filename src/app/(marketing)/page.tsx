@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { TickerBar } from "@/components/layout/TickerBar";
 import { Hero } from "@/components/features/Hero";
 import { StatsBar } from "@/components/features/StatsBar";
@@ -15,7 +15,7 @@ export default function Home() {
     <div className="min-h-screen bg-bg-primary">
       <TickerBar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-12 lg:space-y-16">
+      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-12 lg:space-y-16">
         {/* 区块 1: Hero (简洁版, 黄金外汇专精) */}
         <Hero />
 

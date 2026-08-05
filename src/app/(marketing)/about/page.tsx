@@ -1,4 +1,4 @@
-// task052 L3: about/page.tsx TV 风格拉平 (移除 Sidebar + bg-gradient + value-card + rounded-xl)
+﻿// task052 L3: about/page.tsx TV 风格拉平 (移除 Sidebar + bg-gradient + value-card + rounded-xl)
 import { Footer } from "@/components/layout/footer";
 import { ShieldIcon, TrendingUpIcon, UsersIcon, HeadphonesIcon } from "lucide-react";
 import { BRAND } from "@/config/brand";
@@ -44,7 +44,7 @@ const cooperationModels = [
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-bg-primary">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-12 lg:space-y-16">
+      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-12 lg:space-y-16">
         {/* Page Header */}
         <header className="border-b border-border pb-8">
           <h1 className="text-3xl lg:text-4xl font-bold mb-3 text-text-primary">
