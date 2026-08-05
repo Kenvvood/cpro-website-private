@@ -10,7 +10,7 @@ export function Hero() {
       <div className="flex flex-col justify-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 text-xs font-semibold border border-border rounded-sm bg-bg-secondary text-text-secondary">
           <span>●</span>
-          <span>19,328 EA · 2,042 开源版 · 100 研报 · USDT 收银</span>
+          <span>首批精选 · 启动中 · USDT 收银 · 3 档纯付费</span>
         </div>
 
         <h1 className="text-3xl lg:text-4xl font-bold leading-tight tracking-tight mb-6 text-text-primary">
