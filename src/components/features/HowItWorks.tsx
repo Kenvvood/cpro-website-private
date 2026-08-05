@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { Search, CreditCard, Rocket, ArrowRight, Users } from "lucide-react";
+import { Search, CreditCard, Rocket, ArrowRight } from "lucide-react";
 
-// L4 v1.9 激进档: 3 步 → 3 步 (保留 v1.7 简洁 + 零 emoji)
-// 实际是 4 区块: 浏览 → 订阅 → 部署 + 创作者申请入口
-// PM 决策: 保留简洁, 加 "申请入驻" 按钮作为第 4 个 CTA
-
+// L4 v1.7: 4 步 → 3 步 (PM 反馈"画蛇添足")
+// 浏览 → 订阅 → 部署 (删"下载"这步多余, 部署是订阅后的必然流程)
+// 桌面端保留 2 条箭头连接
 const STEPS = [
   {
     n: "01",
@@ -70,27 +69,13 @@ export function HowItWorks() {
         })}
       </div>
 
-      {/* 创作者申请入口 (借 erbotapp /creator 路由) */}
-      <div className="mt-6 card-base p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
-        <div className="flex items-start gap-3">
-          <div className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-accent-gold/10 shrink-0">
-            <Users size={18} className="text-accent-gold" />
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold text-text-primary mb-1">
-              您有优质 EA？
-            </h3>
-            <p className="text-xs text-text-secondary leading-relaxed">
-              申请入驻创作者中心，提交可验证观摩账户与策略资料，平台协助您找到真正感兴趣的用户。
-            </p>
-          </div>
-        </div>
+      <div className="mt-6 text-center">
         <Link
-          href="/creator/apply"
-          className="btn-outline inline-flex items-center gap-2 text-sm shrink-0"
+          href="/membership"
+          className="btn-primary inline-flex items-center gap-2 text-sm"
         >
-          申请入驻
-          <ArrowRight size={14} />
+          立即开通会员
+          <ArrowRight size={16} />
         </Link>
       </div>
     </section>

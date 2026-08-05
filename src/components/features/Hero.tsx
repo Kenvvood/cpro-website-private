@@ -1,19 +1,13 @@
 import Link from "next/link";
-import { ArrowRight, Code2, Zap, FileCheck2, TrendingUp, ShieldCheck, RotateCcw } from "lucide-react";
+import { ArrowRight, Code2, Zap } from "lucide-react";
 import { BRAND } from "@/config/brand";
 
-// L4 v1.9 激进档 (PM 2026-08-15 15:42 拍板):
-// 借鉴 erbotapp 6 钩结构 + 零 emoji + 真实数据
-// 6 钩: 源码可读 / MT4-MT5 兼容 / USDT 收银 / 编译成功率 / 公开回测 / 失败退款
-const HOOKS = [
-  { icon: Code2, text: "MQL4 / MQL5 源码可读" },
-  { icon: TrendingUp, text: "MT4 / MT5 双平台兼容" },
-  { icon: Zap, text: "USDT 周 / 月 / 年付" },
-  { icon: FileCheck2, text: "编译成功率 56.8% (持续提升)" },
-  { icon: ShieldCheck, text: "公开回测报告可下载" },
-  { icon: RotateCcw, text: "失败可换其他 EA" },
-];
-
+// L4 v1.7: 修回简洁 (PM 反馈 v1.6 过度拟合)
+// - 删装饰 K 线 SVG (22 根假蜡烛视觉污染)
+// - 删 2 浮卡 (XAUUSD 回测 +2.34% 是假数据)
+// - 删 .gradient-hero 径向辉光 → 改纯色 bg-bg-primary
+// - 文案聚焦: XAUUSD 黄金 / EURUSD · GBPUSD 外汇主流对
+// - 钩子从 4 缩到 2 (MQL 源码可读 + USDT 周月年付)
 export function Hero() {
   return (
     <section className="border-b border-border bg-bg-primary">
@@ -46,7 +40,7 @@ export function Hero() {
             </p>
 
             {/* 单 CTA (主) + 次 CTA */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <Link
                 href="/membership"
                 className="btn-primary inline-flex items-center justify-center gap-2 text-base px-6 py-3"
@@ -63,25 +57,24 @@ export function Hero() {
               </Link>
             </div>
 
-            {/* 6 钩子 (v1.9 借 erbotapp, v1.7 是 2 个) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2 text-xs text-text-muted">
-              {HOOKS.map((h) => {
-                const Icon = h.icon;
-                return (
-                  <div key={h.text} className="flex items-center gap-1.5">
-                    <Icon size={12} className="text-accent-blue shrink-0" />
-                    <span>{h.text}</span>
-                  </div>
-                );
-              })}
+            {/* 2 钩子 (v1.6 是 4 个) */}
+            <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-text-muted">
+              <div className="flex items-center gap-1.5">
+                <Code2 size={12} className="text-accent-blue" />
+                <span>MQL4 / MQL5 源码可读</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Zap size={12} className="text-accent-gold" />
+                <span>USDT 周 / 月 / 年付</span>
+              </div>
             </div>
           </div>
 
-          {/* 右: MT5 终端预览占位 */}
+          {/* 右: MT5 终端预览占位 (单卡, 无装饰 K 线, 无浮卡) */}
           <div className="flex items-center justify-center">
             <div className="w-full aspect-[4/3] card-base flex items-center justify-center">
               <div className="text-center px-6">
-                <div className="text-5xl mb-3 font-bold text-text-muted num">MT5</div>
+                <div className="text-5xl mb-3">📊</div>
                 <div className="text-sm font-semibold text-text-primary">MT5 终端预览</div>
                 <div className="text-xs text-text-muted mt-1">（待 PM 提供真实截图）</div>
               </div>
