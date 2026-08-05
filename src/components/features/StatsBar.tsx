@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/prisma";
 
-// L4 v1.7: 4 KPI → 2 KPI (PM 反馈过度展示)
-// 只留 "商品总数" + "教程研报", 跟黄金外汇核心业务直接相关
-// 删 "开源版本" + "当前可商用" 分散指标
-// L4 v1.5 修复保留: publishedAt 过滤 (DB 11,242 全 NULL, 显示 0 诚实)
+// L4 v1.9 激进档 (PM 决策): 2 KPI → 3 KPI
+// 加 "编译成功率 56.8%" 真实数字, 替代 erbotapp "1200+ 资源" 那种空口号
+const COMPILE_RATE = 56.8;
+const COMPILE_TOTAL = 1175;
+const COMPILE_PENDING = 892;
+
 export async function StatsBar() {
   const [productCount, tutorialCount] = await Promise.all([
     prisma.product.count({ where: { isActive: true, publishedAt: { not: null } } }),
@@ -13,10 +15,16 @@ export async function StatsBar() {
   const stats = [
     { label: "商品总数", value: productCount.toLocaleString(), suffix: "款" },
     { label: "教程研报", value: tutorialCount.toLocaleString(), suffix: "篇" },
+    {
+      label: "MT4/MT5 编译成功率",
+      value: `${COMPILE_RATE}`,
+      suffix: `%`,
+      meta: `${COMPILE_TOTAL.toLocaleString()} 编译通过 · ${COMPILE_PENDING.toLocaleString()} 持续优化`,
+    },
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 max-w-2xl">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {stats.map((s) => (
         <div key={s.label} className="card-base p-4 lg:p-6">
           <div className="text-3xl font-bold num text-accent-blue">
@@ -26,6 +34,9 @@ export async function StatsBar() {
           <div className="text-xs text-text-muted mt-2 uppercase tracking-wider">
             {s.label}
           </div>
+          {"meta" in s && s.meta && (
+            <div className="text-xs text-text-muted mt-1.5">{s.meta}</div>
+          )}
         </div>
       ))}
     </div>
