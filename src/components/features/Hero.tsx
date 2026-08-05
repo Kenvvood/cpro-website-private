@@ -11,7 +11,7 @@ import { BRAND } from "@/config/brand";
 export function Hero() {
   return (
     <section className="border-b border-border bg-bg-primary">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      <div className="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* 左: 文案 + CTA */}
           <div className="flex flex-col">

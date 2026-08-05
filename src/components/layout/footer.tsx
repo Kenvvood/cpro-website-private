@@ -46,7 +46,7 @@ const SOCIALS = [
 export function Footer() {
   return (
     <footer className="border-t border-border bg-bg-secondary mt-16">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* 5 列: 1 简介 + 3 链接 + 1 联系 */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           {/* 列 1: 公司简介 */}

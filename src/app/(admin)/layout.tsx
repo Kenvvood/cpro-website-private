@@ -1,4 +1,4 @@
-﻿// src/app/(admin)/layout.tsx — 管理员隐身守卫 (Phase 7 task-0048)
+// src/app/(admin)/layout.tsx — 管理员隐身守卫 (Phase 7 task-0048)
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/admin";
 import Link from "next/link";
@@ -11,7 +11,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card sticky top-0 z-10">
-        <div className="mx-auto max-w-[1440px] px-6 h-14 flex items-center justify-between">
+        <div className="mx-auto max-w-screen-2xl w-full px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link href="/dashboard" className="font-bold text-lg">
               CProTrading <span className="text-xs text-muted-foreground font-normal">Admin</span>
@@ -28,7 +28,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-[1440px] px-6 py-8">{children}</main>
+      <main className="mx-auto max-w-screen-2xl w-full px-6 py-8">{children}</main>
     </div>
   );
 }

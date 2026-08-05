@@ -1,5 +1,5 @@
 // src/app/legal/gpl-notice/page.tsx
-// task052 L4: TV 风拉平 (max-w-[1440px] + card-base + accent-* 语义色)
+// task052 L4: TV 风拉平 (max-w-screen-2xl w-full + card-base + accent-* 语义色)
 import Link from "next/link";
 
 export const metadata = {
@@ -18,7 +18,7 @@ const LICENSE_RISKS = [
 export default function GplNoticePage() {
   return (
     <div className="min-h-screen bg-bg-primary">
-      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-screen-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <header className="mb-8 border-b border-border pb-6">
           <h1 className="text-2xl md:text-3xl font-bold mb-2 text-text-primary">免责声明与开源合规声明</h1>
           <p className="text-xs text-text-muted">最后更新: 2026-07-30</p>
