@@ -23,7 +23,7 @@ const PLAN_OPTIONS: Array<{
     plan: "WEEKLY",
     label: "周付",
     priceUSDT: "$3.6 USDT",
-    desc: "7 天全站解锁",
+    desc: "7 天全站 · 周付 USDT",
   },
   {
     plan: "MONTHLY",

@@ -53,7 +53,7 @@ export function ContentPaywall({ paywallHeadings, callbackUrl }: ContentPaywallP
         </div>
 
         <p className="mt-4 text-xs text-text-muted">
-          注册免费 · 付费会员从 $3.6 USDT / 周起
+          按计划付费 · 3 档可选 (周付 $3.6 / 月付 $8.8 / 年付 $36.6 USDT)
         </p>
       </div>
     </aside>

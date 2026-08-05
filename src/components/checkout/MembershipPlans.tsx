@@ -16,7 +16,7 @@ const PLANS: Array<{
     plan: "WEEKLY",
     label: "周付会员",
     priceUSDT: "$3.6 USDT",
-    desc: "7 天全站 19,328 资源解锁 · 适合短期试用",
+    desc: "7 天全站 19,328 资源 · 周付 USDT",
   },
   {
     plan: "MONTHLY",

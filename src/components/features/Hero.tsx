@@ -26,7 +26,7 @@ export function Hero() {
 
         <div className="flex flex-col sm:flex-row gap-3">
           <Link href="/membership" className="btn-primary text-center">
-            开始 7 天试用（注册后）
+            立即开通会员
           </Link>
           <Link href="/products" className="btn-outline text-center">
             查看 19,328 个 EA

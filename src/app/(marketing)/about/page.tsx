@@ -28,8 +28,8 @@ const advantages = [
 
 const cooperationModels = [
   {
-    title: "免费产品下载",
-    description: "注册后即可下载全部 EA、指标、脚本，先体验再决定",
+    title: "付费资源下载",
+    description: "全部 EA、指标、脚本按计划付费下载，USDT 收款，链上确认后立即生效",
   },
   {
     title: "利润分成合作",
