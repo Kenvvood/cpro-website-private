@@ -68,12 +68,14 @@ export async function POST(
     return NextResponse.json({ ok: false, error: "订单已过期" }, { status: 410 });
   }
 
-  // 链上验证 + 履约事务
+  // 链上验证 + 履约事务 (task057 Phase 9: 接入 channel + createdAt 触发 V5 时间戳防线)
   try {
     const verified = await verifyOnChain(
       txHash,
       Number(order.amount),
       order.walletAddress,
+      order.channel as "USDT_TRC20" | "USDT_BSC",
+      order.createdAt,
     );
     if (!verified.ok) {
       await prisma.order.update({

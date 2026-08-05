@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { hasActiveMembership } from "@/lib/membership";
 
 interface RouteParams {
   params: Promise<{ productId: string }>;
 }
 
 // POST /api/downloads/[productId] - 记录下载
+// task051 PAYMENT-REBUILD Bug-1 封堵: 必须有有效会员才能下载
 export async function POST(request: Request, { params }: RouteParams) {
   try {
     const session = await getServerSession(authOptions);
@@ -31,6 +33,26 @@ export async function POST(request: Request, { params }: RouteParams) {
       return NextResponse.json(
         { error: "产品不存在" },
         { status: 404 }
+      );
+    }
+
+    // task051 Bug-1 修复: 必须有符合 requiredPlan 的有效会员
+    const hasAccess = await hasActiveMembership(userId, product.requiredPlan);
+    if (!hasAccess) {
+      // task056 Phase 7: 埋点 - 白嫖拦截日志
+      await prisma.openSourceAccessLog.create({
+        data: {
+          userId,
+          releaseId: product.id,
+          action: "VIEW_PAID_REQUIRED",
+          ipAddress: null,
+          userAgent: null,
+          referrer: null,
+        },
+      }).catch(() => { /* 埋点失败不阻断主流程 */ });
+      return NextResponse.json(
+        { error: "需要付费会员才能下载", requiredPlan: product.requiredPlan },
+        { status: 403 }
       );
     }
 

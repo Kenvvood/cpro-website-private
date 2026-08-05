@@ -1,8 +1,44 @@
 // src/app/tutorials/[slug]/page.tsx
-// 投研研报详情页 (task-0046)
+// 投研研报详情页 (task-0046 → task051 PAYMENT-REBUILD Bug-2 修复)
+// L0 游客: 截断到关键章节前, 显示 ContentPaywall
+// L1+ 已登录: 全文渲染
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { ContentPaywall } from "@/components/paywall/ContentPaywall";
+
+// task051 PAYMENT-REBUILD: 截断关键章节 (PM D6=D11 决策)
+const PAYWALL_KEYWORDS = ["## 实盘案例", "## 关键参数", "## 回测数据"];
+
+export function truncateMarkdown(content: string): {
+  truncated: string;
+  isTruncated: boolean;
+  paywallHeadings: string[];
+} {
+  const headings: string[] = [];
+  let cutIndex = -1;
+  for (const kw of PAYWALL_KEYWORDS) {
+    const idx = content.indexOf(kw);
+    if (idx !== -1 && (cutIndex === -1 || idx < cutIndex)) {
+      cutIndex = idx;
+      const lineEnd = content.indexOf("\n", idx);
+      headings.push(content.substring(idx, lineEnd === -1 ? idx + kw.length : lineEnd).trim());
+    }
+  }
+  if (cutIndex === -1) {
+    return { truncated: content, isTruncated: false, paywallHeadings: [] };
+  }
+  // 留前 1 行作为过渡 (保留 ## 实盘案例前一段落)
+  const beforeCut = content.substring(0, cutIndex);
+  const lastPara = beforeCut.lastIndexOf("\n\n");
+  return {
+    truncated: lastPara > 0 ? beforeCut.substring(0, lastPara) : beforeCut,
+    isTruncated: true,
+    paywallHeadings: headings,
+  };
+}
 
 export const dynamic = "force-dynamic";
 
@@ -103,6 +139,12 @@ export default async function TutorialDetail({
     data: { viewCount: { increment: 1 } },
   });
 
+  // task051 Bug-2: L0 游客 → 截断; L1+ 已登录 → 全文
+  const session = await getServerSession(authOptions);
+  const isLoggedIn = !!session?.user;
+  const { truncated, isTruncated, paywallHeadings } = truncateMarkdown(t.content);
+  const renderContent = isLoggedIn ? t.content : truncated;
+
   const warnings: string[] = t.riskWarnings ? JSON.parse(t.riskWarnings) : [];
 
   return (
@@ -150,8 +192,16 @@ export default async function TutorialDetail({
 
         {/* === 正文 Markdown 渲染 === */}
         <div className="prose-content">
-          {renderMarkdown(t.content)}
+          {renderMarkdown(renderContent)}
         </div>
+
+        {/* task051 PAYMENT-REBUILD Bug-2 修复: L0 游客截断钩子 */}
+        {isTruncated && !isLoggedIn && (
+          <ContentPaywall
+            paywallHeadings={paywallHeadings}
+            callbackUrl={`/tutorials/${slug}`}
+          />
+        )}
 
         {/* === 风险提示醒目块 === */}
         {warnings.length > 0 && (

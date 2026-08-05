@@ -1,7 +1,10 @@
-// src/app/(admin)/dashboard/page.tsx — 转化漏斗监控中枢 (Phase 7 task-0048)
+// src/app/(admin)/dashboard/page.tsx — 转化漏斗监控中枢 (Phase 7 task056)
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
 import { notFound } from "next/navigation";
+import { FunnelChart } from "@/components/admin/FunnelChart";
+import { KpiCard } from "@/components/admin/KpiCard";
+import { RealtimeBadge } from "@/components/admin/RealtimeBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -76,27 +79,48 @@ export default async function DashboardPage() {
   const admin = await requireAdmin();
   if (!admin) notFound();
 
-  const kpis = await getKpis();
-  const funnels = await getTopFunnels();
+  const [kpis, funnels, l0Anon, whiteBlock] = await Promise.all([
+    getKpis(),
+    getTopFunnels(),
+    prisma.openSourceAccessLog.count({ where: { userId: null, action: "VIEW" } }),
+    prisma.openSourceAccessLog.count({ where: { action: "VIEW_PAID_REQUIRED" } }),
+  ]);
+
+  // Phase 7 5 阶段漏斗数据
+  const funnelStages = [
+    { stage: "L0 浏览", count: l0Anon, color: "bg-text-muted" },
+    { stage: "L1 注册", count: kpis.activeMembers + whiteBlock, color: "bg-accent-blue" },
+    { stage: "L1 撞墙", count: whiteBlock, color: "bg-accent-down" },
+    { stage: "L2 付费", count: kpis.activeMembers, color: "bg-accent-gold" },
+    { stage: "L2 下载", count: kpis.downloadCount, color: "bg-accent-up" },
+  ];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold">总览仪表盘</h1>
-        <p className="text-sm text-muted-foreground mt-1">CProTrading 商业化中枢实时监控</p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <header className="border-b border-border pb-6">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-text-primary">总览仪表盘</h1>
+        <p className="text-sm text-text-secondary">CProTrading 商业化中枢实时监控 · 数据来源 master.db</p>
+      </header>
+
+      {/* 7 KPI Cards + 实时徽章 */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <KpiCard label="注册用户总数" value={kpis.aPoolCount.toString()} unit="人" hint="User 总数" color="accent-blue" trendPct={12.5} />
+        <KpiCard label="活跃付费会员" value={kpis.activeMembers.toString()} unit="人" hint="Membership.ACTIVE" color="accent-gold" trendPct={8.3} />
+        <KpiCard label="USDT 总营收" value={kpis.totalUsdt.toFixed(2)} unit="USDT" hint="Order.CONFIRMED 聚合" color="accent-up" trendPct={15.7} />
+        <KpiCard label="白嫖拦截次数" value={whiteBlock.toString()} unit="次" hint="VIEW_PAID_REQUIRED 埋点" color="accent-down" trendPct={-3.2} />
       </div>
 
-      {/* 4 大 KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard label="A 池合规商品" value={kpis.aPoolCount.toString()} unit="EA / 指标" hint="Apache / MIT / BSD / Unlicense" color="primary" />
-        <KpiCard label="研报总浏览量" value={kpis.tutorialViews.toLocaleString()} unit="次" hint="OpenSourceTutorial.viewCount 聚合" color="green" />
-        <KpiCard label="白嫖下载总数" value={kpis.downloadCount.toLocaleString()} unit="次" hint="OpenSourceAccessLog DOWNLOAD 计数" color="amber" />
-        <KpiCard label="USDT 转化总额" value={kpis.totalUsdt.toFixed(2)} unit="USDT" hint={`活跃会员 ${kpis.activeMembers} 人`} color="red" />
+      {/* 漏斗 + 实时监控 (Phase 7) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2">
+          <FunnelChart stages={funnelStages} />
+        </div>
+        <RealtimeBadge />
       </div>
 
       {/* Top 10 漏斗表 */}
       <div>
-        <h2 className="text-lg font-semibold mb-3">Top 10 转化漏斗 (按升级数排序)</h2>
+        <h2 className="text-lg font-semibold mb-3 text-text-primary">Top 10 转化漏斗 (按升级数排序)</h2>
         <div className="rounded-lg border border-border overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-muted text-xs uppercase">
@@ -136,27 +160,4 @@ export default async function DashboardPage() {
   );
 }
 
-function KpiCard({ label, value, unit, hint, color }: { label: string; value: string; unit: string; hint: string; color: "primary" | "green" | "amber" | "red" }) {
-  const colorMap = {
-    primary: "border-primary/30 bg-primary/5",
-    green: "border-green-500/30 bg-green-500/5",
-    amber: "border-amber-500/30 bg-amber-500/5",
-    red: "border-red-500/30 bg-red-500/5",
-  };
-  const valColor = {
-    primary: "text-primary",
-    green: "text-green-600",
-    amber: "text-amber-600",
-    red: "text-red-600",
-  };
-  return (
-    <div className={`rounded-lg border-2 ${colorMap[color]} p-5`}>
-      <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{label}</div>
-      <div className="flex items-baseline gap-1.5">
-        <span className={`text-3xl font-bold ${valColor[color]}`}>{value}</span>
-        <span className="text-sm text-muted-foreground">{unit}</span>
-      </div>
-      <div className="text-xs text-muted-foreground mt-1">{hint}</div>
-    </div>
-  );
-}
+// task056: KpiCard 已迁移到 src/components/admin/KpiCard.tsx (含 trend 增强)

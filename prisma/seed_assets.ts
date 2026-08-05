@@ -16,26 +16,36 @@
 
 // @/generated/prisma 是 Next.js Webpack 路径别名, tsc 静态解析失败
 // seed_assets.ts 通过 tsx 直接运行, 改用 CommonJS + 物理绝对路径
+// task051 PAYMENT-REBUILD: Prisma 7 必须显式传 adapter (libsql)
 // @ts-ignore - Node 脚本, 不参与前端 bundle 类型检查
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PrismaClient } = require(join(process.cwd(), 'src', 'generated', 'prisma'));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { PrismaLibSql } = require('@prisma/adapter-libsql');
 import { readFile, readdir } from 'fs/promises';
 import { join } from 'path';
 
-const prisma = new PrismaClient();
+// task051 PAYMENT-REBUILD: 与 src/lib/prisma.ts 一致的 adapter 模式
+const adapter = new PrismaLibSql({ url: process.env.DATABASE_URL ?? 'file:./prisma/dev.db' });
+const prisma = new PrismaClient({ adapter });
 const BATCH_SIZE = 500;
 
-// 19,328 计划定义 (Q1 决策: USDT 6.6/16.6/36.6)
+// 19,328 计划定义 (task051 PAYMENT-REBUILD: USDT 3.6/8.8/36.6)
 const PLAN_AMOUNT: Record<string, number> = {
   // 这里只是示例映射, 实际产品不用这些金额
   // plan 字段是 membership 用的, Product 用 tier
 };
 
-const TIER_MAP: Record<string, 'FREE_TRIAL' | 'MONTHLY_16' | 'ANNUAL_36'> = {
-  'Tier 1 (Premium/VIP)': 'ANNUAL_36',
-  'Tier 2 (Pro)': 'MONTHLY_16',
-  'Tier 3 (Basic)': 'FREE_TRIAL',
-  'N/A': 'FREE_TRIAL',
+// task051 重构: 三档纯付费 (WEEKLY/MONTHLY/ANNUAL)
+// 分布规则 (PM 拍板 D7=D9 强制):
+//   - Tier 1 (Premium/VIP): 100% ANNUAL (高价值)
+//   - Tier 2 (Pro):        100% MONTHLY (中价值, 默认)
+//   - Tier 3 (Basic):      100% WEEKLY (引流)
+const TIER_MAP: Record<string, 'WEEKLY' | 'MONTHLY' | 'ANNUAL'> = {
+  'Tier 1 (Premium/VIP)': 'ANNUAL',
+  'Tier 2 (Pro)': 'MONTHLY',
+  'Tier 3 (Basic)': 'WEEKLY',
+  'N/A': 'WEEKLY',
 };
 
 interface ProductProfile {
@@ -54,7 +64,8 @@ interface ProductProfile {
 }
 
 async function loadAllProfiles(): Promise<ProductProfile[]> {
-  const allPath = 'mql5-phase2/output/product_descriptions/product_descriptions_all.json';
+  // task051 PAYMENT-REBUILD: 用绝对路径, 避免 cwd 依赖
+  const allPath = join(process.cwd(), '..', 'mql5-phase2', 'output', 'product_descriptions', 'product_descriptions_all.json');
   const raw = await readFile(allPath, 'utf-8');
   const data = JSON.parse(raw);
   return data.products as ProductProfile[];
@@ -76,7 +87,7 @@ function buildProductData(p: ProductProfile): ProductCreateInput {
   ].filter(Boolean).join('\n\n');
 
   const tier = p.tier ?? 'Tier 3 (Basic)';
-  const plan = TIER_MAP[tier] ?? 'FREE_TRIAL';
+  const plan = TIER_MAP[tier] ?? 'WEEKLY';
 
   // ID 转换: algo-forge__xxx__yyy.mq5 → yyy (简化)
   const cleanId = p.id.replace(/__/g, '-').replace(/\.mq[45]$/, '').slice(-100);
@@ -85,18 +96,20 @@ function buildProductData(p: ProductProfile): ProductCreateInput {
     id: cleanId,
     name: positioning.slice(0, 100) || cleanId,
     description,
-    category: p.category as any,
+    // task051: category 默认值兜底 (部分 source profile 缺该字段)
+    category: (p.category as any) ?? 'EA',
     fileUrl: `cpro_patched_sandbox/products/${p.id}/`,
     version: '1.0',
     requiredPlan: plan,
-    isFree: tier === 'N/A',
+    isFree: false, // task051: D7 一刀切, 全站禁白嫖, 无 isFree 字段
     tier,
     score: 0,
     ratingCount: 0,
     downloadCount: 0,
     isActive: true,
     publishedAt: new Date(),
-    capabilityTags: p.capabilityTags ?? [],
+    // task051: capabilityTags 是 String 字段, JSON 序列化
+    capabilityTags: JSON.stringify(p.capabilityTags ?? []),
     subcategory: p.subcategory ?? '',
     positioning,
     productHighlights: p.productHighlights ?? '',
@@ -117,11 +130,8 @@ async function main() {
     const batch = profiles.slice(i, i + BATCH_SIZE);
     const data = batch.map(buildProductData);
     try {
-      // createMany 是 Postgres 最高效的批量插入
-      await prisma.product.createMany({
-        data,
-        skipDuplicates: true,  // 重复 ID 跳过
-      });
+      // task051 PAYMENT-REBUILD: Prisma 7 移除 skipDuplicates (重复 ID 由 dedup 流程保证)
+      await prisma.product.createMany({ data });
       processed += batch.length;
       console.log(`[${processed}/${profiles.length}] batch OK`);
     } catch (err) {

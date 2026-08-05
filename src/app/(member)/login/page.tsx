@@ -88,29 +88,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative">
-      <div className="fixed top-0 right-0 w-[70%] h-full bg-gradient pointer-events-none" />
-      <div className="fixed inset-0 bg-grid pointer-events-none" />
-
-      <div className="relative z-10 w-full max-w-md px-8">
+    <div className="min-h-screen flex items-center justify-center bg-bg-primary">
+      <div className="w-full max-w-md px-8">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold mb-2">
-            <span className="text-accent">CPro</span>Trading
+            <span className="text-accent-blue">CPro</span>Trading
           </h1>
           <p className="text-sm text-text-secondary">
             专业MT4/MT5量化解决方案
           </p>
         </div>
 
-        <div className="p-8 rounded-2xl border auth-form-card">
+        <div className="card-base p-8">
           {/* Login Mode Tabs */}
-          <div className="flex mb-6 rounded-lg bg-bg-card p-1">
+          <div className="flex mb-6 border border-border p-1">
             <button
               type="button"
               onClick={() => setMode("qrcode")}
-              className={`flex-1 py-2.5 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 py-2 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
                 mode === "qrcode"
-                  ? "bg-accent text-bg-primary"
+                  ? "bg-accent-blue text-white"
                   : "text-text-secondary hover:text-text-primary"
               }`}
             >
@@ -120,9 +117,9 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setMode("password")}
-              className={`flex-1 py-2.5 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${
+              className={`flex-1 py-2 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
                 mode === "password"
-                  ? "bg-accent text-bg-primary"
+                  ? "bg-accent-blue text-white"
                   : "text-text-secondary hover:text-text-primary"
               }`}
             >
@@ -200,7 +197,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 text-base font-bold rounded-lg transition-all auth-btn flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full btn-primary text-base flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {loading ? (
                   <>

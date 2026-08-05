@@ -2,10 +2,13 @@
 // ARCHIVE v7.3 (task-0037): provider 从 PostgreSQL 改回 SQLite (libsql)
 // 修复半成品迁移状态 (与 CLAUDE.md §6.2 锁定路线一致)
 // ARCHIVE v2.0 原始 PostgreSQL 决策废弃
+// ARCHIVE v11.0 [PAYMENT_REBUILD] 三档纯付费重构 (2026-08-05)
 //
 // 数据库: SQLite (libsql)
 // 关键决策:
-//   - USDT 6.6/16.6/36.6 三档定价
+//   - USDT 3.6 / 8.8 / 36.6 三档定价 (task051 architect 裁决)
+//   - 枚举名剥离价格后缀 (WEEKLY / MONTHLY / ANNUAL)
+//   - 无 FREE_TRIAL (PM 一刀切决策, D5=DROP)
 //   - Decimal(18,8) 高精度金额
 //   - Order 状态机 (PENDING → CONFIRMED → ACTIVE → EXPIRED/REFUNDED)
 //   - Review 多维评分 (JSON 存储)
@@ -77,9 +80,9 @@ model User {
 }
 
 enum MembershipPlan {
-  FREE_TRIAL // 7 天试用
-  MONTHLY_16 // ¥99/月  → 6.6 USDT (task0001 决策)
-  ANNUAL_36 // ¥278/年 → 36.6 USDT
+  WEEKLY //  $3.6 USDT / 7 天  (task051 architect 裁决)
+  MONTHLY // $8.8 USDT / 30 天 (task051 architect 裁决)
+  ANNUAL //  $36.6 USDT / 365 天 (task051 architect 裁决)
 }
 
 enum MembershipStatus {
@@ -216,7 +219,7 @@ model Product {
   version String?
 
   // 会员权限锁 (Q5: 保留 fileUrl 向后兼容)
-  requiredPlan MembershipPlan @default(FREE_TRIAL)
+  requiredPlan MembershipPlan @default(WEEKLY)
   isFree       Boolean        @default(false)
 
   // 元数据
@@ -483,6 +486,7 @@ enum OpenSourceAccessAction {
   DOWNLOAD
   LIKE
   UPGRADE_CLICK
+  VIEW_PAID_REQUIRED  // task056 Phase 7: 白嫖拦截埋点
 }
 
 model OpenSourceRelease {
@@ -503,8 +507,8 @@ model OpenSourceRelease {
   originalFileUrl String?
   // 评分/标签
   tier            String?
-  // 门控: 默认需要 MONTHLY_16 付费会员
-  requiredPlan    MembershipPlan    @default(MONTHLY_16)
+  // 门控: 默认需要 MONTHLY 付费会员
+  requiredPlan    MembershipPlan    @default(MONTHLY)
   isFeatured      Boolean           @default(false)
   downloadCount   Int               @default(0)
   viewCount       Int               @default(0)

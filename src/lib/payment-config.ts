@@ -1,23 +1,24 @@
 // src/lib/payment-config.ts
-// USDT 支付配置 (task-0041)
+// USDT 支付配置 (task-0041 → task051 PAYMENT-REBUILD 重构)
+// ARCHIVE v11.0 三档纯付费 (WEEKLY/MONTHLY/ANNUAL), 无 FREE_TRIAL
 import type { MembershipPlan } from "@/generated/prisma/enums";
 
 export const USDT_RATES: Record<MembershipPlan, number> = {
-  FREE_TRIAL: 0,
-  MONTHLY_16: 6.6,   // ¥99 / 月, ARCHIVE v6.0 task0001 决策
-  ANNUAL_36: 36.6,   // ¥278 / 年
+  WEEKLY: 3.6,    // task051 architect 裁决
+  MONTHLY: 8.8,   // task051 architect 裁决
+  ANNUAL: 36.6,   // task051 architect 裁决
 };
 
 export const PLAN_DURATION_DAYS: Record<MembershipPlan, number> = {
-  FREE_TRIAL: 7,
-  MONTHLY_16: 30,
-  ANNUAL_36: 365,
+  WEEKLY: 7,
+  MONTHLY: 30,
+  ANNUAL: 365,
 };
 
 export const PLAN_LABEL_CN: Record<MembershipPlan, string> = {
-  FREE_TRIAL: "免费试用 (7 天)",
-  MONTHLY_16: "月度会员 (¥99)",
-  ANNUAL_36: "年度会员 (¥278)",
+  WEEKLY: "周付会员 ($3.6 USDT)",
+  MONTHLY: "月付会员 ($8.8 USDT)",
+  ANNUAL: "年付会员 ($36.6 USDT)",
 };
 
 export const ORDER_EXPIRY_MINUTES = 30; // 30 分钟支付窗口

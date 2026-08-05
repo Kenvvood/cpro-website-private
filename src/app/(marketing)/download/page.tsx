@@ -1,8 +1,7 @@
 "use client";
-
+// task052 L3: download/page.tsx TV 风格拉平 (移除 Sidebar + bg-gradient + value-card + ProductCard)
+import * as React from "react";
 import { useEffect, useState } from "react";
-import { ProductCard } from "@/components/features/product-card";
-import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
 import {
   DownloadIcon,
@@ -24,6 +23,18 @@ interface Product {
   downloadCount: number;
 }
 
+const CATEGORY_ICON: Record<string, React.ReactElement> = {
+  ea: <TrendingUpIcon size={20} className="stroke-1.5 text-accent-blue" />,
+  indicator: <ZapIcon size={20} className="stroke-1.5 text-accent-blue" />,
+  script: <ImageIcon size={20} className="stroke-1.5 text-accent-blue" />,
+};
+
+const CATEGORY_LABEL: Record<string, string> = {
+  ea: "EA",
+  indicator: "指标",
+  script: "脚本",
+};
+
 export default function DownloadPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,17 +42,14 @@ export default function DownloadPage() {
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check auth state and fetch products
     async function init() {
       try {
         const [sessionRes, productsRes] = await Promise.all([
           fetch("/api/auth/session"),
           fetch("/api/products"),
         ]);
-
         const sessionData = await sessionRes.json();
         const productsData = await productsRes.json();
-
         setIsLoggedIn(sessionData.loggedIn);
         setProducts(productsData.products || []);
       } catch (error) {
@@ -50,7 +58,6 @@ export default function DownloadPage() {
         setLoading(false);
       }
     }
-
     init();
   }, []);
 
@@ -59,184 +66,127 @@ export default function DownloadPage() {
       toast.error("请先登录后下载");
       return;
     }
-
     setDownloadingId(productId);
-
     try {
-      const res = await fetch(`/api/downloads/${productId}`, {
-        method: "POST",
-      });
-
+      const res = await fetch(`/api/downloads/${productId}`, { method: "POST" });
       const data = await res.json();
-
       if (!res.ok) {
         toast.error(data.error || "下载失败");
         return;
       }
-
       toast.success(data.alreadyDownloaded ? "重新下载" : "下载成功");
-
-      // Update download count locally
       setProducts((prev) =>
         prev.map((p) =>
-          p.id === productId
-            ? { ...p, downloadCount: p.downloadCount + 1 }
-            : p
+          p.id === productId ? { ...p, downloadCount: p.downloadCount + 1 } : p
         )
       );
-    } catch (error) {
+    } catch {
       toast.error("下载失败");
     } finally {
       setDownloadingId(null);
     }
   };
 
-  const getIcon = (category: string) => {
-    switch (category) {
-      case "ea":
-        return <TrendingUpIcon size={26} className="stroke-1.5 text-accent" />;
-      case "indicator":
-        return <ZapIcon size={26} className="stroke-1.5 text-accent" />;
-      case "script":
-        return <ImageIcon size={26} className="stroke-1.5 text-accent" />;
-      default:
-        return <TrendingUpIcon size={26} className="stroke-1.5 text-accent" />;
-    }
-  };
-
   return (
-    <div className="min-h-screen flex ambient-glow">
-      <div className="fixed top-0 right-0 w-[70%] h-full bg-gradient pointer-events-none" />
-      <div className="fixed inset-0 bg-grid pointer-events-none" />
-
-      <Sidebar />
-
-      <div className="flex-1 relative z-10">
-        {/* Page Header */}
-        <div className="px-20 py-12">
-          <h1 className="text-3xl font-bold mb-2">下载中心</h1>
-          <p className="text-sm text-text-secondary">
-            注册登录即可下载全部EA、指标、脚本工具
+    <div className="min-h-screen bg-bg-primary">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-8">
+        <header className="border-b border-border pb-6">
+          <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-text-primary">下载中心</h1>
+          <p className="text-sm lg:text-base text-text-secondary">
+            付费会员可下载全部 EA、指标、脚本工具
           </p>
-        </div>
+        </header>
 
-        {/* Auth Warning Banner */}
         {!isLoggedIn && (
-          <div className="mx-20 mb-8 p-4 rounded-xl bg-[rgba(0,229,221,0.05)] border border-border-accent">
-            <div className="flex items-center justify-between">
+          <div className="card-base p-4 border-accent-blue/30">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <LockIcon size={20} className="text-accent" />
+                <LockIcon size={20} className="text-accent-blue" />
                 <span className="text-sm text-text-secondary">
-                  登录后即可下载全部产品
+                  登录付费会员后可下载全部产品
                 </span>
               </div>
               <div className="flex gap-3">
-                <Link
-                  href="/login"
-                  className="px-4 py-2 text-sm font-medium rounded-lg border border-border-accent text-accent hover:bg-accent/5 transition-all"
-                >
+                <Link href="/login" className="btn-outline text-sm">
                   登录
                 </Link>
-                <Link
-                  href="/register"
-                  className="px-4 py-2 text-sm font-bold rounded-lg bg-accent text-bg-primary transition-all"
-                >
-                  免费注册
+                <Link href="/membership" className="btn-primary text-sm">
+                  立即开通
                 </Link>
               </div>
             </div>
           </div>
         )}
 
-        {/* Products Grid */}
-        <section className="px-20 py-8">
+        <section>
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2Icon
-                size={32}
-                className="text-accent animate-spin"
-              />
+              <Loader2Icon size={32} className="text-accent-blue animate-spin" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  name={product.name}
-                  description={product.description}
-                  tags={[
-                    product.category === "ea"
-                      ? "EA"
-                      : product.category === "indicator"
-                        ? "指标"
-                        : "脚本",
-                    product.version || "",
-                  ]}
-                  icon={getIcon(product.category)}
-                  downloadButton={
-                    <button
-                      onClick={() => handleDownload(product.id)}
-                      disabled={downloadingId === product.id}
-                      className="absolute bottom-4 right-4 px-3 py-1.5 rounded-md bg-accent/10 border border-accent/30 text-accent text-xs font-medium hover:bg-accent/20 hover:border-accent/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 whitespace-nowrap"
-                    >
-                      {downloadingId === product.id ? (
-                        <>
-                          <Loader2Icon size={12} className="animate-spin" />
-                          处理中
-                        </>
-                      ) : (
-                        <>
-                          <DownloadIcon size={12} />
-                          {isLoggedIn ? "下载" : "登录"}
-                        </>
-                      )}
-                    </button>
-                  }
-                />
+                <article key={product.id} className="card-base p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <span className="text-xs px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">
+                      {CATEGORY_LABEL[product.category] ?? product.category}
+                    </span>
+                    <span className="text-xs text-text-muted num">
+                      ↓ {product.downloadCount.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    {CATEGORY_ICON[product.category]}
+                    <h3 className="text-base font-semibold text-text-primary line-clamp-2">
+                      {product.name}
+                    </h3>
+                  </div>
+                  <p className="text-sm text-text-secondary mb-4 line-clamp-2 min-h-[2.5rem]">
+                    {product.description}
+                  </p>
+                  <button
+                    onClick={() => handleDownload(product.id)}
+                    disabled={downloadingId === product.id}
+                    className="w-full btn-primary text-sm disabled:opacity-50"
+                  >
+                    {downloadingId === product.id ? (
+                      <>
+                        <Loader2Icon size={14} className="inline animate-spin mr-2" />
+                        处理中
+                      </>
+                    ) : (
+                      <>
+                        <DownloadIcon size={14} className="inline mr-2" />
+                        {isLoggedIn ? "下载" : "登录后下载"}
+                      </>
+                    )}
+                  </button>
+                </article>
               ))}
             </div>
           )}
         </section>
 
-        {/* Download Instructions */}
-        <section className="px-20 py-8 mb-12">
-          <div className="max-w-4xl p-6 rounded-xl value-card">
-            <h2 className="text-xl font-bold mb-4 text-accent">使用说明</h2>
-            <div className="space-y-3 text-sm text-text-secondary">
-              <div className="flex items-start gap-3">
-                <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-xs flex items-center justify-center shrink-0 mt-0.5">
-                  1
+        <section className="max-w-4xl card-base p-6">
+          <h2 className="text-xl font-semibold mb-4 text-text-primary">使用说明</h2>
+          <ol className="space-y-3 text-sm text-text-secondary">
+            {[
+              "下载 EA / 指标文件后, 打开 MT4 或 MT5 终端",
+              "点击「文件」→「打开数据文件夹」, 将文件粘贴到对应目录",
+              "关闭并重新打开终端, 在导航器中找到 EA 或指标",
+              "将 EA 拖到图表即可运行, 指标直接拖入图表即可显示",
+            ].map((step, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <span className="w-6 h-6 border border-border bg-bg-tertiary text-text-primary text-xs flex items-center justify-center shrink-0 mt-0.5 num">
+                  {i + 1}
                 </span>
-                <p>下载EA/指标文件后，打开MT4或MT5终端</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-xs flex items-center justify-center shrink-0 mt-0.5">
-                  2
-                </span>
-                <p>
-                  点击&quot;文件&quot;→&quot;打开数据文件夹&quot;，将文件粘贴到对应目录
-                </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-xs flex items-center justify-center shrink-0 mt-0.5">
-                  3
-                </span>
-                <p>关闭并重新打开终端，在导航器中找到EA或指标</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-xs flex items-center justify-center shrink-0 mt-0.5">
-                  4
-                </span>
-                <p>
-                  将EA拖到图表即可运行，指标直接拖入图表即可显示
-                </p>
-              </div>
-            </div>
-          </div>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
         </section>
-
-        <Footer />
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }

@@ -1,10 +1,10 @@
 /**
  * app/products/page.tsx — PLP (Product List Page)
- * 整合 FilterPanel + ProductCard + Hero Banner
+ * task052 L3: 替换旧 ProductCard 为内联 card-base (TV 风)
  */
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { FilterPanel } from '@/components/FilterPanel';
-import { ProductCard } from '@/components/ProductCard';
 import { prisma } from '@/lib/prisma';
 import { ProductGridSkeleton } from '@/components/ProductGridSkeleton';
 
@@ -17,9 +17,14 @@ interface Props {
 export default async function ProductsPage({ searchParams }: Props) {
   return (
     <div className="min-h-screen bg-bg-primary">
-      <HeroBanner />
+      <header className="border-b border-border bg-bg-secondary">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <h1 className="text-2xl lg:text-3xl font-bold mb-2 text-text-primary">产品中心</h1>
+          <p className="text-sm text-text-secondary">19,328 个量化武器 · 注册会员可下载</p>
+        </div>
+      </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1">
             <FilterPanel
@@ -41,9 +46,6 @@ export default async function ProductsPage({ searchParams }: Props) {
 }
 
 async function ProductGrid({ searchParams }: Props) {
-  // ARCHIVE v7.3 (task-0037): capabilityTags 改 String (JSON) 适配 SQLite
-  // PostgreSQL 的 { has: ... } 数组查询在 SQLite 不可用, 改用 LIKE 全字段扫描
-  // Top 60 上限下性能可接受; 大规模场景应建虚拟表 + 触发器同步
   const products = await prisma.product.findMany({
     where: {
       isActive: true,
@@ -57,7 +59,7 @@ async function ProductGrid({ searchParams }: Props) {
 
   if (products.length === 0) {
     return (
-      <div className="text-center py-20 text-text-muted">
+      <div className="card-base p-12 text-center text-text-muted">
         <p>未找到匹配的产品</p>
         <p className="text-sm mt-2">尝试清除筛选条件</p>
       </div>
@@ -66,44 +68,37 @@ async function ProductGrid({ searchParams }: Props) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-      {products.map((p: Record<string, any>) => <ProductCard key={p.id} product={{
-        id: p.id,
-        positioning: p.positioning ?? p.name,
-        category: p.category,
-        tier: p.tier ?? 'N/A',
-        // ARCHIVE v7.3: capabilityTags JSON 解析
-        capabilityTags: (() => {
-          if (!p.capabilityTags) return [];
-          try {
-            const parsed = JSON.parse(p.capabilityTags);
-            return Array.isArray(parsed) ? parsed : [];
-          } catch {
-            return [];
-          }
-        })(),
-      }} />)}
+      {products.map((p: Record<string, any>) => {
+        let tags: string[] = [];
+        try {
+          const parsed = JSON.parse(p.capabilityTags);
+          if (Array.isArray(parsed)) tags = parsed;
+        } catch {}
+        return (
+          <Link
+            key={p.id}
+            href={`/products/${p.id}`}
+            className="card-base p-4 hover:border-border-focus transition-colors group"
+          >
+            <div className="flex items-start justify-between mb-2">
+              <span className="text-xs px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">
+                {p.category}
+              </span>
+              {p.tier && <span className="text-xs text-text-muted">{p.tier}</span>}
+            </div>
+            <h3 className="text-sm font-semibold text-text-primary mb-2 line-clamp-2 group-hover:text-accent-blue">
+              {p.positioning ?? p.name}
+            </h3>
+            <p className="text-xs text-text-secondary mb-3 line-clamp-2 min-h-[2rem]">
+              {tags.slice(0, 3).join(' · ') || '—'}
+            </p>
+            <div className="flex items-center justify-between text-xs text-text-muted pt-2 border-t border-border">
+              <span className="num">↓ {(p.downloadCount ?? 0).toLocaleString()}</span>
+              <span className="text-accent-gold">{p.requiredPlan}</span>
+            </div>
+          </Link>
+        );
+      })}
     </div>
-  );
-}
-
-function HeroBanner() {
-  return (
-    <section className="relative overflow-hidden border-b border-border bg-bg-primary">
-      <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent-2/5" />
-      <div className="relative max-w-7xl mx-auto px-6 py-16 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-4
-          tracking-tight">
-          CProTrading 策略与极客资产库
-        </h1>
-        <p className="text-text-secondary text-lg md:text-xl max-w-2xl mx-auto">
-          19,328 种量化武器，武装你的交易终端
-        </p>
-        <div className="mt-6 flex items-center justify-center gap-3 text-xs text-text-muted">
-          <span className="px-2 py-1 bg-bg-secondary border border-border rounded">MT4</span>
-          <span className="px-2 py-1 bg-bg-secondary border border-border rounded">MT5</span>
-          <span className="px-2 py-1 bg-accent/10 border border-accent/30 text-accent rounded">USDT 会员</span>
-        </div>
-      </div>
-    </section>
   );
 }

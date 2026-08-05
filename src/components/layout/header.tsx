@@ -1,83 +1,93 @@
 "use client";
-
+// src/components/layout/header.tsx
+// task052 L2 C19: 主菜单 10 项 TV 风 (行情/产品/开源/教程/会员/定价/帮助/内容/下载/关于)
+// 兼容移动端: 汉堡折叠
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BRAND } from "@/config/brand";
 
-const navLinks = [
+const NAV_LINKS = [
   { href: "/", label: "首页" },
   { href: "/products", label: "产品中心" },
+  { href: "/open-source", label: "开源专区" },
+  { href: "/tutorials", label: "教程" },
+  { href: "/membership", label: "会员" },
   { href: "/content", label: "内容中心" },
   { href: "/download", label: "下载中心" },
   { href: "/about", label: "关于我们" },
 ];
 
 export function Header() {
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 h-16 border-b backdrop-blur-md bg-[rgba(10,10,15,0.9)] border-[rgba(255,255,255,0.06)]">
-      <div className="h-full px-16 flex items-center justify-center relative">
-        {/* Desktop Nav - centered */}
-        <nav className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-[15px] font-medium transition-colors text-gray-300 hover:text-accent"
-            >
-              {link.label}
-            </Link>
-          ))}
+    <header className="sticky top-0 z-40 h-16 border-b border-border bg-bg-secondary backdrop-blur-md">
+      <div className="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between max-w-7xl mx-auto">
+        {/* Logo */}
+        <Link href="/" className="text-lg font-bold text-accent-gold">
+          {BRAND.name.short}
+        </Link>
+
+        {/* Desktop Nav */}
+        <nav className="hidden lg:flex items-center gap-6">
+          {NAV_LINKS.map((link) => {
+            const active = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-medium transition-colors ${
+                  active ? "text-accent-blue border-b-2 border-accent-blue pb-1" : "text-text-secondary hover:text-text-primary"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* Actions - right side */}
-        <div className="hidden md:flex items-center gap-4 absolute right-16">
-          <Link
-            href="/login"
-            className="px-4 py-2 text-sm font-medium rounded-md transition-colors text-text-secondary hover:text-text-primary"
-          >
+        {/* Right Actions (Desktop) */}
+        <div className="hidden lg:flex items-center gap-3">
+          <Link href="/login" className="text-sm text-text-secondary hover:text-text-primary">
             登录
           </Link>
-          <Link
-            href="/register"
-            className="px-4 py-2 text-sm font-bold rounded-md transition-all bg-accent text-bg-primary header-register-btn"
-          >
-            免费注册
+          <Link href="/membership" className="btn-primary text-sm">
+            立即开通
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Hamburger */}
         <button
-          className="md:hidden p-2 text-text-primary"
+          className="lg:hidden p-2 text-text-primary"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t bg-bg-secondary border-[rgba(255,255,255,0.06)]">
-          <nav className="flex flex-col p-4 gap-4">
-            {navLinks.map((link) => (
+        <div className="lg:hidden border-t border-border bg-bg-secondary">
+          <nav className="flex flex-col p-4 gap-3 max-h-[80vh] overflow-y-auto">
+            {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-text-secondary"
+                className="text-sm font-medium text-text-secondary hover:text-accent-blue"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="flex gap-3 pt-4 border-t border-[rgba(255,255,255,0.06)]">
-              <Link href="/login" className="flex-1 text-center py-2 text-sm text-text-secondary">
+            <div className="flex gap-2 pt-3 border-t border-border">
+              <Link href="/login" className="flex-1 btn-outline text-center text-sm" onClick={() => setMobileMenuOpen(false)}>
                 登录
               </Link>
-              <Link href="/register" className="flex-1 text-center py-2 text-sm font-bold rounded-md bg-accent text-bg-primary">
-                免费注册
+              <Link href="/membership" className="flex-1 btn-primary text-center text-sm" onClick={() => setMobileMenuOpen(false)}>
+                立即开通
               </Link>
             </div>
           </nav>

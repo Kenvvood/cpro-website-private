@@ -40,38 +40,39 @@ export default async function OpenSourcePage({
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold">开源合规再分发专区</h1>
-        <p className="mt-2 text-muted-foreground">
-          CProTrading 城诺科技收录 {total.toLocaleString()} 个开源 EA / 指标 / 脚本。
-          所有资源保留原作者版权，本平台仅做表达层汉化包装，不修改核心算法。付费会员可下载，已下载者可按原始协议自由再分发。
-        </p>
-        <p className="mt-2 text-xs text-red-600 dark:text-red-400">
-          ⚠️ 本平台资源仅供编程学习与历史数据回测用途。实盘交易盈亏自负。
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2 text-xs">
-          {byLicense.map((b) => (
-            <Link
-              key={b.license}
-              href={`/open-source?license=${b.license}`}
-              className="px-3 py-1 rounded-full border border-border bg-muted hover:bg-muted/70 transition"
-            >
-              {b.license} · {b._count}
-            </Link>
-          ))}
-        </div>
-      </header>
+    <div className="min-h-screen bg-bg-primary">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <header className="mb-8 border-b border-border pb-6">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 text-text-primary">开源合规再分发专区</h1>
+          <p className="text-sm text-text-secondary">
+            CProTrading 城诺科技收录 {total.toLocaleString()} 个开源 EA / 指标 / 脚本。
+            所有资源保留原作者版权，本平台仅做表达层汉化包装，不修改核心算法。付费会员可下载，已下载者可按原始协议自由再分发。
+          </p>
+          <p className="mt-3 text-xs text-accent-down">
+            ⚠️ 本平台资源仅供编程学习与历史数据回测用途。实盘交易盈亏自负。
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs">
+            {byLicense.map((b) => (
+              <Link
+                key={b.license}
+                href={`/open-source?license=${b.license}`}
+                className="px-3 py-1 border border-border bg-bg-tertiary text-text-secondary hover:border-border-focus transition-colors rounded-sm"
+              >
+                {b.license} · {b._count}
+              </Link>
+            ))}
+          </div>
+        </header>
 
       {releases.length === 0 ? (
-        <div className="text-center py-20 text-muted-foreground">
+        <div className="card-base p-12 text-center text-text-muted">
           <p>未找到匹配的开源资源</p>
-          <Link href="/open-source" className="mt-2 inline-block text-sm underline">
+          <Link href="/open-source" className="mt-2 inline-block text-sm text-accent-blue hover:underline">
             清除筛选
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {releases.map((r) => (
             <OpenSourceReleaseCard
               key={r.id}
@@ -102,8 +103,8 @@ export default async function OpenSourcePage({
                 ...(params.license ? { license: params.license } : {}),
                 page: String(p),
               }).toString()}`}
-              className={`px-3 py-1 rounded border ${
-                p === page ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-muted/70"
+              className={`px-3 py-1 border rounded-sm ${
+                p === page ? "bg-accent-blue border-accent-blue text-white" : "border-border bg-bg-tertiary text-text-secondary hover:border-border-focus"
               }`}
             >
               {p}
@@ -113,16 +114,17 @@ export default async function OpenSourcePage({
       )}
 
       {/* 法律免责 */}
-      <footer className="mt-12 p-4 rounded border border-border bg-muted/50 text-xs text-muted-foreground">
-        <strong className="text-foreground">合规声明：</strong>
+      <footer className="mt-12 card-base p-4 text-xs text-text-secondary">
+        <strong className="text-text-primary">合规声明：</strong>
         本专区资源依据开源协议合规再分发，已下载者可按原始协议条款自由再分发。
         所有资源保留原作者版权，CProTrading 仅做技术中性的表达层包装，不修改核心算法。
         {" "}
-        <Link href="/legal/gpl-notice" className="underline">
+        <Link href="/legal/gpl-notice" className="underline text-accent-blue">
           详见免责声明
         </Link>
         。
       </footer>
+      </main>
     </div>
   );
 }

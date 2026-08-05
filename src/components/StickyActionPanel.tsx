@@ -20,9 +20,9 @@ interface Props {
 }
 
 const PLAN_LABEL: Record<string, string> = {
-  'FREE_TRIAL': '7 天试用',
-  'MONTHLY_16': '月度会员 (¥99 / 6.6 USDT)',
-  'ANNUAL_36': '年度会员 (¥278 / 36.6 USDT)',
+  'WEEKLY': '周付会员 ($3.6 USDT)',
+  'MONTHLY': '月付会员 ($8.8 USDT)',
+  'ANNUAL': '年付会员 ($36.6 USDT)',
 };
 
 export function StickyActionPanel({ product, hasAccess, onCheckout }: Props) {

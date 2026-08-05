@@ -1,0 +1,37 @@
+/* src/app/tokens.css
+ * task052 L1 重构 v1.0 — CSS 变量中间层
+ * 真理源: src/config/brand.ts (必须字符级对齐, 用 token_lint.py 校验)
+ * ⚠️ 修改颜色 → 先改 brand.ts → 再 sync 本文件 → 跑 npm run lint:tokens
+ * ARCHIVE v11.0 + v12.0 (UI_TRADINGVIEW_RESTART) 锁定
+ */
+:root {
+  /* 背景 (Gemini TV 风冷灰深蓝) */
+  --bg-primary:   #131722;
+  --bg-secondary: #1e222d;
+  --bg-tertiary:  #2a2e39;
+
+  /* 文字 */
+  --text-primary:   #E0E0E0;
+  --text-secondary: #B2B5BE;
+  --text-muted:     #6A6E77;
+
+  /* 边框 (1px 哲学) */
+  --border-default: #2a2e39;
+  --border-strong:  #3a3e49;
+  --border-focus:   #2962FF;
+
+  /* 强调色 (C2-A 拍板: TV 蓝主, 品牌金降级) */
+  --accent-blue: #2962FF;
+  --accent-gold: #D4AF37;
+  --accent-up:   #26a69a;
+  --accent-down: #ef5350;
+
+  /* 字号 / 间距 / 圆角 */
+  --font-zh:     'Microsoft YaHei', sans-serif;
+  --font-en:     'Arial Black', sans-serif;
+  --font-number: 'Arial Black', Consolas, monospace;
+  --spacing-base: 8px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}

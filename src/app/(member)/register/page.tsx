@@ -151,22 +151,19 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative">
-      <div className="fixed top-0 right-0 w-[70%] h-full bg-gradient pointer-events-none" />
-      <div className="fixed inset-0 bg-grid pointer-events-none" />
-
-      <div className="relative z-10 w-full max-w-md px-8">
+    <div className="min-h-screen flex items-center justify-center bg-bg-primary">
+      <div className="w-full max-w-md px-8">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold mb-2">
-            <span className="text-accent">CPro</span>Trading
+            <span className="text-accent-blue">CPro</span>Trading
           </h1>
           <p className="text-sm text-text-secondary">
-            专业MT4/MT5量化解决方案
+            专业 MT4/MT5 量化解决方案
           </p>
         </div>
 
-        <div className="p-8 rounded-2xl border auth-form-card">
-          <h2 className="text-xl font-bold mb-6 text-center">注册账号</h2>
+        <div className="card-base p-8">
+          <h2 className="text-xl font-semibold mb-6 text-center text-text-primary">注册账号</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Username */}
@@ -291,7 +288,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading || step !== "verified"}
-              className="w-full py-3 text-base font-bold rounded-lg transition-all auth-btn mt-6 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full btn-primary text-base mt-6 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>

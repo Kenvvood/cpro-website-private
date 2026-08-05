@@ -1,5 +1,6 @@
 "use client";
-// MembershipPlans — 3 档套餐 + CheckoutModal 触发 (task-0041)
+// MembershipPlans — 3 档套餐 + CheckoutModal 触发
+// task051 PAYMENT-REBUILD: 三档纯付费 (WEEKLY/MONTHLY/ANNUAL), 无 FREE_TRIAL
 import { useState } from "react";
 import { CheckoutModal } from "./CheckoutModal";
 import type { MembershipPlan } from "@/generated/prisma/enums";
@@ -7,32 +8,28 @@ import type { MembershipPlan } from "@/generated/prisma/enums";
 const PLANS: Array<{
   plan: MembershipPlan;
   label: string;
-  priceCN: string;
   priceUSDT: string;
   desc: string;
   popular?: boolean;
 }> = [
   {
-    plan: "FREE_TRIAL",
-    label: "免费试用",
-    priceCN: "¥0",
-    priceUSDT: "0 USDT",
-    desc: "7 天免费体验基础功能",
+    plan: "WEEKLY",
+    label: "周付会员",
+    priceUSDT: "$3.6 USDT",
+    desc: "7 天全站 19,328 资源解锁 · 适合短期试用",
   },
   {
-    plan: "MONTHLY_16",
-    label: "月度会员",
-    priceCN: "¥99",
-    priceUSDT: "6.6 USDT",
-    desc: "全平台 2,042 开源资源无限下载 · 含教程",
+    plan: "MONTHLY",
+    label: "月付会员",
+    priceUSDT: "$8.8 USDT",
+    desc: "30 天全平台 2,042 开源资源无限下载 · 含教程",
     popular: true,
   },
   {
-    plan: "ANNUAL_36",
-    label: "年度会员",
-    priceCN: "¥278",
-    priceUSDT: "36.6 USDT",
-    desc: "年度套餐 · 节省 ¥900 · 含 6 月持续更新",
+    plan: "ANNUAL",
+    label: "年付会员",
+    priceUSDT: "$36.6 USDT",
+    desc: "365 天年付套餐 · 节省 70% · 含 6 月持续更新",
   },
 ];
 
@@ -55,8 +52,8 @@ export function MembershipPlans({ loggedIn }: { loggedIn: boolean }) {
               </span>
             )}
             <div className="text-lg font-semibold mb-1">{p.label}</div>
-            <div className="text-3xl font-bold mb-1">{p.priceCN}</div>
-            <div className="text-xs text-muted-foreground mb-4">{p.priceUSDT}</div>
+            <div className="text-3xl font-bold mb-1 font-mono">{p.priceUSDT}</div>
+            <div className="text-xs text-muted-foreground mb-4">USDT 收款</div>
             <div className="text-sm text-muted-foreground mb-6 min-h-[3rem]">{p.desc}</div>
             <button
               onClick={() => {
@@ -66,16 +63,15 @@ export function MembershipPlans({ loggedIn }: { loggedIn: boolean }) {
                 }
                 setActivePlan(p.plan);
               }}
-              disabled={p.plan === "FREE_TRIAL"}
-              className="w-full py-2 rounded bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              className="w-full py-2 rounded bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              {p.plan === "FREE_TRIAL" ? "自动开通" : "立即订阅"}
+              立即订阅
             </button>
           </div>
         ))}
       </div>
 
-      {activePlan && activePlan !== "FREE_TRIAL" && (
+      {activePlan && (
         <CheckoutModal plan={activePlan} isOpen={!!activePlan} onClose={() => setActivePlan(null)} />
       )}
     </>

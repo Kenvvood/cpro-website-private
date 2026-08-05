@@ -28,9 +28,9 @@ export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
 
 
 export const MembershipPlan = {
-  FREE_TRIAL: 'FREE_TRIAL',
-  MONTHLY_16: 'MONTHLY_16',
-  ANNUAL_36: 'ANNUAL_36'
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY',
+  ANNUAL: 'ANNUAL'
 } as const
 
 export type MembershipPlan = (typeof MembershipPlan)[keyof typeof MembershipPlan]
@@ -123,7 +123,8 @@ export const OpenSourceAccessAction = {
   VIEW: 'VIEW',
   DOWNLOAD: 'DOWNLOAD',
   LIKE: 'LIKE',
-  UPGRADE_CLICK: 'UPGRADE_CLICK'
+  UPGRADE_CLICK: 'UPGRADE_CLICK',
+  VIEW_PAID_REQUIRED: 'VIEW_PAID_REQUIRED'
 } as const
 
 export type OpenSourceAccessAction = (typeof OpenSourceAccessAction)[keyof typeof OpenSourceAccessAction]

@@ -56,7 +56,7 @@ export function OpenSourceReleaseCard({ release }: OpenSourceReleaseCardProps) {
         <span>⬇ {release.downloadCount.toLocaleString()}</span>
       </div>
       <div className="mt-2 text-xs text-muted-foreground">
-        {release.requiredPlan === "FREE_TRIAL" ? "免费" : "付费会员"}
+        付费会员 · {release.requiredPlan}
       </div>
     </Link>
   );

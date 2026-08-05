@@ -31,9 +31,7 @@ export async function POST(req: NextRequest) {
   if (!plan || !(plan in PLAN_DURATION_DAYS)) {
     return NextResponse.json({ ok: false, error: "套餐非法" }, { status: 400 });
   }
-  if (plan === "FREE_TRIAL") {
-    return NextResponse.json({ ok: false, error: "免费试用无需支付" }, { status: 400 });
-  }
+  // task051 PAYMENT-REBUILD: FREE_TRIAL 已废弃, 无需旁路检查
   const finalChannel: PayChannel = channel === "USDT_BSC" ? "USDT_BSC" : "USDT_TRC20";
 
   // 限流: 5 秒内已有 PENDING 订单则拒绝

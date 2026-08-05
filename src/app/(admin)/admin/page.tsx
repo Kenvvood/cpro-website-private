@@ -84,30 +84,27 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center ambient-glow">
+      <div className="min-h-screen flex items-center justify-center bg-bg-primary">
         <Loader2Icon size={32} className="text-accent animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen ambient-glow">
-      <div className="fixed top-0 right-0 w-[70%] h-full bg-gradient pointer-events-none" />
-      <div className="fixed inset-0 bg-grid pointer-events-none" />
-
-      <div className="relative z-10">
+    <div className="min-h-screen bg-bg-primary">
+      <div>
         {/* Admin Header */}
-        <div className="px-20 py-8 border-b border-border">
-          <h1 className="text-3xl font-bold mb-2">管理后台</h1>
-          <p className="text-sm text-text-secondary">
-            管理用户、产品推广和消息推送
-          </p>
-        </div>
+        <header className="border-b border-border bg-bg-secondary">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <h1 className="text-2xl lg:text-3xl font-bold mb-2 text-text-primary">管理后台</h1>
+            <p className="text-sm text-text-secondary">管理用户、产品推广和消息推送</p>
+          </div>
+        </header>
 
         {/* Stats Overview */}
         <div className="px-20 py-8">
           <div className="grid grid-cols-4 gap-6">
-            <div className="p-6 rounded-xl value-card">
+            <div className="p-6 card-base">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-lg bg-accent/20">
                   <UsersIcon size={24} className="text-accent" />
@@ -120,7 +117,7 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
-            <div className="p-6 rounded-xl value-card">
+            <div className="p-6 card-base">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-lg bg-accent/20">
                   <TrendingUpIcon size={24} className="text-accent" />
@@ -133,7 +130,7 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
-            <div className="p-6 rounded-xl value-card">
+            <div className="p-6 card-base">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-lg bg-accent/20">
                   <DownloadIcon size={24} className="text-accent" />
@@ -146,7 +143,7 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
-            <div className="p-6 rounded-xl value-card">
+            <div className="p-6 card-base">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-lg bg-accent/20">
                   <BarChart3Icon size={24} className="text-accent" />
@@ -239,7 +236,7 @@ export default function AdminPage() {
               </div>
 
               {/* Users Table */}
-              <div className="rounded-xl value-card overflow-hidden">
+              <div className="card-base overflow-hidden">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border">
@@ -298,7 +295,7 @@ export default function AdminPage() {
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 {stats.products.map((item) => (
-                  <div key={item.id} className="p-6 rounded-xl value-card">
+                  <div key={item.id} className="p-6 card-base">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-sm font-medium text-gray-100">
                         {item.name}
@@ -325,7 +322,7 @@ export default function AdminPage() {
           {/* Messages Tab */}
           {activeTab === "messages" && (
             <div className="max-w-2xl space-y-6">
-              <div className="p-6 rounded-xl value-card">
+              <div className="p-6 card-base">
                 <h3 className="text-lg font-bold mb-4 text-gray-100">
                   发送消息
                 </h3>
