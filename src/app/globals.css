@@ -62,14 +62,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* L4 v1.6: Hero 渐变背景 (借 TradingView 深色 + 径向辉光) */
-.gradient-hero {
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(41, 98, 255, 0.10), transparent 50%),
-    radial-gradient(ellipse 60% 50% at 85% 75%, rgba(212, 175, 55, 0.06), transparent 55%),
-    linear-gradient(180deg, #131722 0%, #1a1f2e 50%, #131722 100%);
-}
-
 /* 章节分区微分割线 */
 .section-divider {
   background: linear-gradient(90deg, transparent 0%, var(--border-strong) 50%, transparent 100%);
@@ -77,26 +69,10 @@ body {
   border: none;
 }
 
-/* 浮动卡片阴影 (Hero 浮卡) */
-.float-card-shadow {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-/* 状态徽章脉冲 */
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-.animate-pulse-soft {
-  animation: pulse-soft 2s ease-in-out infinite;
-}
-
 /* 减少动画 (无障碍) */
 @media (prefers-reduced-motion: reduce) {
-  .animate-pulse-soft,
   .card-base,
   .card-base:hover {
-    animation: none;
     transition: none;
     transform: none;
   }

@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { Search, CreditCard, Download, Rocket, ArrowRight } from "lucide-react";
+import { Search, CreditCard, Rocket, ArrowRight } from "lucide-react";
 
-// L4 v1.6: 借 TradingView 中文站 onboarding 风格
-// 4 步: 浏览 → 订阅 → 下载 → 部署
-// 严守 PM D5: 无试用, 直接付费 USDT
+// L4 v1.7: 4 步 → 3 步 (PM 反馈"画蛇添足")
+// 浏览 → 订阅 → 部署 (删"下载"这步多余, 部署是订阅后的必然流程)
+// 桌面端保留 2 条箭头连接
 const STEPS = [
   {
     n: "01",
@@ -14,20 +14,14 @@ const STEPS = [
   {
     n: "02",
     icon: CreditCard,
-    title: "订阅会员",
+    title: "订阅 USDT",
     body: "选择周 / 月 / 年付 USDT 套餐, 链上转账后订单 4 小时内自动开通。",
   },
   {
     n: "03",
-    icon: Download,
-    title: "下载源码",
-    body: "订阅期内不限次数下载 MQL4 / MQL5 源码 + 参数集 + 回测报告。",
-  },
-  {
-    n: "04",
     icon: Rocket,
     title: "部署实盘",
-    body: "源码导入 MT4/MT5 终端, 按参数集初始化即可上线, 工作室多账户复制。",
+    body: "订阅期内不限次数下载 MQL4 / MQL5 源码, 导入 MT4/MT5 终端直接上线。",
   },
 ];
 
@@ -39,11 +33,11 @@ export function HowItWorks() {
           工作流 · 从浏览到部署
         </h2>
         <p className="text-xs text-text-muted">
-          4 步闭环 · 工作室级流程, 链上 USDT 收银
+          3 步闭环 · 链上 USDT 收银 · 工作室级流程
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
         {STEPS.map((s, i) => {
           const Icon = s.icon;
           return (
@@ -64,9 +58,9 @@ export function HowItWorks() {
                   {s.body}
                 </p>
               </div>
-              {/* 箭头 (桌面端, 3 条) */}
+              {/* 箭头 (桌面端, 2 条) */}
               {i < STEPS.length - 1 && (
-                <div className="hidden lg:flex absolute -right-2 top-1/2 -translate-y-1/2 z-10 w-4 h-4 items-center justify-center text-border-strong">
+                <div className="hidden md:flex absolute -right-2 top-1/2 -translate-y-1/2 z-10 w-4 h-4 items-center justify-center text-border-strong">
                   <ArrowRight size={16} />
                 </div>
               )}

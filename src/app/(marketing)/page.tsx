@@ -1,50 +1,34 @@
 import Link from "next/link";
 import { TickerBar } from "@/components/layout/TickerBar";
 import { Hero } from "@/components/features/Hero";
-import { MarketOverview } from "@/components/features/MarketOverview";
 import { StatsBar } from "@/components/features/StatsBar";
 import { ProductGrid } from "@/components/features/ProductGrid";
-import { WhyUs } from "@/components/features/WhyUs";
-import { OpenSourceGrid } from "@/components/features/OpenSourceGrid";
-import { TutorialGrid } from "@/components/features/TutorialGrid";
 import { HowItWorks } from "@/components/features/HowItWorks";
 import { PricingTable } from "@/components/features/PricingTable";
 import { Footer } from "@/components/layout/footer";
 
-// L4 v1.6: 9 区块首页 (借 TradingView cn.tradingview.com 风格钩子)
-// 1.Ticker 2.Hero 3.MarketOverview 4.StatsBar 5.ProductGrid
-// 6.WhyUs 7.OpenSource 8.Tutorial 9.HowItWorks 10.Pricing 11.Footer
+// L4 v1.7: 5 区块首页 (修回简洁, 黄金外汇专精)
+// 1.Ticker 2.Hero 3.StatsBar 4.ProductGrid 5.HowItWorks 6.Pricing 7.Footer
+// 删 v1.6 的 MarketOverview (12品种) + WhyUs (4特性套话)
 export default function Home() {
   return (
     <div className="min-h-screen bg-bg-primary">
       <TickerBar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-12 lg:space-y-20">
-        {/* 区块 1: Hero (巨型 + 渐变 + 右侧图表占位) */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 space-y-12 lg:space-y-16">
+        {/* 区块 1: Hero (简洁版, 黄金外汇专精) */}
         <Hero />
 
-        {/* 区块 2: 市场覆盖 (12 品种 × 4 分类) */}
-        <MarketOverview />
-
-        {/* 区块 3: Stats Bar (4 列数字, 0 诚实) */}
+        {/* 区块 2: Stats Bar (2 卡: 商品总数 + 教程研报) */}
         <StatsBar />
 
-        {/* 区块 4: 产品中心 (8 个 EA, 0 时显示空态) */}
+        {/* 区块 3: 产品中心 (8 个 EA) */}
         <ProductSection />
 
-        {/* 区块 5: 为什么选 CProTrading (4 特性) */}
-        <WhyUs />
-
-        {/* 区块 6: 开源专区 (双署名卡) */}
-        <OpenSourceSection />
-
-        {/* 区块 7: 投研教程 (3 列) */}
-        <TutorialSection />
-
-        {/* 区块 8: 工作流 4 步 (借 TV onboarding) */}
+        {/* 区块 4: 工作流 (3 步: 浏览 / 订阅 / 部署) */}
         <HowItWorks />
 
-        {/* 区块 9: 会员订阅 3 档 */}
+        {/* 区块 5: 会员订阅 3 档 */}
         <PricingSection />
       </main>
 
@@ -53,7 +37,6 @@ export default function Home() {
   );
 }
 
-// 区块包装器 (统一标题 + 副标 + 查看全部链接)
 function SectionHeader({
   title,
   subtitle,
@@ -92,32 +75,6 @@ function ProductSection() {
         href="/products"
       />
       <ProductGrid />
-    </section>
-  );
-}
-
-function OpenSourceSection() {
-  return (
-    <section>
-      <SectionHeader
-        title="开源专区"
-        subtitle="合规再分发协议 · GPL / MIT / BSD 严格标注"
-        href="/open-source"
-      />
-      <OpenSourceGrid />
-    </section>
-  );
-}
-
-function TutorialSection() {
-  return (
-    <section>
-      <SectionHeader
-        title="投研教程"
-        subtitle="策略逻辑 + 风险评级 + 市场环境标签"
-        href="/tutorials"
-      />
-      <TutorialGrid />
     </section>
   );
 }
