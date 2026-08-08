@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { OpenSourceReleaseCard } from "@/components/open-source/OpenSourceReleaseCard";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -58,7 +59,7 @@ export default async function OpenSourcePage({
                 href={`/open-source?license=${b.license}`}
                 className="px-3 py-1 border border-border bg-bg-tertiary text-text-secondary hover:border-border-focus transition-colors rounded-sm"
               >
-                {b.license} · {b._count}
+                {t.license(b.license).short} · {b._count}
               </Link>
             ))}
           </div>

@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin";
 
+// task060 S0 1.1: 强制 ADMIN 鉴权 (架构师 8/8 [已批准])
 export async function GET() {
+  const admin = await requireAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "未授权" }, { status: 401 });
+  }
   try {
     const [userCount, monthStart, products, downloadsCount] = await Promise.all([
       prisma.user.count(),

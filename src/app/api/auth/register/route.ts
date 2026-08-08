@@ -1,11 +1,27 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { hash } from "bcryptjs";
+
+function getClientIp(request: Request): string {
+  const xff = request.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return request.headers.get("x-real-ip") ?? "unknown";
+}
 
 export async function POST(request: Request) {
   try {
+    // task063 2.2: IP 级 3/h 限流
+    const ip = getClientIp(request);
+    const ipLimit = await rateLimit("register-ip", ip, 3_600_000, 3);
+    if (!ipLimit.ok) return tooManyRequests(ipLimit.retryAfterMs);
+
     const body = await request.json();
-    const { username, phone, password, wechatOpenid, wechatUnionid, wechatQrTicket } = body;
+    // task060 S0 1.3b: 注册接口不接收微信身份字段 (防账号接管)
+    // (微信绑定必须走 /api/wechat/callback 服务端流程)
+    const { username, phone, password } = body;
+    const wechatOpenid: string | null = null;
+    const wechatUnionid: string | null = null;
 
     // Validate required fields
     if (!username || !phone || !password) {
@@ -21,8 +37,9 @@ export async function POST(request: Request) {
     });
 
     if (existingUser) {
+      // task063 2.2: 统一响应文案 (防手机号枚举)
       return NextResponse.json(
-        { error: "该手机号已注册" },
+        { error: "注册请求失败，请稍后重试" },
         { status: 400 }
       );
     }
@@ -36,8 +53,8 @@ export async function POST(request: Request) {
         username,
         phone,
         passwordHash: hashedPassword,
-        wechatOpenid: wechatOpenid || null,
-        wechatUnionid: wechatUnionid || null,
+        wechatOpenid,
+        wechatUnionid,
       },
     });
 

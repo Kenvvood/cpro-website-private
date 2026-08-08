@@ -4,13 +4,37 @@
 // L1+ 已登录: 全文渲染
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ContentPaywall } from "@/components/paywall/ContentPaywall";
+import { t as i18n } from "@/lib/i18n";
 
 // task051 PAYMENT-REBUILD: 截断关键章节 (PM D6=D11 决策)
 const PAYWALL_KEYWORDS = ["## 实盘案例", "## 关键参数", "## 回测数据"];
+
+// task061 3: 教程详情页动态 metadata (Tutorial.title 由 release.title 提供)
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const t = await prisma.openSourceTutorial.findUnique({
+    where: { slug },
+    select: {
+      marketRegime: true,
+      timeframe: true,
+      release: { select: { title: true } },
+    },
+  });
+  if (!t) return { title: "研报未找到 - CProTrading" };
+  const title = t.release.title;
+  const desc = `${t.marketRegime ?? ""} ${t.timeframe ?? ""} 投研研报`.trim();
+  return {
+    title: `${title} - 投研研报 - CProTrading`,
+    description: desc.slice(0, 160),
+    openGraph: { title, description: desc, type: "article" },
+    alternates: { canonical: `/tutorials/${slug}` },
+  };
+}
 
 export function truncateMarkdown(content: string): {
   truncated: string;
@@ -44,6 +68,7 @@ export const dynamic = "force-dynamic";
 
 function renderMarkdown(md: string) {
   // 极简 Markdown 渲染 (标题/列表/表格/段落/粗体)
+  // task060 S0 1.3a: boldify() 内部已 sanitize; 此处不再二次注入
   const lines = md.split("\n");
   const out: any[] = [];
   let i = 0;
@@ -107,8 +132,40 @@ function renderMarkdown(md: string) {
   return blocks;
 }
 
+// task060 S0 1.3a: 最小化 HTML escape + 标签白名单 (防 LLM 内容 XSS)
+// (取代 boldify 旧版仅做 **text** 替换, 直接注入 DOM)
+const ALLOWED_TAGS = new Set(["strong", "em", "code", "br"]);
+
+function sanitize(html: string): string {
+  // 1) 转义全部 HTML 实体 (防 <script>, <img onerror>, <iframe> 等)
+  let safe = html
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+  // 2) 仅放行 <strong> <em> <code> <br> 四类标签 (bold/italic/code/break)
+  safe = safe.replace(
+    /&lt;(strong|em|code|br)(\s+[^&]*?)?\s*\/?&gt;/gi,
+    (_m, tag) => {
+      if (!ALLOWED_TAGS.has(tag.toLowerCase())) return "";
+      return tag.toLowerCase() === "br" ? "<br/>" : `<${tag.toLowerCase()}>`;
+    }
+  );
+  // 3) 闭合标签 (简单反转义成可输出的标签)
+  safe = safe.replace(
+    /&lt;\/(strong|em|code)&gt;/gi,
+    (_m, tag) => `</${tag.toLowerCase()}>`
+  );
+  return safe;
+}
+
 function boldify(s: string) {
-  return s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  // 仅在 **...** 包裹的"已知安全"文本中插入 <strong> 标签
+  return s.replace(
+    /\*\*([^*\n]+)\*\*/g,
+    (_m, text) => `<strong>${sanitize(text)}</strong>`
+  );
 }
 
 const RISK_BADGE: Record<string, string> = {
@@ -160,11 +217,11 @@ export default async function TutorialDetail({
             CProTrading 投研
           </span>
           <span className="px-2.5 py-1 rounded bg-muted text-xs">
-            {t.marketRegime}
+            {i18n.regime(t.marketRegime).short}
           </span>
           {t.timeframe && (
             <span className="px-2.5 py-1 rounded bg-muted text-xs">
-              {t.timeframe}
+              {i18n.timeframe(t.timeframe).short}
             </span>
           )}
           {t.riskLevel && (
@@ -185,7 +242,7 @@ export default async function TutorialDetail({
           <span className="mx-2">·</span>
           <span>来源：{t.release.originalSource}</span>
           <span className="mx-2">·</span>
-          <span>协议：{t.release.license}</span>
+          <span>协议：{i18n.license(t.release.license).short}</span>
           <span className="mx-2">·</span>
           <span>{t.viewCount.toLocaleString()} 次阅读</span>
         </div>

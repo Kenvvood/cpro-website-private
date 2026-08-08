@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { FilterPanel } from '@/components/FilterPanel';
 import { prisma } from '@/lib/prisma';
 import { ProductGridSkeleton } from '@/components/ProductGridSkeleton';
+import { getCategoryAliases, t } from '@/lib/i18n';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,11 +47,13 @@ export default async function ProductsPage({ searchParams }: Props) {
 }
 
 async function ProductGrid({ searchParams }: Props) {
+  // task065: 选「辅助脚本」时同时匹配 Script + Code Snippet
+  const categoryAliases = searchParams.type ? getCategoryAliases(searchParams.type) : null;
   const products = await prisma.product.findMany({
     where: {
       isActive: true,
       ...(searchParams.tier ? { tier: searchParams.tier } : {}),
-      ...(searchParams.type ? { category: searchParams.type as any } : {}),
+      ...(categoryAliases ? { category: { in: categoryAliases as any } } : {}),
       ...(searchParams.tag ? { capabilityTags: { contains: `"${searchParams.tag}"` } } : {}),
     },
     orderBy: [{ createdAt: 'desc' }],
@@ -82,19 +85,21 @@ async function ProductGrid({ searchParams }: Props) {
           >
             <div className="flex items-start justify-between mb-2">
               <span className="text-xs px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">
-                {p.category}
+                {t.category(p.category).full}
               </span>
-              {p.tier && <span className="text-xs text-text-muted">{p.tier}</span>}
+              {p.tier && (
+                <span className="text-xs text-text-muted">{t.tier(p.tier).short}</span>
+              )}
             </div>
             <h3 className="text-sm font-semibold text-text-primary mb-2 line-clamp-2 group-hover:text-accent-blue">
               {p.positioning ?? p.name}
             </h3>
             <p className="text-xs text-text-secondary mb-3 line-clamp-2 min-h-[2rem]">
-              {tags.slice(0, 3).join(' · ') || '—'}
+              {tags.slice(0, 3).map(t.tag).join(' · ') || '—'}
             </p>
             <div className="flex items-center justify-between text-xs text-text-muted pt-2 border-t border-border">
               <span className="num">↓ {(p.downloadCount ?? 0).toLocaleString()}</span>
-              <span className="text-accent-gold">{p.requiredPlan}</span>
+              <span className="text-accent-gold">{t.plan(p.requiredPlan).short}</span>
             </div>
           </Link>
         );

@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { createState, cleanExpiredStates } from "@/lib/wechat-state";
+import { rateLimit, tooManyRequests } from "@/lib/rate-limit";
+import { checkCsrf, csrfForbidden } from "@/lib/csrf";
 
 // 微信开放平台配置
 // TODO: 替换为实际配置，购买微信开放平台后获取
@@ -8,15 +11,20 @@ const WECHAT_CONFIG = {
   redirectUri: process.env.WECHAT_REDIRECT_URI || "",
 };
 
-// 生成随机字符串作为state参数（防CSRF）
-function generateState(): string {
-  return Math.random().toString(36).substring(2, 15);
+function getClientIp(request: Request): string {
+  const xff = request.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return request.headers.get("x-real-ip") ?? "unknown";
 }
 
-// 存储state（生产环境应使用Redis）
-const stateStore = new Map<string, { createdAt: number }>();
+// task061 2.2: state 生成/校验/清理 已抽出到 @/lib/wechat-state (共享)
 
-export async function GET() {
+export async function GET(request: Request) {
+  // task063 3.2: IP 限流 3/min
+  const ip = getClientIp(request);
+  const ipLimit = await rateLimit("wechat-qr-ip", ip, 60_000, 3);
+  if (!ipLimit.ok) return tooManyRequests(ipLimit.retryAfterMs);
+
   try {
     if (!WECHAT_CONFIG.appId || !WECHAT_CONFIG.appSecret) {
       return NextResponse.json(
@@ -25,8 +33,7 @@ export async function GET() {
       );
     }
 
-    const state = generateState();
-    stateStore.set(state, { createdAt: Date.now() });
+    const state = createState();
 
     // 微信开放平台授权链接
     const authorizeUrl = new URL("https://open.weixin.qq.com/connect/qrconnect");
@@ -51,15 +58,10 @@ export async function GET() {
 }
 
 // 清理过期state（5分钟内未使用则过期）
-export async function DELETE() {
-  const now = Date.now();
-  const fiveMinutes = 5 * 60 * 1000;
-
-  for (const [state, data] of stateStore.entries()) {
-    if (now - data.createdAt > fiveMinutes) {
-      stateStore.delete(state);
-    }
-  }
-
-  return NextResponse.json({ success: true, cleaned: true });
+export async function DELETE(request: Request) {
+  // task063 3.2: DELETE 也走 CSRF
+  const csrf = checkCsrf(request);
+  if (!csrf.ok) return csrfForbidden(csrf.reason);
+  const cleaned = cleanExpiredStates();
+  return NextResponse.json({ success: true, cleaned });
 }

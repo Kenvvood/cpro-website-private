@@ -28,10 +28,12 @@ const COLUMNS = [
   {
     title: "法律",
     links: [
-      { href: BRAND.legal.privacyPolicy, label: "隐私政策" },
-      { href: BRAND.legal.termsOfService, label: "服务条款" },
-      { href: BRAND.legal.refundPolicy, label: "退款政策" },
-      { href: "/security", label: "安全说明" },
+      // task060 2.2: /privacy /terms /refund /security 临时收敛至 /legal/gpl-notice
+      // (避免点击 404 - ICP 备案要求法律页可见; 后续 sub-commit 替换为正式页)
+      { href: "/legal/gpl-notice", label: "隐私政策" },
+      { href: "/legal/gpl-notice", label: "服务条款" },
+      { href: "/legal/gpl-notice", label: "退款政策" },
+      { href: "/legal/gpl-notice", label: "安全说明" },
     ],
   },
 ];

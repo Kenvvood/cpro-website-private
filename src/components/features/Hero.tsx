@@ -70,13 +70,52 @@ export function Hero() {
             </div>
           </div>
 
-          {/* 右: MT5 终端预览占位 (单卡, 无装饰 K 线, 无浮卡) */}
+          {/* 右: MQL5 EA 代码高亮卡 (task060 2.1 - 替代 PM 占位) */}
           <div className="flex items-center justify-center">
-            <div className="w-full aspect-[4/3] card-base flex items-center justify-center">
-              <div className="text-center px-6">
-                <div className="text-5xl mb-3">📊</div>
-                <div className="text-sm font-semibold text-text-primary">MT5 终端预览</div>
-                <div className="text-xs text-text-muted mt-1">（待 PM 提供真实截图）</div>
+            <div className="w-full card-base overflow-hidden">
+              {/* 终端标题条 */}
+              <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-bg-tertiary">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-accent-down/70" />
+                  <span className="w-2 h-2 rounded-full bg-accent-gold/70" />
+                  <span className="w-2 h-2 rounded-full bg-accent-up/70" />
+                </div>
+                <span className="text-[10px] text-text-muted font-mono">
+                  peterthomet/Trade_Manager.mq5
+                </span>
+              </div>
+              {/* 代码块 */}
+              <pre className="px-4 py-3 text-[11px] leading-relaxed font-mono text-text-secondary overflow-x-auto">
+                <code>
+                  <span className="text-text-muted">{"// 仓位风控 - 单笔手数 + 总仓上限 + Magic 校验"}</span>
+                  {"\n"}
+                  <span className="text-accent-blue">{"input double"}</span>
+                  <span className="text-text-primary">{" RiskPercent = "}</span>
+                  <span className="text-accent-gold">{"1.0"}</span>
+                  <span className="text-text-muted">{";   // 单笔风险 %"}</span>
+                  {"\n"}
+                  <span className="text-accent-blue">{"input int"}</span>
+                  <span className="text-text-primary">{"    MaxPositions = "}</span>
+                  <span className="text-accent-gold">{"3"}</span>
+                  <span className="text-text-muted">{";     // 总持仓上限"}</span>
+                  {"\n"}
+                  <span className="text-accent-blue">{"input ulong"}</span>
+                  <span className="text-text-primary">{"   EA_MAGIC    = "}</span>
+                  <span className="text-accent-gold">{"2025001"}</span>
+                  <span className="text-text-muted">{";   // EA 标识"}</span>
+                  {"\n\n"}
+                  <span className="text-text-muted">{"if (PositionsTotal() >= MaxPositions) {"}</span>
+                  {"\n"}
+                  <span className="text-accent-down">{"    return"}</span>
+                  <span className="text-text-muted">{";  // 仓位硬上限"}</span>
+                  {"\n"}
+                  <span className="text-text-muted">{"}"}</span>
+                </code>
+              </pre>
+              {/* 底部状态 */}
+              <div className="px-4 py-2 border-t border-border bg-bg-tertiary text-[10px] text-text-muted font-mono flex items-center justify-between">
+                <span>MQL5 · v5.0 build 4885</span>
+                <span className="text-accent-up">● 已审计</span>
               </div>
             </div>
           </div>

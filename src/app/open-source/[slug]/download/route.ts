@@ -11,6 +11,11 @@ import { prisma } from "@/lib/prisma";
 const PROJECT_ROOT = path.resolve(process.cwd(), "..");
 const REDISTRIBUTE_DIR = path.join(process.cwd(), "cpro_patched_redistribute");
 
+// task060 S0 1.2b: 路径白名单根 (防目录穿越)
+const ALLOWED_ROOTS = [PROJECT_ROOT, REDISTRIBUTE_DIR].map((p) =>
+  path.resolve(p)
+);
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -43,60 +48,71 @@ export async function GET(
     physical = path.join(REDISTRIBUTE_DIR, release.originalSource, release.originalAuthor, path.basename(release.fileUrl));
   }
 
-  if (!fs.existsSync(physical)) {
+  // task060 S0 1.2b: 路径白名单 + realpath 校验 (防目录穿越 / symlink 攻击)
+  const resolved = path.resolve(physical);
+  const inAllowed = ALLOWED_ROOTS.some(
+    (root) => resolved === root || resolved.startsWith(root + path.sep)
+  );
+  if (!inAllowed) {
+    console.error(`[BLOCKED path-traversal] release=${release.id} resolved=${resolved}`);
     return NextResponse.json(
-      { ok: false, error: "file missing on disk", path: physical },
+      { ok: false, error: "路径越界" },
+      { status: 403 }
+    );
+  }
+  let realPath = resolved;
+  try {
+    realPath = fs.realpathSync(resolved);
+  } catch {
+    /* 文件不存在 */
+  }
+  const realInAllowed = ALLOWED_ROOTS.some(
+    (root) => realPath === root || realPath.startsWith(root + path.sep)
+  );
+  if (!realInAllowed) {
+    console.error(`[BLOCKED symlink-escape] release=${release.id} realPath=${realPath}`);
+    return NextResponse.json(
+      { ok: false, error: "路径越界" },
+      { status: 403 }
+    );
+  }
+
+  if (!fs.existsSync(realPath)) {
+    return NextResponse.json(
+      { ok: false, error: "文件暂未就绪" },
       { status: 500 }
     );
   }
 
-  // 记录日志 + 自增 downloadCount
-  await Promise.all([
-    prisma.openSourceAccessLog.create({
-      data: {
-        userId,
-        releaseId: release.id,
-        action: "DOWNLOAD",
-        ipAddress: req.headers.get("x-forwarded-for") ?? null,
-        userAgent: req.headers.get("user-agent") ?? null,
-        referrer: req.headers.get("referer") ?? null,
-      },
-    }),
-    prisma.openSourceRelease.update({
-      where: { id: release.id },
-      data: { downloadCount: { increment: 1 } },
-    }),
-  ]);
-
-  // 记录 DOWNLOAD 埋点 (Phase 7 task-0048)
-  // 容错: 即使记录失败也不阻塞下载主流程 (架构师叮嘱)
+  // task060 S0 1.2b: 去重埋点 (旧版 line 53-69 + line 71-90 重复写 DOWNLOAD)
   try {
-    await prisma.openSourceAccessLog.create({
-      data: {
-        userId,
-        releaseId: release.id,
-        action: "DOWNLOAD",
-        ipAddress: req.headers.get("x-forwarded-for") ?? null,
-        userAgent: req.headers.get("user-agent") ?? null,
-        referrer: req.headers.get("referer") ?? null,
-      },
-    });
-    // 自增 downloadCount
-    await prisma.openSourceRelease.update({
-      where: { id: release.id },
-      data: { downloadCount: { increment: 1 } },
-    });
+    await prisma.$transaction([
+      prisma.openSourceAccessLog.create({
+        data: {
+          userId,
+          releaseId: release.id,
+          action: "DOWNLOAD",
+          ipAddress: req.headers.get("x-forwarded-for") ?? null,
+          userAgent: req.headers.get("user-agent") ?? null,
+          referrer: req.headers.get("referer") ?? null,
+        },
+      }),
+      prisma.openSourceRelease.update({
+        where: { id: release.id },
+        data: { downloadCount: { increment: 1 } },
+      }),
+    ]);
   } catch (e) {
     console.error("[download埋点失败, 不阻塞下载]", e);
   }
 
-  const stat = fs.statSync(physical);
-  const stream = fs.createReadStream(physical);
+  const stat = fs.statSync(realPath);
+  const stream = fs.createReadStream(realPath);
   return new NextResponse(stream as any, {
     headers: {
       "Content-Type": "application/octet-stream",
       "Content-Length": String(stat.size),
-      "Content-Disposition": `attachment; filename="${path.basename(physical)}"`,
+      "Content-Disposition": `attachment; filename="${path.basename(realPath)}"`,
     },
   });
 }

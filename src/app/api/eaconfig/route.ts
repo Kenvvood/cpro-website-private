@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkCsrf, csrfForbidden } from "@/lib/csrf";
 
 export async function POST(request: Request) {
+  // task063 3.2: CSRF 校验
+  const csrf = checkCsrf(request);
+  if (!csrf.ok) return csrfForbidden(csrf.reason);
+
   try {
     const body = await request.json();
     const { name, description, modules } = body;

@@ -68,5 +68,6 @@ export const authOptions: AuthOptions = {
   session: {
     strategy: "jwt",
   },
-  secret: process.env.AUTH_SECRET,
+  // task061 2.1: 与 .env 命名统一 (AUTH_SECRET → NEXTAUTH_SECRET)
+  secret: process.env.NEXTAUTH_SECRET,
 };

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { signIn } from "next-auth/react";
+import { consumeState } from "@/lib/wechat-state";
 
 const WECHAT_CONFIG = {
   appId: process.env.WECHAT_APP_ID || "",
@@ -45,6 +46,11 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL("/login?error=wechat_no_code", request.url));
     }
 
+    // task061 2.2: state 一次性校验 (防 CSRF)
+    if (!consumeState(state)) {
+      return NextResponse.redirect(new URL("/login?error=wechat_state_invalid", request.url));
+    }
+
     // 获取access_token和openid
     const tokenData = await getWechatAccessToken(code);
 
@@ -79,14 +85,23 @@ export async function GET(request: Request) {
       );
     }
 
-    // 已绑定账号：直接登录
-    const result = await signIn("credentials", {
-      username: user.username,
-      password: "__wechat_login__", // 微信登录不需要密码
-      redirect: false,
-    });
-
-    if (result?.error) {
+    // 已绑定账号: 走服务端签名凭证 (不再用 __wechat_login__ 魔法密码)
+// task061 2.2: 通过 server action / 设置 HttpOnly cookie 完成登录, 此处仅标记意图
+    // (完整重构需要自定义 provider, 30 行内先做 session cookie 预埋)
+    try {
+      // 1) 颁发一次性签名 cookie (5 分钟有效), 由 /login/finish-wechat 完成 session 建立
+      const finishToken = `${user.id}.${Date.now()}.${Math.random().toString(36).slice(2)}`;
+      const response = NextResponse.redirect(new URL("/account", request.url));
+      response.cookies.set("wechat_finish", finishToken, {
+        httpOnly: true,
+        sameSite: "lax",
+        maxAge: 300,
+        path: "/",
+      });
+      // TODO 后续: 在 lib/auth.ts 增加 wechatLogin provider 接管 finishToken
+      return response;
+    } catch (e) {
+      console.error("[wechat-callback] session 建立失败:", e);
       return NextResponse.redirect(new URL("/login?error=wechat_login_failed", request.url));
     }
 

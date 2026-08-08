@@ -36,3 +36,6 @@ next-env.d.ts
 # dev.db
 prisma/dev.db
 prisma/dev.db-journal
+
+# task068 部署: 付费资产不入 git (物理下载内容, 1316 个 ZIP / 44.3 MB)
+_private_assets/

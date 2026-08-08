@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { t } from "@/lib/i18n";
 
-// task052 L2 C15: 产品中心真实网格 (4 列 · 数据从 DB)
+// task052 L2 C15 + task065: 产品中心真实网格 (4 列 · 数据从 DB · 接入 i18n)
 export async function ProductGrid() {
   const products = await prisma.product.findMany({
     where: { isActive: true },
@@ -37,10 +38,10 @@ export async function ProductGrid() {
         >
           <div className="flex items-start justify-between mb-2">
             <span className="text-xs px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">
-              {p.category}
+              {t.category(p.category).full}
             </span>
             {p.tier && (
-              <span className="text-xs text-text-muted">{p.tier}</span>
+              <span className="text-xs text-text-muted">{t.tier(p.tier).short}</span>
             )}
           </div>
           <h3 className="text-sm font-semibold text-text-primary mb-2 line-clamp-2 group-hover:text-accent-blue">
@@ -51,7 +52,7 @@ export async function ProductGrid() {
           </p>
           <div className="flex items-center justify-between text-xs text-text-muted pt-2 border-t border-border">
             <span className="num">↓ {p.downloadCount.toLocaleString()}</span>
-            <span className="text-accent-gold">{p.requiredPlan}</span>
+            <span className="text-accent-gold">{t.plan(p.requiredPlan).short}</span>
           </div>
         </Link>
       ))}

@@ -132,3 +132,26 @@ body {
   background-color: var(--bg-secondary);
   border-top: 1px solid var(--border-default);
 }
+
+/* ── task065 中文排版微调 ─────────────────────────── */
+
+/* 1) 中文长段落: 1.85 行高 (TradingView 中文阅读舒适度) */
+.prose-content { line-height: 1.85; }
+
+/* 2) 中英文混排: 字间距 +0.05em (缓解拥挤) */
+.cn-en {
+  word-spacing: 0.05em;
+  letter-spacing: 0.01em;
+}
+
+/* 3) 中文标签: 更舒展的内边距 (避免拥挤) */
+.cn-tag {
+  padding: 4px 10px;
+  font-feature-settings: 'tnum';
+}
+
+/* 4) 中文数字与符号: tabular-nums 等宽 */
+.cn-num {
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
+}

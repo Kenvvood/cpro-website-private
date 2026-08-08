@@ -16,20 +16,20 @@ const PLANS: Array<{
     plan: "WEEKLY",
     label: "周付会员",
     priceUSDT: "$3.6 USDT",
-    desc: "7 天全站 19,328 资源 · 周付 USDT",
+    desc: "7 天权限 · 严选可商用 EA 库与投研教程",
   },
   {
     plan: "MONTHLY",
     label: "月付会员",
     priceUSDT: "$8.8 USDT",
-    desc: "30 天全平台 2,042 开源资源无限下载 · 含教程",
+    desc: "30 天权限 · 严选 EA + 合规开源专区 + 投研教程",
     popular: true,
   },
   {
     plan: "ANNUAL",
     label: "年付会员",
     priceUSDT: "$36.6 USDT",
-    desc: "365 天年付套餐 · 节省 70% · 含 6 月持续更新",
+    desc: "365 天权限 · 含 6 个月持续更新，性价比最优",
   },
 ];
 

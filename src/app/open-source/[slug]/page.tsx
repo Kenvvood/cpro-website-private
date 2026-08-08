@@ -2,6 +2,7 @@
 // 详情页: middleware 拦截 + 详情展示 + 下载按钮
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
@@ -9,6 +10,26 @@ import { hasActiveMembership } from "@/lib/membership";
 import { OpenSourceDownloadButton } from "@/components/open-source/OpenSourceDownloadButton";
 
 export const dynamic = "force-dynamic";
+
+// task061 3: 开源详情页动态 metadata
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const r = await prisma.openSourceRelease.findUnique({
+    where: { id: slug },
+    select: { title: true, description: true, originalSource: true, license: true },
+  });
+  if (!r) return { title: "开源资源未找到 - CProTrading" };
+  return {
+    title: `${r.title} - 开源资源 - CProTrading`,
+    description: (r.description ?? r.title).slice(0, 160),
+    openGraph: {
+      title: r.title,
+      description: r.description ?? undefined,
+      type: "article",
+    },
+    alternates: { canonical: `/open-source/${slug}` },
+  };
+}
 
 const LICENSE_DESCRIPTION: Record<string, string> = {
   GPL_3: "GPL-3.0 强 copyleft — 集成 GPL-3 代码会强制整个 EA 也按 GPL-3 分发",

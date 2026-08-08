@@ -5,6 +5,7 @@
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
@@ -17,6 +18,22 @@ export const dynamic = 'force-dynamic';
 
 interface Props {
   params: Promise<{ id: string }>;
+}
+
+// task060 3.3: 商品详情页动态 metadata + Product JSON-LD
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const p = await prisma.product.findUnique({
+    where: { id },
+    select: { name: true, positioning: true, category: true, tier: true },
+  });
+  if (!p) return { title: "商品未找到 - CProTrading" };
+  return {
+    title: `${p.name} - CProTrading`,
+    description: (p.positioning ?? "严选可商用 MQL4/MQL5 EA").slice(0, 160),
+    openGraph: { title: p.name, description: p.positioning ?? undefined, type: "website" },
+    alternates: { canonical: `/products/${id}` },
+  };
 }
 
 export default async function ProductDetail({ params }: Props) {
@@ -33,6 +50,26 @@ export default async function ProductDetail({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-bg-primary">
+      {/* task060 3.3: Product JSON-LD (SEO 富摘要) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: product.name,
+            description: product.positioning ?? "",
+            category: product.category ?? undefined,
+            brand: { "@type": "Brand", name: "CProTrading" },
+            offers: {
+              "@type": "Offer",
+              category: "Membership Subscription",
+              priceCurrency: "USDT",
+              availability: "https://schema.org/InStock",
+            },
+          }),
+        }}
+      />
       <article className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-8 lg:py-12">
         <Link
           href="/products"

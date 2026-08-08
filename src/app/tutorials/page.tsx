@@ -1,7 +1,8 @@
 // src/app/tutorials/page.tsx
-// task052 L4: TV 风拉平 + 风险徽章改 accent 语义色
+// task052 L4: TV 风拉平 + 风险徽章改 accent 语义色 + task065: 接入 i18n
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,7 @@ export default async function TutorialsPage() {
         <header className="mb-8 border-b border-border pb-6">
           <div className="flex items-baseline gap-3 mb-2">
             <h1 className="text-2xl md:text-3xl font-bold text-text-primary">投研研报</h1>
-            <span className="text-xs text-text-muted uppercase tracking-widest">CProTrading Research</span>
+            <span className="text-xs text-text-muted">CProTrading 投研</span>
           </div>
           <p className="text-sm text-text-secondary">
             基于开源 EA 源码深度解析 · 严选合规再分发协议 · 每篇研报配套实盘风险提示
@@ -73,11 +74,17 @@ function TutCard({ t }: { t: any }) {
         )}
       </div>
       <div className="flex flex-wrap gap-2 text-xs mb-3">
-        <span className="px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">{t.marketRegime}</span>
+        <span className="px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">
+          {t.regime(t.marketRegime).short}
+        </span>
         {t.timeframe && (
-          <span className="px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">{t.timeframe}</span>
+          <span className="px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">
+            {t.timeframe(t.timeframe).short}
+          </span>
         )}
-        <span className="px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">{t.release.license}</span>
+        <span className="px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">
+          {t.license(t.release.license).short}
+        </span>
       </div>
       <p className="text-xs text-text-secondary line-clamp-2">{t.strategyLogic}</p>
       <div className="mt-3 pt-3 border-t border-border text-xs text-text-muted flex justify-between num">

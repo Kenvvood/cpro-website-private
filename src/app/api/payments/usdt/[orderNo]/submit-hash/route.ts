@@ -1,16 +1,21 @@
 // src/app/api/payments/usdt/[orderNo]/submit-hash/route.ts
-// 用户提交链上 TxID (task-0041, 核心幂等点)
+// 用户提交链上 TxID (task-0041 + task063 3.2 CSRF)
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { verifyOnChain } from "@/lib/chain-verifier";
 import { parseFromReleaseId } from "@/lib/admin";
+import { checkCsrf, csrfForbidden } from "@/lib/csrf";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ orderNo: string }> },
 ) {
+  // task063 3.2: CSRF 校验 (资金关键, 必须)
+  const csrf = checkCsrf(req);
+  if (!csrf.ok) return csrfForbidden(csrf.reason);
+
   const session = await getServerSession(authOptions);
   const userId = (session?.user as any)?.id as string | undefined;
   if (!userId) {
@@ -68,7 +73,7 @@ export async function POST(
     return NextResponse.json({ ok: false, error: "订单已过期" }, { status: 410 });
   }
 
-  // 链上验证 + 履约事务 (task057 Phase 9: 接入 channel + createdAt 触发 V5 时间戳防线)
+  // 链上验证 + 履约事务 (task057 Phase 9 + task064 Fail-Closed)
   try {
     const verified = await verifyOnChain(
       txHash,
@@ -78,6 +83,19 @@ export async function POST(
       order.createdAt,
     );
     if (!verified.ok) {
+      // task064 Fail-Closed: 网络类错误(transient) → 订单保持 PENDING, 用户可重试
+      if (verified.transient) {
+        // 回滚 txHash 与 paidAt, 让订单回归 PENDING
+        await prisma.order.update({
+          where: { orderNo },
+          data: { txHash: null, paidAt: null },
+        });
+        return NextResponse.json(
+          { ok: false, transient: true, error: verified.reason ?? "网络拥堵，请稍后再试" },
+          { status: 503 },
+        );
+      }
+      // 业务级失败 (金额/地址/状态) → 标记 FAILED, 用户需重新下单
       await prisma.order.update({
         where: { orderNo },
         data: { status: "FAILED", failedAt: new Date() },

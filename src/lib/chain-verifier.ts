@@ -1,9 +1,10 @@
 // src/lib/chain-verifier.ts
 // task057 Phase 9: 真实链上 USDT 验证 (TRC20 / BEP20)
-// ARCHIVE v16.0 [ONCHAIN_VERIFY] 封箱
-// 4 项铁律校验 + V5 时间戳防线 + 容错降级
+// ARCHIVE v16.0 [ONCHAIN_VERIFY] 封箱 + task064 V5 时间戳防线 + Fail-Closed
 export interface VerifyResult {
   ok: boolean;
+  /** 是否为"瞬态网络错误"(超时/502/限流) — true 时 submit-hash 应保持 PENDING */
+  transient?: boolean;
   blockNumber?: bigint;
   reason?: string;
   actualAmount?: number;
@@ -50,11 +51,13 @@ export async function verifyOnChain(
     if (channel === "USDT_BSC") return await verifyBEP20(txHash, expectedAmountUSDT, expectedWallet, orderCreatedAt);
     return { ok: false, reason: `不支持的支付通道: ${channel}` };
   } catch (e: any) {
-    // 容错降级: 网络超时 / 限流 / API 错误 → 422 不放行
+    // task064 Fail-Closed: 网络超时 / 限流 / 5xx → 标识 transient=true
+    // (submit-hash 据此保持 PENDING, 不标 FAILED, 允许用户重试)
     console.error("[chain-verifier]", e);
     return {
       ok: false,
-      reason: "链上查询失败 (网络拥堵/限流), 请稍后再试",
+      transient: true,
+      reason: "网络拥堵，请稍后再试",
       error: e?.message ?? String(e),
     };
   }
@@ -86,8 +89,8 @@ async function verifyTRC20(
     fetch(`https://api.trongrid.io/v1/transactions/${txHash}/events`, { headers }),
   ]);
 
-  if (!txRes.ok) return { ok: false, reason: `TronGrid 交易查询 ${txRes.status}` };
-  if (!eventRes.ok) return { ok: false, reason: `TronGrid 事件查询 ${eventRes.status}` };
+  if (!txRes.ok) return { ok: false, transient: txRes.status >= 500 || txRes.status === 429, reason: `TronGrid 交易查询 ${txRes.status}` };
+  if (!eventRes.ok) return { ok: false, transient: eventRes.status >= 500 || eventRes.status === 429, reason: `TronGrid 事件查询 ${eventRes.status}` };
 
   const tx = await txRes.json();
   const eventsJson = await eventRes.json();
@@ -162,8 +165,8 @@ async function verifyBEP20(
     fetch(`${base}&module=proxy&action=eth_getTransactionReceipt&txhash=${txHash}`),
   ]);
 
-  if (!txRes.ok) return { ok: false, reason: `BscScan 交易查询 ${txRes.status}` };
-  if (!receiptRes.ok) return { ok: false, reason: `BscScan receipt 查询 ${receiptRes.status}` };
+  if (!txRes.ok) return { ok: false, transient: txRes.status >= 500 || txRes.status === 429, reason: `BscScan 交易查询 ${txRes.status}` };
+  if (!receiptRes.ok) return { ok: false, transient: receiptRes.status >= 500 || receiptRes.status === 429, reason: `BscScan receipt 查询 ${receiptRes.status}` };
 
   const txJson = await txRes.json();
   const receiptJson = await receiptRes.json();
@@ -206,9 +209,10 @@ async function verifyBEP20(
   const blockRes = await fetch(
     `${base}&module=proxy&action=eth_getBlockByNumber&tag=${receipt.blockNumber}&boolean=false`,
   );
+  if (!blockRes.ok) return { ok: false, transient: blockRes.status >= 500 || blockRes.status === 429, reason: `BscScan block 查询 ${blockRes.status}` };
   const blockJson = await blockRes.json();
   const block = blockJson.result;
-  if (!block) return { ok: false, reason: "查无 block 时间戳" };
+  if (!block) return { ok: false, transient: true, reason: "查无 block 时间戳" };
 
   // BEP20 block timestamp 是秒 (Hex)
   const txTimestampSec = parseInt(block.timestamp, 16);

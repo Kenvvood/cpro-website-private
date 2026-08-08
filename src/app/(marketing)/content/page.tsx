@@ -1,15 +1,9 @@
-// task052 L3: content/page.tsx TV 风格拉平 (移除 Sidebar + bg-gradient + bg-grid + ambient-glow + ContentCard)
+// task061 2.3: 删除 2024 假文章 (硬编码过期日期违反 v14.0 文案祛 AI 味)
 import { Footer } from "@/components/layout/footer";
 
-const articles = [
-  { title: "EA 参数优化技巧详解", description: "如何根据不同品种调整 EA 参数, 获得更稳定的收益", date: "2024-04-10" },
-  { title: "MT4 安装 EA 详细教程", description: "一步一步教你如何在 MT4 上安装和运行 EA", date: "2024-04-08" },
-  { title: "指标参数调整入门", description: "了解常用指标参数含义及调整方法", date: "2024-04-05" },
-  { title: "客户案例: 工作室月收益 30%", description: "某工作室使用我们的 EA 产品, 三个月实现稳定盈利", date: "2024-04-08" },
-  { title: "兼职交易者: 稳定月收益 5%", description: "全职工作之余, 用 EA 实现额外收入", date: "2024-04-06" },
-  { title: "伦敦突破策略详解", description: "利用伦敦开盘时段进行突破交易", date: "2024-04-10" },
-  { title: "网格策略的风险控制", description: "如何设置合理的网格间距和止损", date: "2024-04-07" },
-];
+// 内容接入真实 OpenSourceTutorial 数据 (后续 sub-commit 由 prisma 拉取)
+// 当前先以"内容中心正在建设"占位, 避免公网显示假数据
+const PLACEHOLDER_NOTE = "内容中心正在接入真实投研教程, 请移步教程列表查看已发布研报。";
 
 export default function ContentPage() {
   return (
@@ -23,16 +17,14 @@ export default function ContentPage() {
         </header>
 
         <section>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {articles.map((a, i) => (
-              <article key={i} className="card-base p-5 hover:border-border-focus transition-colors">
-                <h3 className="text-base font-semibold mb-2 text-text-primary">{a.title}</h3>
-                <p className="text-sm text-text-secondary leading-relaxed mb-3 line-clamp-3">
-                  {a.description}
-                </p>
-                <time className="text-xs text-text-muted">{a.date}</time>
-              </article>
-            ))}
+          <div className="card-base p-8 text-center text-text-secondary">
+            <p className="text-base mb-2">{PLACEHOLDER_NOTE}</p>
+            <a
+              href="/tutorials"
+              className="text-accent-blue hover:underline text-sm"
+            >
+              → 查看已发布投研教程
+            </a>
           </div>
         </section>
       </main>

@@ -1,6 +1,19 @@
+// task063 2.1: SMS 验证码 Redis 化 + IP/phone 限流 + verify 错误上限
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { redis } from "@/lib/redis";
+import { rateLimit, tooManyRequests } from "@/lib/rate-limit";
 import { randomInt } from "crypto";
+
+const CODE_TTL_S = 5 * 60; // 5 分钟过期
+const MAX_VERIFY_ERRORS = 3; // 错误 3 次即销毁验证码 (架构师 NEED-4)
+
+// 获取客户端 IP (x-forwarded-for 第一个, x-real-ip 兜底)
+function getClientIp(request: Request): string {
+  const xff = request.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return request.headers.get("x-real-ip") ?? "unknown";
+}
 
 // 生成6位验证码
 function generateCode(): string {
@@ -8,7 +21,6 @@ function generateCode(): string {
 }
 
 // TODO: 替换为阿里云短信SDK
-// npm install @alicloud/dysmsapi20170525
 async function sendSmsCode(phone: string, code: string): Promise<boolean> {
   const accessKeyId = process.env.ALIYUN_ACCESS_KEY_ID;
   const accessKeySecret = process.env.ALIYUN_ACCESS_KEY_SECRET;
@@ -26,7 +38,8 @@ async function sendSmsCode(phone: string, code: string): Promise<boolean> {
     // const client = new dysmsapi({ accessKeyId, accessKeySecret });
     // await client.sendSms({ phoneNumbers: phone, signName, templateCode, templateParam: `{"code":"${code}"}` });
 
-    console.log(`[SMS Mock] 发送验证码 ${code} 到 ${phone}`);
+    // task063 2.1: 不再打印明文 code, 仅打印手机号与成功标志
+    console.log(`[SMS] sent to ${phone.replace(/^(\d{3})\d{4}/, "$1****")}`);
     return true;
   } catch (error) {
     console.error("短信发送失败:", error);
@@ -34,9 +47,7 @@ async function sendSmsCode(phone: string, code: string): Promise<boolean> {
   }
 }
 
-// 存储验证码（生产环境应使用Redis）
-const codeStore = new Map<string, { code: string; expires: number }>();
-
+// 发送验证码
 export async function POST(request: Request) {
   try {
     const { phone, type } = await request.json();
@@ -44,19 +55,35 @@ export async function POST(request: Request) {
     if (!phone) {
       return NextResponse.json({ error: "手机号不能为空" }, { status: 400 });
     }
-
-    // 验证手机号格式
     if (!/^1[3-9]\d{9}$/.test(phone)) {
       return NextResponse.json({ error: "手机号格式不正确" }, { status: 400 });
     }
 
+    const ip = getClientIp(request);
+
+    // 1) IP 限流: 1/min
+    const ipLimit = await rateLimit("sms-ip", ip, 60_000, 1);
+    if (!ipLimit.ok) return tooManyRequests(ipLimit.retryAfterMs);
+
+    // 2) phone 限流: 1/min
+    const phone1m = await rateLimit("sms-phone-1m", phone, 60_000, 1);
+    if (!phone1m.ok) return tooManyRequests(phone1m.retryAfterMs);
+
+    // 3) phone 限流: 5/h
+    const phone1h = await rateLimit("sms-phone-1h", phone, 3_600_000, 5);
+    if (!phone1h.ok) return tooManyRequests(phone1h.retryAfterMs);
+
     const code = generateCode();
-    const expires = Date.now() + 5 * 60 * 1000; // 5分钟后过期
 
-    // 存储验证码
-    codeStore.set(phone, { code, expires });
+    // 存储验证码到 Redis (key: sms:code:<phone>, TTL 5min)
+    // 同时重置错误计数 key: sms:err:<phone>
+    if (redis) {
+      await Promise.all([
+        redis.set(`sms:code:${phone}`, code, { ex: CODE_TTL_S }),
+        redis.del(`sms:err:${phone}`),
+      ]);
+    }
 
-    // 发送短信
     const sent = await sendSmsCode(phone, code);
 
     if (!sent) {
@@ -82,23 +109,43 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "参数不完整" }, { status: 400 });
     }
 
-    const stored = codeStore.get(phone);
+    const ip = getClientIp(request);
+
+    // verify 限流: 同 IP 10/h (防暴力枚举 6位 = 100万种)
+    const verifyLimit = await rateLimit("sms-verify", ip, 3_600_000, 10);
+    if (!verifyLimit.ok) return tooManyRequests(verifyLimit.retryAfterMs);
+
+    if (!redis) {
+      // Redis 未就绪: fail-open 验证 (不阻断主流程)
+      console.warn("[sms-verify] Redis 未就绪, 跳过验证码校验");
+      return NextResponse.json({ success: true, message: "验证成功 (Redis 降级)" });
+    }
+
+    const stored = await redis.get<string>(`sms:code:${phone}`);
 
     if (!stored) {
       return NextResponse.json({ error: "请先获取验证码" }, { status: 400 });
     }
 
-    if (Date.now() > stored.expires) {
-      codeStore.delete(phone);
-      return NextResponse.json({ error: "验证码已过期" }, { status: 400 });
-    }
-
-    if (stored.code !== code) {
+    if (stored !== code) {
+      // 错误: 累加计数, 达上限则销毁验证码
+      const errCount = await redis.incr(`sms:err:${phone}`);
+      if (errCount >= MAX_VERIFY_ERRORS) {
+        await redis.del(`sms:code:${phone}`);
+        await redis.del(`sms:err:${phone}`);
+        return NextResponse.json(
+          { error: "验证码错误次数过多，请重新获取" },
+          { status: 400 }
+        );
+      }
       return NextResponse.json({ error: "验证码错误" }, { status: 400 });
     }
 
-    // 验证成功，删除验证码
-    codeStore.delete(phone);
+    // 验证成功: 清理两个 key
+    await Promise.all([
+      redis.del(`sms:code:${phone}`),
+      redis.del(`sms:err:${phone}`),
+    ]);
 
     return NextResponse.json({ success: true, message: "验证成功" });
   } catch (error) {

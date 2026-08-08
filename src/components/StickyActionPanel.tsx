@@ -1,10 +1,12 @@
 /**
  * StickyActionPanel.tsx — PDP 右侧粘性 CTA 面板
  * 显示会员等级 + 摘要数字 + 主 CTA
+ * task065: 接入 i18n dict
  */
 import { Lock, Download, Check } from 'lucide-react';
 import { TierBadge } from './TierBadge';
 import { Tag } from './Tag';
+import { t } from '@/lib/i18n';
 
 interface Props {
   product: {
@@ -19,24 +21,19 @@ interface Props {
   onCheckout: () => void;
 }
 
-const PLAN_LABEL: Record<string, string> = {
-  'WEEKLY': '周付会员 ($3.6 USDT)',
-  'MONTHLY': '月付会员 ($8.8 USDT)',
-  'ANNUAL': '年付会员 ($36.6 USDT)',
-};
-
 export function StickyActionPanel({ product, hasAccess, onCheckout }: Props) {
+  const planEntry = t.plan(product.requiredPlan);
   return (
     <aside className="sticky top-24 bg-bg-secondary border border-border
       rounded-lg p-6 space-y-5">
       {/* 所需计划 + Tier 徽标 */}
       <div>
-        <div className="text-xs text-text-muted uppercase tracking-wider mb-2">
+        <div className="text-xs text-text-muted mb-2">
           所需计划
         </div>
         <div className="flex items-center justify-between">
           <span className="text-text-primary font-semibold">
-            {PLAN_LABEL[product.requiredPlan] ?? product.requiredPlan}
+            {planEntry.full}
           </span>
           <TierBadge tier={product.tier} />
         </div>

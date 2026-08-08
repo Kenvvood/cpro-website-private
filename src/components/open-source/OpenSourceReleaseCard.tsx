@@ -1,8 +1,17 @@
 // src/components/open-source/OpenSourceReleaseCard.tsx
+// task065: 接入 i18n dict
 "use client";
 import Link from "next/link";
 import { TierBadge } from "@/components/TierBadge";
 import { Tag } from "@/components/Tag";
+import { t } from "@/lib/i18n";
+
+const LICENSE_COLOR_CLASSES = {
+  red: "bg-red-500/15 text-red-700 border-red-500/30",
+  yellow: "bg-yellow-500/15 text-yellow-700 border-yellow-500/30",
+  green: "bg-green-500/15 text-green-700 border-green-500/30",
+  orange: "bg-orange-500/15 text-orange-700 border-orange-500/30",
+} as const;
 
 export interface OpenSourceReleaseCardProps {
   release: {
@@ -33,7 +42,9 @@ const LICENSE_BADGE: Record<string, string> = {
 };
 
 export function OpenSourceReleaseCard({ release }: OpenSourceReleaseCardProps) {
-  const licenseBadge = LICENSE_BADGE[release.license] ?? "bg-muted text-foreground";
+  // task065: 接入 dict, 协议颜色从 LICENSE_DICT.color 取
+  const lic = t.license(release.license);
+  const colorCls = LICENSE_COLOR_CLASSES[lic.color as keyof typeof LICENSE_COLOR_CLASSES] ?? "bg-muted text-foreground";
   return (
     <Link
       href={`/open-source/${release.id}`}
@@ -46,7 +57,7 @@ export function OpenSourceReleaseCard({ release }: OpenSourceReleaseCardProps) {
         {release.isFeatured && <span className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">精选</span>}
       </div>
       <div className="mt-3 flex flex-wrap gap-2 text-xs">
-        <span className={`px-2 py-0.5 rounded border ${licenseBadge}`}>{release.license}</span>
+        <span className={`px-2 py-0.5 rounded border ${colorCls}`}>{lic.short}</span>
         <Tag label={`来源: ${release.originalSource}`} />
         {release.tier && <TierBadge tier={release.tier} />}
       </div>
@@ -56,7 +67,7 @@ export function OpenSourceReleaseCard({ release }: OpenSourceReleaseCardProps) {
         <span>⬇ {release.downloadCount.toLocaleString()}</span>
       </div>
       <div className="mt-2 text-xs text-muted-foreground">
-        付费会员 · {release.requiredPlan}
+        付费会员 · {t.plan(release.requiredPlan).short}
       </div>
     </Link>
   );

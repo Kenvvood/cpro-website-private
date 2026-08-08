@@ -1,14 +1,19 @@
 // src/app/api/payments/usdt/[orderNo]/cancel/route.ts
-// 取消订单 (task-0041)
+// 取消订单 (task-0041 + task063 3.2 CSRF)
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkCsrf, csrfForbidden } from "@/lib/csrf";
 
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ orderNo: string }> },
 ) {
+  // task063 3.2: CSRF 校验
+  const csrf = checkCsrf(req);
+  if (!csrf.ok) return csrfForbidden(csrf.reason);
+
   const session = await getServerSession(authOptions);
   const userId = (session?.user as any)?.id as string | undefined;
   if (!userId) {

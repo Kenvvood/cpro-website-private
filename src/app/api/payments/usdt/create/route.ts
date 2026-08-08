@@ -1,9 +1,10 @@
 // src/app/api/payments/usdt/create/route.ts
-// 创建订单 (task-0041)
+// 创建订单 (task-0041 + task063 3.2 CSRF)
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkCsrf, csrfForbidden } from "@/lib/csrf";
 import {
   ORDER_EXPIRY_MINUTES,
   PLAN_DURATION_DAYS,
@@ -16,6 +17,10 @@ import type { MembershipPlan, PayChannel } from "@/generated/prisma/enums";
 const RECENT_PENDING_WINDOW_MS = 5_000;
 
 export async function POST(req: NextRequest) {
+  // task063 3.2: CSRF 校验 (Origin/Referer 白名单)
+  const csrf = checkCsrf(req);
+  if (!csrf.ok) return csrfForbidden(csrf.reason);
+
   const session = await getServerSession(authOptions);
   const userId = (session?.user as any)?.id as string | undefined;
   if (!userId) {

@@ -1,5 +1,6 @@
 /**
  * FilterPanel.tsx — 多维过滤面板 (Tier + Type + Tags)
+ * task065: 接入 i18n 字典; 分类收敛为 EA/指标/脚本 3 类
  * URL 同步: 通过 Link 更新 searchParams
  */
 'use client';
@@ -7,18 +8,19 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronDown, X } from 'lucide-react';
 import { useState } from 'react';
+import { t } from '@/lib/i18n';
 
 const TIER_OPTIONS = [
-  { value: 'Tier 1 (Premium/VIP)', label: 'Tier 1 Premium' },
-  { value: 'Tier 2 (Pro)', label: 'Tier 2 Pro' },
-  { value: 'Tier 3 (Basic)', label: 'Tier 3 Basic' },
+  { value: 'Tier 1 (Premium/VIP)', label: t.tier('Tier 1 (Premium/VIP)').full },
+  { value: 'Tier 2 (Pro)', label: t.tier('Tier 2 (Pro)').full },
+  { value: 'Tier 3 (Basic)', label: t.tier('Tier 3 (Basic)').full },
 ];
 
+// task065 降维合并: Code Snippet 不再暴露, 与 Script 共用「辅助脚本」
 const TYPE_OPTIONS = [
-  { value: 'EA', label: 'EA 自动化交易' },
-  { value: 'Indicator', label: 'Indicator 指标' },
-  { value: 'Script', label: 'Script 脚本' },
-  { value: 'Code Snippet', label: 'Code Snippet 极客' },
+  { value: 'EA',        label: t.category('EA').full },
+  { value: 'Indicator', label: t.category('Indicator').full },
+  { value: 'Script',    label: t.category('Script').full }, // 隐式含 Code Snippet
 ];
 
 const POPULAR_TAGS = [
@@ -67,7 +69,7 @@ export function FilterPanel({ currentTier, currentType, currentTag }: {
       </div>
 
       {/* Tier 分组 */}
-      <FilterGroup title="级别 (Tier)" isOpen={tierOpen} onToggle={() => setTierOpen(!tierOpen)}>
+      <FilterGroup title="商品级别" isOpen={tierOpen} onToggle={() => setTierOpen(!tierOpen)}>
         <div className="space-y-1.5">
           {TIER_OPTIONS.map(opt => {
             const active = currentTier === opt.value;
@@ -85,8 +87,8 @@ export function FilterPanel({ currentTier, currentType, currentTag }: {
         </div>
       </FilterGroup>
 
-      {/* Type 分组 */}
-      <FilterGroup title="类型 (Type)" isOpen={typeOpen} onToggle={() => setTypeOpen(!typeOpen)}>
+      {/* Type 分组 (task065: 仅 3 类) */}
+      <FilterGroup title="商品分类" isOpen={typeOpen} onToggle={() => setTypeOpen(!typeOpen)}>
         <div className="space-y-1.5">
           {TYPE_OPTIONS.map(opt => {
             const active = currentType === opt.value;
