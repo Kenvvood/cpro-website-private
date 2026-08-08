@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "lint:tokens": "python ../.harness/scripts/token_lint.py",
+    "postinstall": "prisma generate",
+    "prebuild": "node scripts/prebuild-db.js",
     "db:seed": "npx tsx src/lib/seed.ts",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate"

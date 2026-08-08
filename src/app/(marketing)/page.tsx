@@ -7,6 +7,10 @@ import { HowItWorks } from "@/components/features/HowItWorks";
 import { PricingTable } from "@/components/features/PricingTable";
 import { Footer } from "@/components/layout/footer";
 
+// task068 部署修复: 首页含 DB 查询, Vercel prerender 时 SQLite 表可能不存在
+// force-dynamic 改为运行时渲染, 避免构建时 SQLITE_ERROR
+export const dynamic = "force-dynamic";
+
 // L4 v1.7: 5 区块首页 (修回简洁, 黄金外汇专精)
 // 1.Ticker 2.Hero 3.StatsBar 4.ProductGrid 5.HowItWorks 6.Pricing 7.Footer
 // 删 v1.6 的 MarketOverview (12品种) + WhyUs (4特性套话)
