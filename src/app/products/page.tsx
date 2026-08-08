@@ -11,11 +11,17 @@ import { getCategoryAliases, t } from '@/lib/i18n';
 
 export const dynamic = 'force-dynamic';
 
-interface Props {
+interface PageProps {
+  // task069 抢修: Next.js 16 要求 searchParams 为 Promise
+  searchParams: Promise<{ tier?: string; type?: string; tag?: string }>;
+}
+
+interface GridProps {
   searchParams: { tier?: string; type?: string; tag?: string };
 }
 
-export default async function ProductsPage({ searchParams }: Props) {
+export default async function ProductsPage({ searchParams }: PageProps) {
+  const sp = await searchParams;
   return (
     <div className="min-h-screen bg-bg-primary">
       <header className="border-b border-border bg-bg-secondary">
@@ -29,15 +35,15 @@ export default async function ProductsPage({ searchParams }: Props) {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1">
             <FilterPanel
-              currentTier={searchParams.tier}
-              currentType={searchParams.type}
-              currentTag={searchParams.tag}
+              currentTier={sp.tier}
+              currentType={sp.type}
+              currentTag={sp.tag}
             />
           </div>
 
           <section className="lg:col-span-3">
             <Suspense fallback={<ProductGridSkeleton count={12} />}>
-              <ProductGrid searchParams={searchParams} />
+              <ProductGrid searchParams={sp} />
             </Suspense>
           </section>
         </div>
@@ -46,7 +52,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   );
 }
 
-async function ProductGrid({ searchParams }: Props) {
+async function ProductGrid({ searchParams }: GridProps) {
   // task065: 选「辅助脚本」时同时匹配 Script + Code Snippet
   const categoryAliases = searchParams.type ? getCategoryAliases(searchParams.type) : null;
   const products = await prisma.product.findMany({
