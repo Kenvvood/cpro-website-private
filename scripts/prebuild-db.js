@@ -19,8 +19,11 @@ try {
   }
 
   // 强制以 schema.prisma 为准建库, 无视迁移历史冲突
+  // task073 v2: Prisma 7 移除 --skip-generate (db push 默认就不 generate, 重复了)
+  // 之前写 --skip-generate 会触发 "unknown or unexpected option" → db push 失败
+  // → dev.db 不存在 → 所有动态路由 SQLITE_CANTOPEN (14) → server 500
   console.log("[prebuild-db] 执行 prisma db push --accept-data-loss");
-  execSync("npx prisma db push --accept-data-loss --skip-generate", {
+  execSync("npx prisma db push --accept-data-loss", {
     stdio: "inherit",
   });
   console.log("[prebuild-db] db push 完成");
