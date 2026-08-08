@@ -2,23 +2,28 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { t } from "@/lib/i18n";
 
-// task052 L2 C15 + task065: 产品中心真实网格 (4 列 · 数据从 DB · 接入 i18n)
+// task052 L2 C15 + task065 + task068 v4: 兜底 DB 错误
 export async function ProductGrid() {
-  const products = await prisma.product.findMany({
-    where: { isActive: true },
-    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-    take: 8,
-    select: {
-      id: true,
-      name: true,
-      positioning: true,
-      category: true,
-      tier: true,
-      requiredPlan: true,
-      downloadCount: true,
-      rating: true,
-    },
-  });
+  let products: any[] = [];
+  try {
+    products = await prisma.product.findMany({
+      where: { isActive: true },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+      take: 8,
+      select: {
+        id: true,
+        name: true,
+        positioning: true,
+        category: true,
+        tier: true,
+        requiredPlan: true,
+        downloadCount: true,
+        rating: true,
+      },
+    });
+  } catch {
+    /* DB 不可用, 显示占位 */
+  }
 
   if (products.length === 0) {
     return (
