@@ -12,7 +12,8 @@ export function Hero() {
   return (
     <section>
       <div className="w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-center">
+        {/* lg 单列 / xl 起 2 栏 / 2xl 1.3fr 宽左文案 + 字号大 */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-[1.3fr_1fr] gap-8 xl:gap-10 2xl:gap-14 items-center">
           {/* 左: 文案 + CTA */}
           <div className="flex flex-col">
             {/* 状态徽章 - v22.0 Phase 2.1-A: 去边框 + 去底色 → 纯文字 (cn.investing 顶部风格, 反 AI 卡片感) */}
@@ -23,15 +24,15 @@ export function Hero() {
               <span>首批精选 · 已上线 · 持续更新 · 严选订阅服务</span>
             </div>
 
-            {/* 巨型标题 - FXSSI 调性: 客户视角 + 行动引导 + 决策辅助 */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold leading-[1.1] tracking-tight mb-4 text-text-primary">
+            {/* 巨型标题 - 字号断点: 2xl(移动) / 3xl / 4xl / 5xl(lg-xl) / 6xl(2xl+) */}
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold leading-[1.1] tracking-tight mb-4 text-text-primary">
               看见<span className="text-accent-blue">市场</span>
               <br />
               决策有据
             </h1>
 
-            {/* 副标: 黄金外汇专精 + 情绪辅助 */}
-            <p className="text-sm lg:text-base text-text-secondary mb-6 max-w-xl leading-relaxed">
+            {/* 副标: 字号断点跟随 */}
+            <p className="text-sm lg:text-base xl:text-lg text-text-secondary mb-6 max-w-xl leading-relaxed">
               <span className="text-text-primary font-semibold num">XAUUSD 黄金</span>
               <span> · </span>
               <span className="text-text-primary font-semibold num">EURUSD / GBPUSD</span>
@@ -92,8 +93,8 @@ export function Hero() {
                   peterthomet/Trade_Manager.mq5
                 </span>
               </div>
-              {/* 代码块 - v22.0 Phase 7.2: text-[10px] 防止大屏溢出 */}
-              <pre className="px-3 py-2.5 text-[10px] leading-snug font-mono text-text-secondary overflow-x-auto">
+              {/* 代码块 - 大屏字号略大, lg 还保持 10px 不溢出 */}
+              <pre className="px-3 py-2.5 text-[10px] xl:text-[11px] 2xl:text-xs leading-snug font-mono text-text-secondary overflow-x-auto">
                 <code>
                   <span className="text-text-muted">{"// 仓位风控 - 单笔手数 + 总仓上限 + Magic 校验"}</span>
                   {"\n"}

@@ -75,8 +75,8 @@ export function AuthorInsights() {
         </a>
       </div>
 
-      {/* 2 栏布局: 左 主表 / 右 侧栏 (无 card-base, 全部 1px 底边线) */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-0 border-t border-border">
+      {/* 2 栏布局: 左 主表 / 右 侧栏 (大屏侧栏 280 → 320 → 360 渐宽) */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] xl:grid-cols-[1fr_320px] 2xl:grid-cols-[1fr_360px] gap-0 border-t border-border">
         {/* 左: 主表 (3 tab 切换 + 10 行文章) */}
         <div className="lg:border-r lg:border-b-0 border-b border-border">
           {/* Tab 切换 (顶部 inline 链接, 不是 tab UI 组件) */}

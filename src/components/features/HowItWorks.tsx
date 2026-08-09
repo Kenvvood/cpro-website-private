@@ -32,7 +32,8 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 lg:gap-12 items-start">
+    // v22.0 Phase 7.3: 响应式 - lg 单列堆叠 / xl 起 2 栏 (1fr:2fr 左标题 + 右步骤)
+    <section className="grid grid-cols-1 xl:grid-cols-[1fr_2fr] gap-8 xl:gap-10 2xl:gap-14 items-start">
       {/* 左 30% 标题区 */}
       <div className="space-y-4 lg:sticky lg:top-20">
         <div className="text-[10px] uppercase tracking-wider text-accent-blue font-semibold">
