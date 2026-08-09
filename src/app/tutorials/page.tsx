@@ -33,7 +33,7 @@ export default async function TutorialsPage() {
             基于开源 EA 源码深度解析 · 严选合规再分发协议 · 每篇研报配套实盘风险提示
           </p>
           <p className="mt-2 text-xs text-text-muted num">
-            作者: CProTrading 投研团队 · 发布总数 {tutorials.length.toLocaleString()} 篇
+            作者: CProTrading 投研团队 · 持续更新中
           </p>
         </header>
 

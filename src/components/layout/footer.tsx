@@ -59,7 +59,7 @@ export function Footer() {
             <p className="text-xs text-text-secondary leading-relaxed mb-4">
               {BRAND.slogan.zh}。
               <br />
-              外汇 / 黄金 / 加密 / 能源指数 — 12 个交易品种多市场覆盖。
+              外汇 / 黄金 / 加密 / 能源指数 — 多市场多品种量化覆盖。
             </p>
             <div className="flex items-center gap-2 text-xs text-text-muted">
               <Globe size={12} />

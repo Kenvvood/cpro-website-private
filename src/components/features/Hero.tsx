@@ -18,7 +18,7 @@ export function Hero() {
             {/* 状态徽章 */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 text-xs font-semibold border border-border rounded-sm bg-bg-secondary w-fit">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-up" />
-              <span>首批精选 · 启动中 · USDT 收银 · 3 档纯付费</span>
+              <span>首批精选 · 已上线 · 持续更新 · USDT 收银 · 3 档纯付费</span>
             </div>
 
             {/* 巨型标题 */}
