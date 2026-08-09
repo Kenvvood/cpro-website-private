@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { href: "/products", label: "产品中心" },
   { href: "/open-source", label: "开源专区" },
   { href: "/tutorials", label: "教程" },
+  { href: "/tools", label: "工具" },  // v22.0 Phase 4.9: 工具区入口 (6 款 XAUUSD/K线实战工具)
   { href: "/membership", label: "会员" },
   { href: "/content", label: "内容中心" },
   { href: "/download", label: "下载中心" },
