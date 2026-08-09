@@ -6,9 +6,9 @@ import { PLAN_LABEL_CN, USDT_RATES, PLAN_DURATION_DAYS } from "@/lib/payment-con
 // 严守 PM D5: 3 档纯付费 USDT, 无 FREE_TRIAL
 export function PricingTable() {
   const plans = [
-    { plan: "WEEKLY" as const, label: "周付会员", desc: "7 天全站资源无限下载 · 周付 USDT", highlight: false },
-    { plan: "MONTHLY" as const, label: "月付会员", desc: "30 天全站资源无限下载 · 含投研教程", highlight: true },
-    { plan: "ANNUAL" as const, label: "年付会员", desc: "365 天年付套餐 · 节省 70% · 含 6 月持续更新", highlight: false },
+    { plan: "WEEKLY" as const, label: "周付会员", desc: "7 天入门 · 严选资源不限次", highlight: false },
+    { plan: "MONTHLY" as const, label: "月付会员", desc: "30 天持续 · 含投研教程 · 每周更新", highlight: true },
+    { plan: "ANNUAL" as const, label: "年付会员", desc: "365 天长期 · 节省 70% · 新工具优先", highlight: false },
   ];
 
   return (
