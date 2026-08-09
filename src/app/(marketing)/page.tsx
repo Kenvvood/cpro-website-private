@@ -9,8 +9,8 @@ import { AuthorInsights } from "@/components/features/AuthorInsights";
 import { Footer } from "@/components/layout/footer";
 
 // L4 v1.7: 5 区块首页 (修回简洁, 黄金外汇专精)
-// v22.0 Phase 3: 6 区块 (+作者分享) — 借鉴 forex.eastmoney 外汇快讯 UI
-// 1.Ticker 2.Hero 3.StatsBar 4.ProductGrid 5.HowItWorks 6.Pricing 7.AuthorInsights 8.Footer
+// v22.0 Phase 2.1: 6 区块 (作者分享从底部移到中部, 借鉴 forex.eastmoney 嵌入风格)
+// 1.Ticker 2.Hero 3.StatsBar 4.AuthorInsights 5.ProductGrid 6.HowItWorks 7.Pricing 8.Footer
 // 删 v1.6 的 MarketOverview (12品种) + WhyUs (4特性套话)
 export default function Home() {
   return (
@@ -24,17 +24,17 @@ export default function Home() {
         {/* 区块 2: Stats Bar (2 卡: 商品总数 + 教程研报) */}
         <StatsBar />
 
-        {/* 区块 3: 产品中心 (8 个 EA) */}
+        {/* 区块 3: 作者分享 (v22.0 Phase 2.1 重构) - 借鉴 forex.eastmoney 中部嵌入 */}
+        <AuthorInsights />
+
+        {/* 区块 4: 产品中心 (8 个 EA) */}
         <ProductSection />
 
-        {/* 区块 4: 工作流 (3 步: 浏览 / 订阅 / 部署) */}
+        {/* 区块 5: 工作流 (3 步: 浏览 / 订阅 / 部署) */}
         <HowItWorks />
 
-        {/* 区块 5: 会员订阅 3 档 */}
+        {/* 区块 6: 会员订阅 3 档 */}
         <PricingSection />
-
-        {/* 区块 6: 作者分享 (v22.0 Phase 3) - 借鉴 forex.eastmoney 外汇快讯展示方式 */}
-        <AuthorInsights />
       </main>
 
       <Footer />
