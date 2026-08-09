@@ -64,7 +64,7 @@ export function DownloadPaywall({ isOpen, requiredPlan, onClose, onSelectPlan }:
 
         <p className="text-sm text-text-secondary mb-4">
           本资源需要 <span className="font-mono text-accent-blue">{requiredPlan}</span> 会员才能下载。
-          开通后立即解锁 19,328 款资源无限制下载。
+          开通后立即解锁全站资源无限制下载 · 持续更新。
         </p>
 
         <div className="grid grid-cols-3 gap-2 mb-4">
