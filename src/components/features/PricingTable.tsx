@@ -36,7 +36,7 @@ export function PricingTable() {
                   : "hover:bg-bg-tertiary"
               }`}
             >
-              <td className={`${p.highlight ? "py-4" : "py-3"} px-2`}>
+              <td className="py-2.5 px-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   {p.highlight && (
                     <span className="text-[9px] font-bold uppercase tracking-wider text-accent-blue border border-accent-blue px-1.5 py-0.5 bg-bg-primary">
@@ -48,19 +48,19 @@ export function PricingTable() {
                   </span>
                 </div>
               </td>
-              <td className={`${p.highlight ? "py-4" : "py-3"} px-2 text-xs text-text-secondary hidden sm:table-cell`}>
+              <td className="py-2.5 px-2 text-xs text-text-secondary hidden sm:table-cell">
                 {p.desc}
               </td>
-              <td className={`${p.highlight ? "py-4" : "py-3"} px-2 text-right num`}>
+              <td className="py-2.5 px-2 text-right num">
                 <span className={`${p.highlight ? "text-2xl" : "text-lg"} font-bold text-accent-blue`}>
                   ${USDT_RATES[p.plan]}
                 </span>
                 <span className="text-[10px] text-text-muted ml-1">USDT</span>
               </td>
-              <td className={`${p.highlight ? "py-4" : "py-3"} px-2 text-right text-xs text-text-muted num hidden sm:table-cell`}>
+              <td className="py-2.5 px-2 text-right text-xs text-text-muted num hidden sm:table-cell">
                 {PLAN_DURATION_DAYS[p.plan]} 天
               </td>
-              <td className={`${p.highlight ? "py-4" : "py-3"} px-2 text-right`}>
+              <td className="py-2.5 px-2 text-right">
                 <Link
                   href="/membership"
                   className={`inline-block text-xs font-semibold px-3 py-1.5 ${

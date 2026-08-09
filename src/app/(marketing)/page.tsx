@@ -59,32 +59,27 @@ export default function Home() {
   );
 }
 
-// v22.0 Phase 7.6: ProductSection 加 h-full 跟 PricingSection 等高
+// v22.0 Phase 7.7: ProductSection header 跟 PricingSection 对称 (h2 + p), 链接放 trust 段
+// PM 截图: '会员订阅模块没有整体对齐右侧的产品中心模块' - 之前 ProductSection header 多了"全部 30+ 款"链接, 高度不一致
 function ProductSection() {
   return (
     <div className="flex flex-col h-full">
-      <div className="flex justify-between items-end mb-3 flex-wrap gap-2">
-        <div>
-          <h2 className="h2 mb-1">产品中心</h2>
-          <p className="text-xs text-text-muted">严选可商用 EA · MQL4 / MQL5 源码可读</p>
-        </div>
-        <Link
-          href="/products"
-          className="text-sm text-accent-blue hover:underline shrink-0"
-        >
-          全部 30+ 款 →
-        </Link>
+      <div className="mb-3">
+        <h2 className="h2 mb-1">产品中心</h2>
+        <p className="text-xs text-text-muted">严选可商用 EA · MQL4 / MQL5 源码可读</p>
       </div>
       <ProductGrid />
       <div className="mt-auto pt-3 border-t border-border text-[11px] text-text-muted text-center">
+        <Link href="/products" className="text-accent-blue hover:underline">全部 30+ 款 →</Link>
+        <span className="mx-1.5">·</span>
         持续更新中 · 每周新增
       </div>
     </div>
   );
 }
 
-// v22.0 Phase 7.6: PricingSection 加底部 trust 段, 跟 ProductSection 4 行高度对齐
-// PM: '产品模块减少行数迁就会员订阅模块回到最佳比例, 左右两边保持一致高度'
+// v22.0 Phase 7.7: 改 trust 段为单行短内容 (避免 wrap), mt-auto 推到底部
+// PM 截图: '会员订阅模块没有整体对齐右侧的产品中心模块' - 之前 3 行 trust 段在窄列 wrap 后变成 6-9 行
 function PricingSection() {
   return (
     <div className="flex flex-col h-full">
@@ -93,19 +88,8 @@ function PricingSection() {
         <p className="text-xs text-text-muted">3 档订阅服务 · 严选品质</p>
       </div>
       <PricingTable />
-      <div className="mt-auto pt-3 border-t border-border text-[11px] text-text-muted space-y-1">
-        <div className="flex items-center gap-1.5">
-          <span className="text-accent-up">✓</span>
-          <span>7 天无理由退订 · 链上 USDT 收银</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-accent-up">✓</span>
-          <span>工单 4 小时响应 · 严选可商用</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-accent-up">✓</span>
-          <span>30+ 款 EA / 指标 / 工具 不限次下载</span>
-        </div>
+      <div className="mt-auto pt-3 border-t border-border text-[11px] text-text-muted text-center">
+        ✓ 7天退订 · 链上USDT · 4h工单
       </div>
     </div>
   );
