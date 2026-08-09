@@ -9,7 +9,8 @@ export async function ProductGrid() {
   const products = await prisma.product.findMany({
     where: { isActive: true },
     orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-    take: 8,
+    // v22.0 Phase 7.6: 减到 4 行 (1 表头 + 3 数据) - 跟 PricingTable 4 行高度一致 (PM: 左右保持一致高度)
+    take: 4,
     select: {
       id: true,
       name: true,
