@@ -20,13 +20,13 @@ export default function GplNoticePage() {
     <div className="min-h-screen bg-bg-primary">
       <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-12">
         <header className="mb-8 border-b border-border pb-6">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2 text-text-primary">免责声明与开源合规声明</h1>
+          <h1 className="h1 mb-2">免责声明与开源合规声明</h1>
           <p className="text-xs text-text-muted">最后更新: 2026-07-30</p>
         </header>
 
         {/* 金融免责（最高优先级） */}
         <section className="card-base p-5 border-l-4 border-l-accent-down mb-8">
-          <h2 className="text-lg font-semibold mt-0 mb-3 text-accent-down">⚠️ 量化交易高风险警示</h2>
+          <h2 className="h2 mt-0 mb-3 text-accent-down">⚠️ 量化交易高风险警示</h2>
           <p className="text-sm text-text-primary font-semibold mb-2">
             CProTrading 提供的所有策略与指标源文件仅作编程学习与历史数据回测用途。
             实盘市场环境复杂多变，任何使用本站工具导致的交易亏损均由用户自行承担。
@@ -38,7 +38,7 @@ export default function GplNoticePage() {
 
         {/* 开源合规再分发 */}
         <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-3 text-text-primary">开源合规再分发说明</h2>
+          <h2 className="h2 mb-3">开源合规再分发说明</h2>
           <div className="card-base p-5 text-sm text-text-secondary leading-relaxed space-y-3">
             <p>
               本平台开源专区收录的资源，其原始版权归原作者所有。
@@ -53,7 +53,7 @@ export default function GplNoticePage() {
 
         {/* 协议风险提示 */}
         <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-3 text-text-primary">协议风险提示</h2>
+          <h2 className="h2 mb-3">协议风险提示</h2>
           <div className="card-base overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-bg-tertiary text-text-secondary">
@@ -78,7 +78,7 @@ export default function GplNoticePage() {
 
         {/* 联系方式 */}
         <section className="card-base p-5 mb-8">
-          <h2 className="text-lg font-semibold mt-0 mb-3 text-text-primary">联系方式</h2>
+          <h2 className="h2 mt-0 mb-3">联系方式</h2>
           <p className="text-sm text-text-secondary mb-2">
             品宣与商务合作: 微信 <code className="font-mono">Lookee333</code>
           </p>
