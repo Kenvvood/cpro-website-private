@@ -38,7 +38,7 @@ export default async function TutorialsPage() {
         </header>
 
         {tutorials.length === 0 ? (
-          <div className="card-base p-12 text-center text-text-muted">暂无已发布研报</div>
+          <div className="text-center text-text-muted text-sm py-8 border-y border-border">暂无已发布研报</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {tutorials.map((t) => (
@@ -47,7 +47,7 @@ export default async function TutorialsPage() {
           </div>
         )}
 
-        <footer className="mt-12 card-base p-4 text-xs text-text-secondary">
+        <footer className="mt-12 border-t border-border pt-4 text-xs text-text-secondary leading-relaxed">
           <strong className="text-text-primary">免责声明：</strong>
           本研报由 CProTrading 城诺科技投研团队基于开源源码分析撰写，不构成任何投资建议。
           实盘交易盈亏自负。联系方式：微信 Lookee333

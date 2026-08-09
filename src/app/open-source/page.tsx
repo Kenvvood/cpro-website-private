@@ -66,7 +66,7 @@ export default async function OpenSourcePage({
         </header>
 
       {releases.length === 0 ? (
-        <div className="card-base p-12 text-center text-text-muted">
+        <div className="text-center text-text-muted text-sm py-8 border-y border-border">
           <p>未找到匹配的开源资源</p>
           <Link href="/open-source" className="mt-2 inline-block text-sm text-accent-blue hover:underline">
             清除筛选
@@ -115,7 +115,7 @@ export default async function OpenSourcePage({
       )}
 
       {/* 法律免责 */}
-      <footer className="mt-12 card-base p-4 text-xs text-text-secondary">
+      <footer className="mt-12 border-t border-border pt-4 text-xs text-text-secondary leading-relaxed">
         <strong className="text-text-primary">合规声明：</strong>
         本专区资源依据开源协议合规再分发，已下载者可按原始协议条款自由再分发。
         所有资源保留原作者版权，CProTrading 仅做技术中性的表达层包装，不修改核心算法。
