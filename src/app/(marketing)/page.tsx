@@ -5,10 +5,12 @@ import { StatsBar } from "@/components/features/StatsBar";
 import { ProductGrid } from "@/components/features/ProductGrid";
 import { HowItWorks } from "@/components/features/HowItWorks";
 import { PricingTable } from "@/components/features/PricingTable";
+import { AuthorInsights } from "@/components/features/AuthorInsights";
 import { Footer } from "@/components/layout/footer";
 
 // L4 v1.7: 5 区块首页 (修回简洁, 黄金外汇专精)
-// 1.Ticker 2.Hero 3.StatsBar 4.ProductGrid 5.HowItWorks 6.Pricing 7.Footer
+// v22.0 Phase 3: 6 区块 (+作者分享) — 借鉴 forex.eastmoney 外汇快讯 UI
+// 1.Ticker 2.Hero 3.StatsBar 4.ProductGrid 5.HowItWorks 6.Pricing 7.AuthorInsights 8.Footer
 // 删 v1.6 的 MarketOverview (12品种) + WhyUs (4特性套话)
 export default function Home() {
   return (
@@ -30,6 +32,9 @@ export default function Home() {
 
         {/* 区块 5: 会员订阅 3 档 */}
         <PricingSection />
+
+        {/* 区块 6: 作者分享 (v22.0 Phase 3) - 借鉴 forex.eastmoney 外汇快讯展示方式 */}
+        <AuthorInsights />
       </main>
 
       <Footer />
