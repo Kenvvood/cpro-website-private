@@ -16,20 +16,20 @@ const PLANS: Array<{
     plan: "WEEKLY",
     label: "周付会员",
     priceUSDT: "$3.6 USDT",
-    desc: "7 天权限 · 严选可商用 EA 库与投研教程",
+    desc: "7 天入门 · 全站 EA 随心用 + 投研教程",
   },
   {
     plan: "MONTHLY",
     label: "月付会员",
     priceUSDT: "$8.8 USDT",
-    desc: "30 天权限 · 严选 EA + 合规开源专区 + 投研教程",
+    desc: "30 天持续 · 全站资源随心用 + 投研教程",
     popular: true,
   },
   {
     plan: "ANNUAL",
     label: "年付会员",
     priceUSDT: "$36.6 USDT",
-    desc: "365 天权限 · 含 6 个月持续更新，性价比最优",
+    desc: "365 天长期 · 持续更新中 · 工作室级保障",
   },
 ];
 
