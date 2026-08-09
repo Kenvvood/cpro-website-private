@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 
 // L4 v1.7: 4 KPI → 2 KPI (PM 反馈过度展示)
 // v21.0 season2: 不再展示具体数字 (PM: 50 款起 + 持续更新, 不应给具体数字)
-// 保留 DB 查询供未来动态展示, 但 UI 只显示"持续更新中"承诺
+// v22.0 Phase 2.1-B: 去 card-base → 改 1 张密集行 + 1px 底边线 (fxssi / cn.investing 风格)
 export async function StatsBar() {
   // 保留查询以备未来需要动态数字 (counts util)
   await Promise.all([
@@ -16,17 +16,15 @@ export async function StatsBar() {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 max-w-2xl">
+    // 1 张密集行 (2 列各 50%, 1px 底边线分隔) — 反 AI 卡片感
+    <div className="flex border-y border-border divide-x divide-border max-w-2xl">
       {stats.map((s) => (
-        <div key={s.label} className="card-base p-4 lg:p-6">
-          <div className="text-lg font-semibold text-accent-blue">
+        <div key={s.label} className="flex-1 py-3 px-4 first:pl-0 last:pr-0">
+          <div className="text-base font-semibold text-text-primary">
             {s.tag}
           </div>
-          <div className="text-xs text-text-muted mt-2 uppercase tracking-wider">
-            {s.label}
-          </div>
-          <div className="text-xs text-text-secondary mt-1">
-            {s.note}
+          <div className="text-[10px] text-text-muted mt-0.5">
+            {s.label} · <span className="text-accent-up">{s.note}</span>
           </div>
         </div>
       ))}
