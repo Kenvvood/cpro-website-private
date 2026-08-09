@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Code2, Zap } from "lucide-react";
+import { ArrowRight, Code2, Zap, Calculator } from "lucide-react";
 import { BRAND } from "@/config/brand";
 
 // L4 v1.7: 修回简洁 (PM 反馈 v1.6 过度拟合)
@@ -15,9 +15,9 @@ export function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* 左: 文案 + CTA */}
           <div className="flex flex-col">
-            {/* 状态徽章 */}
+            {/* 状态徽章 - v22.0 Phase 4.8: 去圆点动画 → 方块 (人味化, 不"live online"模板感) */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 text-xs font-semibold border border-border rounded-sm bg-bg-secondary w-fit">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-up" />
+              <span className="inline-block w-2 h-2 bg-accent-blue" />
               <span>首批精选 · 已上线 · 持续更新 · 严选订阅服务 · USDT 收银</span>
             </div>
 
@@ -66,6 +66,12 @@ export function Hero() {
               <div className="flex items-center gap-1.5">
                 <Zap size={12} className="text-accent-gold" />
                 <span>USDT 周 / 月 / 年付</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Calculator size={12} className="text-accent-up" />
+                <Link href="/tools" className="hover:text-text-primary transition-colors">
+                  6 款实战工具
+                </Link>
               </div>
             </div>
           </div>
