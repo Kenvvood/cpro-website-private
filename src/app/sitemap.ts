@@ -1,9 +1,6 @@
 // task060 3.1: sitemap.xml (架构师 8/8 [已批准])
-// task068 v5: Vercel prerender 时 DB 表可能不存在, force-dynamic 跳过 prerender
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
-
-export const dynamic = "force-dynamic";
 
 const SITE_URL = "https://www.cprotrading.com";
 

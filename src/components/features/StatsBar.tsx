@@ -1,20 +1,14 @@
 import { prisma } from "@/lib/prisma";
 
-// L4 v1.7: 4 KPI → 2 KPI
-// task068 v4: DB 错误兜底 — 构建/运行时不阻塞页面渲染
+// L4 v1.7: 4 KPI → 2 KPI (PM 反馈过度展示)
+// 只留 "商品总数" + "教程研报", 跟黄金外汇核心业务直接相关
+// 删 "开源版本" + "当前可商用" 分散指标
+// L4 v1.5 修复保留: publishedAt 过滤 (DB 11,242 全 NULL, 显示 0 诚实)
 export async function StatsBar() {
-  let productCount = 0;
-  let tutorialCount = 0;
-  try {
-    const [pc, tc] = await Promise.all([
-      prisma.product.count({ where: { isActive: true, publishedAt: { not: null } } }).catch(() => 0),
-      prisma.openSourceTutorial.count({ where: { status: "PUBLISHED", publishedAt: { not: null } } }).catch(() => 0),
-    ]);
-    productCount = pc;
-    tutorialCount = tc;
-  } catch {
-    /* DB 不可用, 显示 0 占位 */
-  }
+  const [productCount, tutorialCount] = await Promise.all([
+    prisma.product.count({ where: { isActive: true, publishedAt: { not: null } } }),
+    prisma.openSourceTutorial.count({ where: { status: "PUBLISHED", publishedAt: { not: null } } }),
+  ]);
 
   const stats = [
     { label: "商品总数", value: productCount.toLocaleString(), suffix: "款" },
