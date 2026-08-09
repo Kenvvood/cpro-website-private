@@ -26,10 +26,15 @@
   --accent-up:   #26a69a;
   --accent-down: #ef5350;
 
-  /* 字号 / 间距 / 圆角 */
-  --font-zh:     'Microsoft YaHei', sans-serif;
-  --font-en:     'Arial Black', sans-serif;
-  --font-number: 'Arial Black', Consolas, monospace;
+  /* 字号 / 间距 / 圆角
+   * v22.0 Phase 1: 字体借鉴 cn.investing.com / fxssi.com
+   * --font-inter / --font-noto-sc 由 layout.tsx 的 next/font/google 注入
+   * (Next.js 15+ build 时自托管字体, 运行时零外部依赖)
+   * 回退链保留 Microsoft YaHei / Arial (防止 build 失败降级)
+   */
+  --font-zh:     var(--font-noto-sc), 'Microsoft YaHei', sans-serif;
+  --font-en:     var(--font-inter), 'Arial', sans-serif;
+  --font-number: var(--font-inter), Consolas, monospace;
   --spacing-base: 8px;
   --radius-sm: 4px;
   --radius-md: 6px;

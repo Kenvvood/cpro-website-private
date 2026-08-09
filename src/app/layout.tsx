@@ -1,10 +1,25 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { Header } from "@/components/layout/header";
 import { BRAND } from "@/config/brand";
 
-// task052 L1 C8: 字体 → Microsoft YaHei (CSS var 驱动, 无 next/font/google 离线依赖)
+// v22.0 Phase 1: 字体借鉴 cn.investing.com / fxssi.com
+// Inter (拉丁) + Noto Sans SC (中文) - Next.js build 时自托管, 运行时零外部依赖
+// 探查 (outbox/probe_fonts.log): ECS build 可访问 fonts.googleapis.com
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
+});
+const notoSC = Noto_Sans_SC({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '500', '700'],
+  variable: '--font-noto-sc',
+});
 
 export const metadata: Metadata = {
   title: `${BRAND.name.zh} - ${BRAND.slogan.zh}`,
@@ -22,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" className={`${inter.variable} ${notoSC.variable}`}>
       <body>
         {/* task052 L1: 删除左上角 glossy-badge 浮窗 (违和感, 已被 Header 替代) */}
         <Header />
