@@ -69,7 +69,7 @@ export default function AccountPage() {
         <div className="max-w-md w-full px-4">
           <div className="card-base p-8 text-center">
             <UserIcon size={48} className="text-accent-blue mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-3 text-text-primary">登录后查看</h2>
+            <h2 className="h2 mb-3">登录后查看</h2>
             <p className="text-sm text-text-secondary mb-6">
               登录后即可查看个人信息、下载记录和会员权益
             </p>
@@ -96,7 +96,7 @@ export default function AccountPage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
         <header className="border-b border-border pb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2 text-text-primary">个人中心</h1>
+            <h1 className="h1 mb-2">个人中心</h1>
             <p className="text-sm text-text-secondary">管理您的账号信息和会员权益</p>
           </div>
           <div className="flex items-center gap-2 text-sm">
@@ -131,7 +131,7 @@ export default function AccountPage() {
                   <UserIcon size={28} className="text-accent-blue" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-text-primary">{user.username}</h3>
+                  <h3 className="h3">{user.username}</h3>
                   <p className="text-xs text-text-muted">付费会员</p>
                 </div>
               </div>
@@ -147,7 +147,7 @@ export default function AccountPage() {
             </div>
 
             <div className="card-base p-6">
-              <h3 className="text-lg font-semibold mb-4 text-text-primary">会员权益</h3>
+              <h3 className="h3 mb-4">会员权益</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[
                   { title: "全部 EA 下载", desc: "智能交易系统" },
@@ -168,7 +168,7 @@ export default function AccountPage() {
 
         {activeTab === "downloads" && (
           <div className="card-base p-6">
-            <h3 className="text-lg font-semibold mb-4 text-text-primary">下载记录</h3>
+            <h3 className="h3 mb-4">下载记录</h3>
             {downloads.length > 0 ? (
               <div className="space-y-2">
                 {downloads.map((record) => (

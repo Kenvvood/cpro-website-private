@@ -91,7 +91,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-bg-primary">
       <div className="w-full max-w-md px-8">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold mb-2">
+          <h1 className="h1 mb-2">
             <span className="text-accent-blue">CPro</span>Trading
           </h1>
           <p className="text-sm text-text-secondary">
