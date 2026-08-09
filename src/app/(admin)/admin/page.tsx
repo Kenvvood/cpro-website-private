@@ -96,7 +96,7 @@ export default function AdminPage() {
         {/* Admin Header */}
         <header className="border-b border-border bg-bg-secondary">
           <div className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-6">
-            <h1 className="text-2xl lg:text-3xl font-bold mb-2 text-text-primary">管理后台</h1>
+            <h1 className="h1 mb-2">管理后台</h1>
             <p className="text-sm text-text-secondary">管理用户、产品推广和消息推送</p>
           </div>
         </header>
@@ -297,7 +297,7 @@ export default function AdminPage() {
                 {stats.products.map((item) => (
                   <div key={item.id} className="p-6 card-base">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-sm font-medium text-gray-100">
+                      <h3 className="h4 text-gray-100">
                         {item.name}
                       </h3>
                       <span className="text-2xl font-bold text-accent">
@@ -323,7 +323,7 @@ export default function AdminPage() {
           {activeTab === "messages" && (
             <div className="max-w-2xl space-y-6">
               <div className="p-6 card-base">
-                <h3 className="text-lg font-bold mb-4 text-gray-100">
+                <h3 className="h3 mb-4 text-gray-100">
                   发送消息
                 </h3>
                 <div className="space-y-4">

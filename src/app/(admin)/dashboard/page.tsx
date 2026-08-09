@@ -98,7 +98,7 @@ export default async function DashboardPage() {
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-8 space-y-8">
       <header className="border-b border-border pb-6">
-        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-text-primary">总览仪表盘</h1>
+        <h1 className="h1 mb-2">总览仪表盘</h1>
         <p className="text-sm text-text-secondary">CProTrading 商业化中枢实时监控 · 数据来源 master.db</p>
       </header>
 
@@ -120,7 +120,7 @@ export default async function DashboardPage() {
 
       {/* Top 10 漏斗表 */}
       <div>
-        <h2 className="text-lg font-semibold mb-3 text-text-primary">Top 10 转化漏斗 (按升级数排序)</h2>
+        <h2 className="h2 mb-3">Top 10 转化漏斗 (按升级数排序)</h2>
         <div className="rounded-lg border border-border overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-muted text-xs uppercase">
