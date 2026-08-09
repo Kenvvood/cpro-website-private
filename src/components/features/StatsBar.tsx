@@ -21,7 +21,7 @@ export async function StatsBar() {
     // v22.0 Phase 7.0: 4 列 data strip + 时间戳右对齐 (浅灰底色由 page.tsx 提供)
     <div className="flex items-center divide-x divide-border">
       {stats.map((s) => (
-        <div key={s.label} className="flex-1 py-3 px-4 first:pl-0 last:pr-0">
+        <div key={s.label} className="flex-1 py-2 px-4 first:pl-0 last:pr-0">
           <div className="text-sm font-semibold text-text-primary">
             {s.tag}
           </div>

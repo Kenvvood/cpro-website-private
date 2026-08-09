@@ -63,7 +63,7 @@ export function HowItWorks() {
         {STEPS.map((s) => {
           const Icon = s.icon;
           return (
-            <div key={s.n} className="py-5 grid grid-cols-[auto_1fr] gap-4 items-start hover:bg-bg-primary transition-colors -mx-2 px-2">
+            <div key={s.n} className="py-3 grid grid-cols-[auto_1fr] gap-4 items-start hover:bg-bg-primary transition-colors -mx-2 px-2">
               <div className="flex flex-col items-start gap-2 w-16">
                 <span className="text-3xl lg:text-4xl font-bold num text-accent-blue/40 leading-none">
                   {s.n}

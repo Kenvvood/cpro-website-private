@@ -10,9 +10,9 @@ import { BRAND } from "@/config/brand";
 // - 钩子从 4 缩到 2 (MQL 源码可读 + USDT 周月年付)
 export function Hero() {
   return (
-    <section className="border-b border-border bg-bg-primary">
-      <div className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-12 lg:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+    <section>
+      <div className="w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 lg:gap-10 items-center">
           {/* 左: 文案 + CTA */}
           <div className="flex flex-col">
             {/* 状态徽章 - v22.0 Phase 2.1-A: 去边框 + 去底色 → 纯文字 (cn.investing 顶部风格, 反 AI 卡片感) */}
@@ -24,14 +24,14 @@ export function Hero() {
             </div>
 
             {/* 巨型标题 - FXSSI 调性: 客户视角 + 行动引导 + 决策辅助 */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-6 text-text-primary">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight mb-4 text-text-primary">
               看见<span className="text-accent-blue">市场</span>
               <br />
               决策有据
             </h1>
 
             {/* 副标: 黄金外汇专精 + 情绪辅助 */}
-            <p className="text-base lg:text-lg text-text-secondary mb-8 max-w-xl leading-relaxed">
+            <p className="text-sm lg:text-base text-text-secondary mb-6 max-w-xl leading-relaxed">
               <span className="text-text-primary font-semibold num">XAUUSD 黄金</span>
               <span> · </span>
               <span className="text-text-primary font-semibold num">EURUSD / GBPUSD</span>
@@ -42,7 +42,7 @@ export function Hero() {
             </p>
 
             {/* 单 CTA (主) + 次 CTA - FXSSI 调性: 行动闭环 */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            <div className="flex flex-col sm:flex-row gap-2 mb-4">
               <Link
                 href="/membership"
                 className="btn-primary inline-flex items-center justify-center gap-2 text-base px-6 py-3"

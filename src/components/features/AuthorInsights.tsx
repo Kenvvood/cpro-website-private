@@ -58,7 +58,7 @@ export function AuthorInsights() {
   return (
     <section>
       {/* 区块头: left-aligned + 行业细节 + 本周新增小标识 (v22.0 Phase 7.0 破节奏) */}
-      <div className="flex justify-between items-end mb-6 flex-wrap gap-2">
+      <div className="flex justify-between items-end mb-3 flex-wrap gap-2">
         <div>
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <h2 className="h2">作者分享</h2>
