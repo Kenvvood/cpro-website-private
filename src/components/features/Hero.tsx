@@ -15,10 +15,12 @@ export function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* 左: 文案 + CTA */}
           <div className="flex flex-col">
-            {/* 状态徽章 - v22.0 Phase 4.8: 去圆点动画 → 方块 (人味化, 不"live online"模板感) */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 text-xs font-semibold border border-border rounded-sm bg-bg-secondary w-fit">
-              <span className="inline-block w-2 h-2 bg-accent-blue" />
-              <span>首批精选 · 已上线 · 持续更新 · 严选订阅服务 · USDT 收银</span>
+            {/* 状态徽章 - v22.0 Phase 2.1-A: 去边框 + 去底色 → 纯文字 (cn.investing 顶部风格, 反 AI 卡片感) */}
+            <div className="flex items-center gap-2 mb-6 text-xs text-text-muted">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-up" />
+              <span className="num">2026-08-09</span>
+              <span className="text-text-secondary">·</span>
+              <span>首批精选 · 已上线 · 持续更新 · 严选订阅服务</span>
             </div>
 
             {/* 巨型标题 - FXSSI 调性: 客户视角 + 行动引导 + 决策辅助 */}
