@@ -13,14 +13,16 @@ export async function StatsBar() {
   const stats = [
     { label: "商品中心", tag: "严选 MQL 量化武器", note: "持续更新中" },
     { label: "投研教程", tag: "基于开源 EA 深度解析", note: "每周新增" },
+    { label: "实战工具", tag: "XAUUSD / 外汇计算器", note: "客户端运算" },
+    { label: "开源专区", tag: "合规再分发协议", note: "可商用" },
   ];
 
   return (
-    // 1 张密集行 (2 列各 50%, 1px 底边线分隔) — 反 AI 卡片感
-    <div className="flex border-y border-border divide-x divide-border max-w-2xl">
+    // v22.0 Phase 7.0: 4 列 data strip + 时间戳右对齐 (浅灰底色由 page.tsx 提供)
+    <div className="flex items-center divide-x divide-border">
       {stats.map((s) => (
         <div key={s.label} className="flex-1 py-3 px-4 first:pl-0 last:pr-0">
-          <div className="text-base font-semibold text-text-primary">
+          <div className="text-sm font-semibold text-text-primary">
             {s.tag}
           </div>
           <div className="text-[10px] text-text-muted mt-0.5">
@@ -28,6 +30,9 @@ export async function StatsBar() {
           </div>
         </div>
       ))}
+      <div className="text-[10px] text-text-muted num pl-4 shrink-0">
+        更新于 2026-08-09
+      </div>
     </div>
   );
 }

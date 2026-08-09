@@ -57,12 +57,17 @@ export function AuthorInsights() {
 
   return (
     <section>
-      {/* 区块头: left-aligned + 行业细节 */}
-      <div className="flex justify-between items-end mb-6">
+      {/* 区块头: left-aligned + 行业细节 + 本周新增小标识 (v22.0 Phase 7.0 破节奏) */}
+      <div className="flex justify-between items-end mb-6 flex-wrap gap-2">
         <div>
-          <h2 className="h2 mb-1">作者分享</h2>
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <h2 className="h2">作者分享</h2>
+            <span className="text-[10px] font-semibold text-accent-up border border-accent-up/30 bg-accent-up/5 px-1.5 py-0.5">
+              本周新增 2 篇
+            </span>
+          </div>
           <p className="text-xs text-text-muted">
-            站长 Lookee · 量化交易架构师 · CProTrading 城诺科技 · 真实开发与交易经验分享
+            站长 Lookee · 量化交易架构师 · CProTrading 城诺科技 · 真实开发与交易经验分享 · 最近更新 2026-08-08
           </p>
         </div>
         <a href="/content" className="text-sm text-accent-blue hover:underline shrink-0">

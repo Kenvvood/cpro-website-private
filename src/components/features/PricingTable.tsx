@@ -13,6 +13,7 @@ export function PricingTable() {
 
   return (
     // 1 张密集表格 (3 行, fxssi 价格表风格)
+    // v22.0 Phase 7.0: 中间档"推荐" - 行高 + 蓝边 + 徽章 + 强调
     <div className="border-y border-border">
       <table className="w-full text-sm">
         <thead>
@@ -28,31 +29,37 @@ export function PricingTable() {
           {plans.map((p) => (
             <tr
               key={p.plan}
-              className={`border-b border-border last:border-0 hover:bg-bg-tertiary transition-colors ${
-                p.highlight ? "bg-accent-blue/5" : ""
+              className={`border-b border-border last:border-0 transition-colors ${
+                p.highlight
+                  ? "bg-accent-blue/5 border-l-2 border-l-accent-blue hover:bg-accent-blue/10"
+                  : "hover:bg-bg-tertiary"
               }`}
             >
-              <td className="py-3 px-2">
-                <div className="flex items-center gap-2">
+              <td className={`${p.highlight ? "py-4" : "py-3"} px-2`}>
+                <div className="flex items-center gap-2 flex-wrap">
                   {p.highlight && (
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-blue" />
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-accent-blue border border-accent-blue px-1.5 py-0.5 bg-bg-primary">
+                      推荐
+                    </span>
                   )}
                   <span className={`text-sm font-semibold ${p.highlight ? "text-accent-blue" : "text-text-primary"}`}>
                     {p.label}
                   </span>
                 </div>
               </td>
-              <td className="py-3 px-2 text-xs text-text-secondary hidden sm:table-cell">
+              <td className={`${p.highlight ? "py-4" : "py-3"} px-2 text-xs text-text-secondary hidden sm:table-cell`}>
                 {p.desc}
               </td>
-              <td className="py-3 px-2 text-right num">
-                <span className="text-lg font-bold text-accent-blue">${USDT_RATES[p.plan]}</span>
+              <td className={`${p.highlight ? "py-4" : "py-3"} px-2 text-right num`}>
+                <span className={`${p.highlight ? "text-2xl" : "text-lg"} font-bold text-accent-blue`}>
+                  ${USDT_RATES[p.plan]}
+                </span>
                 <span className="text-[10px] text-text-muted ml-1">USDT</span>
               </td>
-              <td className="py-3 px-2 text-right text-xs text-text-muted num hidden sm:table-cell">
+              <td className={`${p.highlight ? "py-4" : "py-3"} px-2 text-right text-xs text-text-muted num hidden sm:table-cell`}>
                 {PLAN_DURATION_DAYS[p.plan]} 天
               </td>
-              <td className="py-3 px-2 text-right">
+              <td className={`${p.highlight ? "py-4" : "py-3"} px-2 text-right`}>
                 <Link
                   href="/membership"
                   className={`inline-block text-xs font-semibold px-3 py-1.5 ${
