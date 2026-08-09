@@ -48,8 +48,7 @@ export async function ProductGrid() {
           {products.map((p, i) => (
             <tr
               key={p.id}
-              className="border-b border-border last:border-0 hover:bg-bg-tertiary transition-colors group cursor-pointer"
-              onClick={() => window.location.href = `/products/${p.id}`}
+              className="border-b border-border last:border-0 hover:bg-bg-tertiary transition-colors group"
             >
               <td className="py-2.5 px-2 text-text-muted num text-xs w-12">
                 {String(i + 1).padStart(2, "0")}
