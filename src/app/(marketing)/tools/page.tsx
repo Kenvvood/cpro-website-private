@@ -2,13 +2,10 @@
 // v22.0 Phase 4.1: 工具区首页 (6 工具卡片网格入口)
 // v22.0 Phase 2.1-E: 去 6 卡片 → 1 张密集表格 (反 AI 卡片感)
 // 借鉴 dailyfx.com.hk 的工具列表 (密集行 + 1px 底边线)
+"use client";
 import Link from "next/link";
 import { TOOLS } from "./layout";
-
-export const metadata = {
-  title: "交易者工具箱 - CProTrading",
-  description: "XAUUSD 与外汇主流对的实战计算工具: 斐波那契回撤 / 枢轴点 / 持仓规模 / 点值&盈亏 / 风险回报比 / 汇率换算",
-};
+// v22.0 Phase 2.1-E-fix: use client 不支持 export const metadata, 移除
 
 export default function ToolsPage() {
   return (
