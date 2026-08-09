@@ -12,7 +12,7 @@ export function Hero() {
   return (
     <section>
       <div className="w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 lg:gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-center">
           {/* 左: 文案 + CTA */}
           <div className="flex flex-col">
             {/* 状态徽章 - v22.0 Phase 2.1-A: 去边框 + 去底色 → 纯文字 (cn.investing 顶部风格, 反 AI 卡片感) */}
@@ -24,7 +24,7 @@ export function Hero() {
             </div>
 
             {/* 巨型标题 - FXSSI 调性: 客户视角 + 行动引导 + 决策辅助 */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight mb-4 text-text-primary">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold leading-[1.1] tracking-tight mb-4 text-text-primary">
               看见<span className="text-accent-blue">市场</span>
               <br />
               决策有据
@@ -92,8 +92,8 @@ export function Hero() {
                   peterthomet/Trade_Manager.mq5
                 </span>
               </div>
-              {/* 代码块 */}
-              <pre className="px-4 py-3 text-[11px] leading-relaxed font-mono text-text-secondary overflow-x-auto">
+              {/* 代码块 - v22.0 Phase 7.2: text-[10px] 防止大屏溢出 */}
+              <pre className="px-3 py-2.5 text-[10px] leading-snug font-mono text-text-secondary overflow-x-auto">
                 <code>
                   <span className="text-text-muted">{"// 仓位风控 - 单笔手数 + 总仓上限 + Magic 校验"}</span>
                   {"\n"}
