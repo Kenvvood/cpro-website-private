@@ -14,8 +14,9 @@ export function PricingTable() {
   return (
     // 1 张密集表格 (3 行, fxssi 价格表风格)
     // v22.0 Phase 7.0: 中间档"推荐" - 行高 + 蓝边 + 徽章 + 强调
-    <div className="border-y border-border">
-      <table className="w-full text-sm">
+    // v22.0 Phase 7.5: 去掉 max-w-4xl mx-auto 居中 (page.tsx grid 控宽)
+    <div className="border-y border-border overflow-x-auto">
+      <table className="w-full text-sm min-w-[280px]">
         <thead>
           <tr className="text-[10px] uppercase tracking-wider text-text-muted border-b border-border">
             <th className="text-left py-2 px-2 font-normal">档位</th>
