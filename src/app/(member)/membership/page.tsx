@@ -21,7 +21,7 @@ export default async function MembershipPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="text-3xl font-bold mb-2">CProTrading 会员订阅</h1>
+      <h1 className="h1 mb-3">CProTrading 会员订阅</h1>
       <p className="text-muted-foreground mb-8">
         付费会员解锁持续收录的合规开源再分发资源 · 含中文教程 · 含专属社区
       </p>

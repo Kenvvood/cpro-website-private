@@ -20,8 +20,8 @@ export default async function ProductsPage({ searchParams }: Props) {
     <div className="min-h-screen bg-bg-primary">
       <header className="border-b border-border bg-bg-secondary">
         <div className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-8">
-          <h1 className="text-2xl lg:text-3xl font-bold mb-2 text-text-primary">产品中心</h1>
-          <p className="text-sm text-text-secondary">严选 MQL 量化武器 · 持续更新中 · 注册会员可下载</p>
+          <h1 className="h1 mb-3 text-text-primary">产品中心</h1>
+          <p className="text-sm text-text-secondary leading-relaxed">严选 MQL 量化武器 · 持续更新中 · 注册会员可下载</p>
         </div>
       </header>
 

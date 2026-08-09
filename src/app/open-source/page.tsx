@@ -44,7 +44,7 @@ export default async function OpenSourcePage({
     <div className="min-h-screen bg-bg-primary">
       <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-12">
         <header className="mb-8 border-b border-border pb-6">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2 text-text-primary">开源合规再分发专区</h1>
+          <h1 className="h1 mb-3 text-text-primary">开源合规再分发专区</h1>
           <p className="text-sm text-text-secondary">
             CProTrading 城诺科技持续收录开源 EA / 指标 / 脚本。
             所有资源保留原作者版权，本平台仅做表达层汉化包装，不修改核心算法。付费会员可下载，已下载者可按原始协议自由再分发。

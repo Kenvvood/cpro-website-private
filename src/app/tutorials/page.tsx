@@ -26,7 +26,7 @@ export default async function TutorialsPage() {
       <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-12">
         <header className="mb-8 border-b border-border pb-6">
           <div className="flex items-baseline gap-3 mb-2">
-            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">投研研报</h1>
+            <h1 className="h1 text-text-primary">投研研报</h1>
             <span className="text-xs text-text-muted">CProTrading 投研</span>
           </div>
           <p className="text-sm text-text-secondary">
