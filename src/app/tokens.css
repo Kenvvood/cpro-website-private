@@ -5,19 +5,21 @@
  * ARCHIVE v11.0 + v12.0 (UI_TRADINGVIEW_RESTART) 锁定
  */
 :root {
-  /* 背景 (Gemini TV 风冷灰深蓝) */
-  --bg-primary:   #131722;
-  --bg-secondary: #1e222d;
-  --bg-tertiary:  #2a2e39;
+  /* 背景 (v22.0 Phase 2.1-G: 借鉴 cn.investing.com 错落有致风 - 白底)
+   * 主背景纯白 / 次背景浅灰(header, footer) / 三级浅灰(hover)
+   */
+  --bg-primary:   #ffffff;
+  --bg-secondary: #f7f8fa;
+  --bg-tertiary:  #f0f2f5;
 
-  /* 文字 */
-  --text-primary:   #E0E0E0;
-  --text-secondary: #B2B5BE;
-  --text-muted:     #6A6E77;
+  /* 文字 (白底对应深色字) */
+  --text-primary:   #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-muted:     #888888;
 
-  /* 边框 (1px 哲学) */
-  --border-default: #2a2e39;
-  --border-strong:  #3a3e49;
+  /* 边框 (1px 浅灰哲学) */
+  --border-default: #e5e7eb;
+  --border-strong:  #d1d5db;
   --border-focus:   #2962FF;
 
   /* 强调色 (C2-A 拍板: TV 蓝主, 品牌金降级) */

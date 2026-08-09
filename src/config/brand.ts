@@ -24,22 +24,22 @@ export const BRAND = {
     svgPath: null as string | null,
   },
   colors: {
-    // === 背景层（TV 风冷灰深蓝） ===
+    // === 背景层 (v22.0 Phase 2.1-G: 借鉴 cn.investing.com 白底错落风) ===
     bg: {
-      primary:   '#131722',  // Gemini TV #131722
-      secondary: '#1e222d',  // Gemini TV #1e222d (卡片)
-      tertiary:  '#2a2e39',  // hover / 抬升层
+      primary:   '#ffffff',  // 主背景 - 纯白
+      secondary: '#f7f8fa',  // header/footer/section header 浅灰
+      tertiary:  '#f0f2f5',  // hover / 抬升层
     },
-    // === 文字层（偏灰白不刺眼） ===
+    // === 文字层（白底对应深色字） ===
     text: {
-      primary:   '#E0E0E0',
-      secondary: '#B2B5BE',
-      muted:     '#6A6E77',
+      primary:   '#1a1a1a',  // 主文字
+      secondary: '#4a4a4a',  // 次文字
+      muted:     '#888888',  // 弱化文字
     },
-    // === 边框（1px 哲学） ===
+    // === 边框（1px 浅灰哲学） ===
     border: {
-      default: '#2a2e39',
-      strong:  '#3a3e49',
+      default: '#e5e7eb',
+      strong:  '#d1d5db',
       focus:   '#2962FF',  // TV 蓝聚焦
     },
     // === 强调色（C2-A 拍板） ===
@@ -51,7 +51,7 @@ export const BRAND = {
     },
     // === 历史主色（仅字体/营销位用, 严禁替换 accent.* 语义） ===
     primary:    '#D4AF37',  // 品牌金 — 营销位/字体强调
-    background: '#131722',  // 主背景（=colors.bg.primary）
+    background: '#ffffff',  // 主背景（=colors.bg.primary, v22.0 Phase 2.1-G 白底）
     note: 'task052 L1 重构后, 新代码必须用嵌套结构 (colors.bg/text/border/accent); primary 仅字体/营销位用',
   },
   fonts: {
