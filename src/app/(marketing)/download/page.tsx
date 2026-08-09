@@ -98,22 +98,20 @@ export default function DownloadPage() {
         </header>
 
         {!isLoggedIn && (
-          <div className="card-base p-4 border-accent-blue/30">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <LockIcon size={20} className="text-accent-blue" />
-                <span className="text-sm text-text-secondary">
-                  登录付费会员后可下载全部产品
-                </span>
-              </div>
-              <div className="flex gap-3">
-                <Link href="/login" className="btn-outline text-sm">
-                  登录
-                </Link>
-                <Link href="/membership" className="btn-primary text-sm">
-                  立即开通
-                </Link>
-              </div>
+          <div className="border-y border-border py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <LockIcon size={20} className="text-accent-blue" />
+              <span className="text-sm text-text-secondary">
+                登录付费会员后可下载全部产品
+              </span>
+            </div>
+            <div className="flex gap-3">
+              <Link href="/login" className="btn-outline text-sm">
+                登录
+              </Link>
+              <Link href="/membership" className="btn-primary text-sm">
+                立即开通
+              </Link>
             </div>
           </div>
         )}
@@ -123,61 +121,77 @@ export default function DownloadPage() {
             <div className="flex items-center justify-center py-20">
               <Loader2Icon size={32} className="text-accent-blue animate-spin" />
             </div>
+          ) : products.length === 0 ? (
+            <div className="text-center text-text-muted text-sm py-8 border-y border-border">
+              暂无商品 (DB 已重置, seed 数据准备中)
+            </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.map((product) => (
-                <article key={product.id} className="card-base p-5">
-                  <div className="flex items-start justify-between mb-3">
-                    <span className="text-xs px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">
-                      {CATEGORY_LABEL[product.category] ?? product.category}
-                    </span>
-                    <span className="text-xs text-text-muted num">
-                      ↓ {product.downloadCount.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    {CATEGORY_ICON[product.category]}
-                    <h3 className="h3 text-text-primary line-clamp-2">
-                      {product.name}
-                    </h3>
-                  </div>
-                  <p className="text-sm text-text-secondary mb-4 line-clamp-2 min-h-[2.5rem]">
-                    {product.description}
-                  </p>
-                  <button
-                    onClick={() => handleDownload(product.id)}
-                    disabled={downloadingId === product.id}
-                    className="w-full btn-primary text-sm disabled:opacity-50"
-                  >
-                    {downloadingId === product.id ? (
-                      <>
-                        <Loader2Icon size={14} className="inline animate-spin mr-2" />
-                        处理中
-                      </>
-                    ) : (
-                      <>
-                        <DownloadIcon size={14} className="inline mr-2" />
-                        {isLoggedIn ? "下载" : "登录后下载"}
-                      </>
-                    )}
-                  </button>
-                </article>
-              ))}
+            <div className="border-y border-border">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-[10px] uppercase tracking-wider text-text-muted border-b border-border">
+                    <th className="text-left py-2 px-2 font-normal w-12">#</th>
+                    <th className="text-left py-2 px-2 font-normal hidden sm:table-cell w-16">分类</th>
+                    <th className="text-left py-2 px-2 font-normal">商品</th>
+                    <th className="text-left py-2 px-2 font-normal hidden md:table-cell">说明</th>
+                    <th className="text-right py-2 px-2 font-normal hidden sm:table-cell w-20">下载</th>
+                    <th className="text-right py-2 px-2 font-normal w-28">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.map((product, i) => (
+                    <tr key={product.id} className="border-b border-border last:border-0 hover:bg-bg-tertiary transition-colors">
+                      <td className="py-2.5 px-2 text-text-muted num text-xs w-12">{String(i + 1).padStart(2, "0")}</td>
+                      <td className="py-2.5 px-2 text-xs text-text-secondary hidden sm:table-cell w-16">
+                        {CATEGORY_LABEL[product.category] ?? product.category}
+                      </td>
+                      <td className="py-2.5 px-2 text-text-primary font-medium">
+                        {product.name}
+                      </td>
+                      <td className="py-2.5 px-2 text-xs text-text-muted hidden md:table-cell line-clamp-1">
+                        {product.description}
+                      </td>
+                      <td className="py-2.5 px-2 text-right text-xs text-text-muted num hidden sm:table-cell w-20">
+                        {product.downloadCount.toLocaleString()}
+                      </td>
+                      <td className="py-2.5 px-2 text-right w-28">
+                        <button
+                          onClick={() => handleDownload(product.id)}
+                          disabled={downloadingId === product.id}
+                          className="text-xs btn-primary disabled:opacity-50"
+                        >
+                          {downloadingId === product.id ? (
+                            <>
+                              <Loader2Icon size={12} className="inline animate-spin mr-1" />
+                              处理中
+                            </>
+                          ) : (
+                            <>
+                              <DownloadIcon size={12} className="inline mr-1" />
+                              {isLoggedIn ? "下载" : "登录后下载"}
+                            </>
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </section>
 
-        <section className="max-w-4xl card-base p-6">
+        <section className="max-w-4xl border-t border-border pt-6">
           <h2 className="h2 mb-4">使用说明</h2>
-          <ol className="space-y-3 text-sm text-text-secondary">
+          <ol className="text-sm text-text-secondary divide-y divide-border">
             {[
               "下载 EA / 指标文件后, 打开 MT4 或 MT5 终端",
               "点击「文件」→「打开数据文件夹」, 将文件粘贴到对应目录",
               "关闭并重新打开终端, 在导航器中找到 EA 或指标",
               "将 EA 拖到图表即可运行, 指标直接拖入图表即可显示",
             ].map((step, i) => (
-              <li key={i} className="flex items-start gap-3">
-                <span className="w-6 h-6 border border-border bg-bg-tertiary text-text-primary text-xs flex items-center justify-center shrink-0 mt-0.5 num">
+              <li key={i} className="flex items-start gap-3 py-3">
+                <span className="w-6 h-6 border border-border bg-bg-tertiary text-text-primary text-xs flex items-center justify-center shrink-0 num">
                   {i + 1}
                 </span>
                 <span>{step}</span>

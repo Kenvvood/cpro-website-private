@@ -16,16 +16,14 @@ export default function ContentPage() {
           </p>
         </header>
 
-        <section>
-          <div className="card-base p-8 text-center text-text-secondary">
-            <p className="text-base mb-2">{PLACEHOLDER_NOTE}</p>
-            <a
-              href="/tutorials"
-              className="text-accent-blue hover:underline text-sm"
-            >
-              → 查看已发布投研教程
-            </a>
-          </div>
+        <section className="border-t border-border pt-6">
+          <p className="text-sm text-text-secondary mb-3 leading-relaxed">{PLACEHOLDER_NOTE}</p>
+          <a
+            href="/tutorials"
+            className="text-sm text-accent-blue hover:underline"
+          >
+            → 查看已发布投研教程
+          </a>
         </section>
       </main>
       <Footer />

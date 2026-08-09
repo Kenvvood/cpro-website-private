@@ -37,36 +37,39 @@ export function HowItWorks() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
-        {STEPS.map((s, i) => {
-          const Icon = s.icon;
-          return (
-            <div key={s.n} className="relative">
-              <div className="card-base p-5 h-full hover:border-border-focus transition-all hover:-translate-y-0.5">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-3xl font-bold num text-accent-blue/40 select-none">
-                    {s.n}
-                  </span>
-                  <div className="inline-flex items-center justify-center w-9 h-9 rounded-md bg-accent-blue/10">
-                    <Icon size={18} className="text-accent-blue" />
-                  </div>
-                </div>
-                <h3 className="text-base font-semibold text-text-primary mb-2">
-                  {s.title}
-                </h3>
-                <p className="text-xs text-text-secondary leading-relaxed">
-                  {s.body}
-                </p>
-              </div>
-              {/* 箭头 (桌面端, 2 条) */}
-              {i < STEPS.length - 1 && (
-                <div className="hidden md:flex absolute -right-2 top-1/2 -translate-y-1/2 z-10 w-4 h-4 items-center justify-center text-border-strong">
-                  <ArrowRight size={16} />
-                </div>
-              )}
-            </div>
-          );
-        })}
+      <div className="border-y border-border">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-[10px] uppercase tracking-wider text-text-muted border-b border-border">
+              <th className="text-left py-2 px-2 font-normal w-12">#</th>
+              <th className="text-left py-2 px-2 font-normal w-32">步骤</th>
+              <th className="text-left py-2 px-2 font-normal hidden md:table-cell w-12">→</th>
+              <th className="text-left py-2 px-2 font-normal">说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            {STEPS.map((s, i) => {
+              const Icon = s.icon;
+              return (
+                <tr key={s.n} className="border-b border-border last:border-0 hover:bg-bg-tertiary transition-colors">
+                  <td className="py-3 px-2 text-text-muted num text-xs w-12">{s.n}</td>
+                  <td className="py-3 px-2 w-32">
+                    <div className="flex items-center gap-2">
+                      <Icon size={16} className="text-accent-blue shrink-0" />
+                      <span className="text-text-primary font-medium">{s.title}</span>
+                    </div>
+                  </td>
+                  <td className="py-3 px-2 text-text-muted text-xs hidden md:table-cell w-12">
+                    {i < STEPS.length - 1 ? "→" : "✓"}
+                  </td>
+                  <td className="py-3 px-2 text-text-secondary text-xs leading-relaxed">
+                    {s.body}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
 
       <div className="mt-6 text-center">

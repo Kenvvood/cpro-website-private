@@ -23,45 +23,52 @@ export async function TutorialGrid() {
 
   if (tutorials.length === 0) {
     return (
-      <div className="card-base p-12 text-center text-text-muted">
+      <div className="text-center text-text-muted text-sm py-8 border-y border-border">
         暂无教程研报
       </div>
     );
   }
 
-  const RISK_BADGE: Record<string, string> = {
-    低: "text-accent-up border-accent-up/30 bg-accent-up/10",
-    中: "text-accent-gold border-accent-gold/30 bg-accent-gold/10",
-    高: "text-accent-down border-accent-down/30 bg-accent-down/10",
+  const RISK_COLOR: Record<string, string> = {
+    低: "text-accent-up",
+    中: "text-accent-gold",
+    高: "text-accent-down",
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {tutorials.map((t) => (
-        <Link
-          key={t.slug}
-          href={`/tutorials/${t.slug}`}
-          className="card-base p-4 hover:border-border-focus transition-colors group"
-        >
-          <div className="flex flex-wrap gap-2 mb-3">
-            <span className="text-xs px-2 py-0.5 bg-bg-tertiary text-accent-blue rounded-sm">
-              CProTrading 投研
-            </span>
-            {t.riskLevel && (
-              <span className={`text-xs px-2 py-0.5 border rounded-sm ${RISK_BADGE[t.riskLevel] ?? "text-text-muted border-border"}`}>
-                {t.riskLevel}风险
-              </span>
-            )}
-          </div>
-          <h3 className="text-sm font-semibold text-text-primary mb-2 line-clamp-2 group-hover:text-accent-blue">
-            {t.release?.title ?? t.strategyLogic}
-          </h3>
-          <div className="text-xs text-text-muted pt-3 border-t border-border flex justify-between">
-            <span>{t.author ?? "CProTrading 投研团队"}</span>
-            <span className="num">👁 {t.viewCount.toLocaleString()}</span>
-          </div>
-        </Link>
-      ))}
+    <div className="border-y border-border">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-[10px] uppercase tracking-wider text-text-muted border-b border-border">
+            <th className="text-left py-2 px-2 font-normal w-12">#</th>
+            <th className="text-left py-2 px-2 font-normal w-16 hidden sm:table-cell">风险</th>
+            <th className="text-left py-2 px-2 font-normal">标题</th>
+            <th className="text-left py-2 px-2 font-normal hidden md:table-cell w-32">作者</th>
+            <th className="text-right py-2 px-2 font-normal hidden sm:table-cell w-16">阅读</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tutorials.map((t, i) => (
+            <tr key={t.slug} className="border-b border-border last:border-0 hover:bg-bg-tertiary transition-colors">
+              <td className="py-2.5 px-2 text-text-muted num text-xs w-12">{String(i + 1).padStart(2, "0")}</td>
+              <td className={`py-2.5 px-2 text-xs w-16 hidden sm:table-cell ${RISK_COLOR[t.riskLevel] ?? "text-text-muted"}`}>
+                {t.riskLevel ? `${t.riskLevel}风险` : "—"}
+              </td>
+              <td className="py-2.5 px-2">
+                <Link href={`/tutorials/${t.slug}`} className="text-text-primary font-medium hover:text-accent-blue line-clamp-1">
+                  {t.release?.title ?? t.strategyLogic}
+                </Link>
+              </td>
+              <td className="py-2.5 px-2 text-xs text-text-secondary hidden md:table-cell w-32">
+                {t.author ?? "CProTrading 投研团队"}
+              </td>
+              <td className="py-2.5 px-2 text-right text-xs text-text-muted num hidden sm:table-cell w-16">
+                {t.viewCount.toLocaleString()}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
