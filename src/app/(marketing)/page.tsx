@@ -49,7 +49,7 @@ function SectionHeader({
   return (
     <div className="flex justify-between items-end mb-6">
       <div>
-        <h2 className="text-xl lg:text-2xl font-semibold text-text-primary mb-1">
+        <h2 className="h2 mb-1">
           {title}
         </h2>
         {subtitle && (

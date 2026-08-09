@@ -91,7 +91,7 @@ export default function DownloadPage() {
     <div className="min-h-screen bg-bg-primary">
       <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-12 lg:py-16 space-y-8">
         <header className="border-b border-border pb-6">
-          <h1 className="text-3xl lg:text-4xl font-bold mb-2 text-text-primary">下载中心</h1>
+          <h1 className="h1 mb-2">下载中心</h1>
           <p className="text-sm lg:text-base text-text-secondary">
             付费会员可下载全部 EA、指标、脚本工具
           </p>
@@ -137,7 +137,7 @@ export default function DownloadPage() {
                   </div>
                   <div className="flex items-center gap-2 mb-2">
                     {CATEGORY_ICON[product.category]}
-                    <h3 className="text-base font-semibold text-text-primary line-clamp-2">
+                    <h3 className="h3 text-text-primary line-clamp-2">
                       {product.name}
                     </h3>
                   </div>
@@ -168,7 +168,7 @@ export default function DownloadPage() {
         </section>
 
         <section className="max-w-4xl card-base p-6">
-          <h2 className="text-xl font-semibold mb-4 text-text-primary">使用说明</h2>
+          <h2 className="h2 mb-4">使用说明</h2>
           <ol className="space-y-3 text-sm text-text-secondary">
             {[
               "下载 EA / 指标文件后, 打开 MT4 或 MT5 终端",

@@ -47,7 +47,7 @@ export default function AboutPage() {
       <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-12 lg:py-16 space-y-12 lg:space-y-16">
         {/* Page Header */}
         <header className="border-b border-border pb-8">
-          <h1 className="text-3xl lg:text-4xl font-bold mb-3 text-text-primary">
+          <h1 className="h1 mb-3">
             关于 {BRAND.name.zh}
           </h1>
           <p className="text-base lg:text-lg text-text-secondary max-w-2xl">
@@ -57,7 +57,7 @@ export default function AboutPage() {
 
         {/* Company Story */}
         <section className="max-w-4xl">
-          <h2 className="text-xl lg:text-2xl font-semibold mb-4 text-text-primary">公司简介</h2>
+          <h2 className="h2 mb-4">公司简介</h2>
           <div className="space-y-4 text-sm lg:text-base leading-relaxed text-text-secondary">
             <p>
               {BRAND.entity} 是一家专注于外汇量化交易工具研发的科技公司。
@@ -73,7 +73,7 @@ export default function AboutPage() {
 
         {/* Core Advantages */}
         <section>
-          <h2 className="text-xl lg:text-2xl font-semibold mb-6 text-text-primary">核心优势</h2>
+          <h2 className="h2 mb-6">核心优势</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {advantages.map((item, i) => (
               <div key={i} className="card-base p-6">
@@ -82,7 +82,7 @@ export default function AboutPage() {
                     {item.icon}
                   </div>
                   <div>
-                    <h3 className="text-base font-semibold mb-2 text-text-primary">
+                    <h3 className="h3 mb-2">
                       {item.title}
                     </h3>
                     <p className="text-sm text-text-secondary leading-relaxed">
@@ -97,11 +97,11 @@ export default function AboutPage() {
 
         {/* Cooperation Models */}
         <section>
-          <h2 className="text-xl lg:text-2xl font-semibold mb-6 text-text-primary">合作模式</h2>
+          <h2 className="h2 mb-6">合作模式</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {cooperationModels.map((model, i) => (
               <div key={i} className="card-base p-6 text-center">
-                <h3 className="text-base font-semibold mb-3 text-accent-blue">
+                <h3 className="h3 mb-3 text-accent-blue">
                   {model.title}
                 </h3>
                 <p className="text-sm text-text-secondary leading-relaxed">
@@ -114,10 +114,10 @@ export default function AboutPage() {
 
         {/* Products Overview */}
         <section>
-          <h2 className="text-xl lg:text-2xl font-semibold mb-6 text-text-primary">产品体系</h2>
+          <h2 className="h2 mb-6">产品体系</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="card-base p-6">
-              <h3 className="text-base font-semibold mb-4 text-accent-blue">智能 EA 交易系统</h3>
+              <h3 className="h3 mb-4 text-accent-blue">智能 EA 交易系统</h3>
               <ul className="space-y-2 text-sm text-text-secondary">
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 bg-accent-blue shrink-0" />
@@ -134,7 +134,7 @@ export default function AboutPage() {
               </ul>
             </div>
             <div className="card-base p-6">
-              <h3 className="text-base font-semibold mb-4 text-accent-blue">量化指标工具</h3>
+              <h3 className="h3 mb-4 text-accent-blue">量化指标工具</h3>
               <ul className="space-y-2 text-sm text-text-secondary">
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 bg-accent-blue shrink-0" />
@@ -155,7 +155,7 @@ export default function AboutPage() {
 
         {/* Contact */}
         <section className="max-w-md mx-auto card-base p-8 text-center">
-          <h2 className="text-xl lg:text-2xl font-semibold mb-4 text-text-primary">联系我们</h2>
+          <h2 className="h2 mb-4">联系我们</h2>
           <div className="space-y-2 text-sm">
             <p className="text-text-secondary">
               技术支持微信: <span className="font-semibold text-accent-blue">{BRAND.contact.wechat}</span>
