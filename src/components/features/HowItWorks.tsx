@@ -33,7 +33,7 @@ export function HowItWorks() {
           工作流 · 从浏览到部署
         </h2>
         <p className="text-xs text-text-muted">
-          3 步闭环 · 链上 USDT 收银 · 工作室级流程
+          3 步闭环 · 链上 USDT 收银 · 工作室级服务
         </p>
       </div>
 

@@ -84,7 +84,7 @@ function PricingSection() {
     <section>
       <SectionHeader
         title="会员订阅"
-        subtitle="3 档纯付费 USDT · 无免费试用 · 工作室级售后"
+        subtitle="3 档订阅服务 · 严选品质 · 工作室级保障"
         href="/membership"
       />
       <PricingTable />
