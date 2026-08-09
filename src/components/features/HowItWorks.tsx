@@ -34,8 +34,8 @@ export function HowItWorks() {
   return (
     // v22.0 Phase 7.3: 响应式 - lg 单列堆叠 / xl 起 2 栏 (1fr:2fr 左标题 + 右步骤)
     <section className="grid grid-cols-1 xl:grid-cols-[1fr_2fr] gap-8 xl:gap-10 2xl:gap-14 items-start">
-      {/* 左 30% 标题区 */}
-      <div className="space-y-4 lg:sticky lg:top-20">
+      {/* 左 30% 标题区 - v22.0 Phase 7.4: sticky 只在 xl+ 启用, 移动端不 sticky */}
+      <div className="space-y-4 xl:sticky xl:top-20">
         <div className="text-[10px] uppercase tracking-wider text-accent-blue font-semibold">
           工作流
         </div>
@@ -66,7 +66,7 @@ export function HowItWorks() {
           return (
             <div key={s.n} className="py-3 grid grid-cols-[auto_1fr] gap-4 items-start hover:bg-bg-primary transition-colors -mx-2 px-2">
               <div className="flex flex-col items-start gap-2 w-16">
-                <span className="text-3xl lg:text-4xl font-bold num text-accent-blue/40 leading-none">
+                <span className="text-2xl lg:text-3xl xl:text-4xl font-bold num text-accent-blue/40 leading-none">
                   {s.n}
                 </span>
                 <Icon size={18} className="text-accent-blue" />

@@ -18,19 +18,22 @@ export async function StatsBar() {
   ];
 
   return (
-    // v22.0 Phase 7.0: 4 列 data strip + 时间戳右对齐 (浅灰底色由 page.tsx 提供)
+    // v22.0 Phase 7.4: 移动端只显示 2 数据 (前 2 个) + 时间戳, 大屏 4 数据
     <div className="flex items-center divide-x divide-border">
-      {stats.map((s) => (
-        <div key={s.label} className="flex-1 py-2 px-4 first:pl-0 last:pr-0">
+      {stats.map((s, i) => (
+        <div
+          key={s.label}
+          className={`flex-1 py-2 px-2 sm:px-4 first:pl-0 last:pr-0 ${i >= 2 ? "hidden sm:block" : ""}`}
+        >
           <div className="text-sm font-semibold text-text-primary">
             {s.tag}
           </div>
-          <div className="text-[10px] text-text-muted mt-0.5">
+          <div className="text-[10px] text-text-muted mt-0.5 truncate">
             {s.label} · <span className="text-accent-up">{s.note}</span>
           </div>
         </div>
       ))}
-      <div className="text-[10px] text-text-muted num pl-4 shrink-0">
+      <div className="text-[10px] text-text-muted num pl-2 sm:pl-4 shrink-0 hidden sm:block">
         更新于 2026-08-09
       </div>
     </div>

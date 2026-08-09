@@ -32,16 +32,17 @@ export async function ProductGrid() {
 
   return (
     // 1 张密集表格 (8 行, fxssi 价格表风格: 表头 + 行)
-    <div className="border-y border-border">
-      <table className="w-full text-sm">
+    // v22.0 Phase 7.4: 移动端 overflow-x-auto + 表格只显示 #/商品 (其他 hidden)
+    <div className="border-y border-border overflow-x-auto">
+      <table className="w-full text-sm min-w-[240px] sm:min-w-[360px] md:min-w-[560px]">
         <thead>
           <tr className="text-[10px] uppercase tracking-wider text-text-muted border-b border-border">
-            <th className="text-left py-2 px-2 font-normal w-12">#</th>
+            <th className="text-left py-2 px-2 font-normal w-10">#</th>
             <th className="text-left py-2 px-2 font-normal">商品</th>
-            <th className="text-left py-2 px-2 font-normal hidden md:table-cell">分类</th>
+            <th className="text-left py-2 px-2 font-normal hidden lg:table-cell">分类</th>
             <th className="text-left py-2 px-2 font-normal hidden md:table-cell">描述</th>
-            <th className="text-right py-2 px-2 font-normal">下载</th>
-            <th className="text-right py-2 px-2 font-normal hidden sm:table-cell">订阅</th>
+            <th className="text-right py-2 px-2 font-normal hidden sm:table-cell w-16">下载</th>
+            <th className="text-right py-2 px-2 font-normal hidden md:table-cell">订阅</th>
           </tr>
         </thead>
         <tbody>
@@ -50,7 +51,7 @@ export async function ProductGrid() {
               key={p.id}
               className="border-b border-border last:border-0 hover:bg-bg-tertiary transition-colors group"
             >
-              <td className="py-2.5 px-2 text-text-muted num text-xs w-12">
+              <td className="py-2.5 px-2 text-text-muted num text-xs w-10">
                 {String(i + 1).padStart(2, "0")}
               </td>
               <td className="py-2.5 px-2">
@@ -64,16 +65,16 @@ export async function ProductGrid() {
                   <span className="ml-2 text-[10px] text-text-muted">{t.tier(p.tier).short}</span>
                 )}
               </td>
-              <td className="py-2.5 px-2 text-xs text-text-secondary hidden md:table-cell">
+              <td className="py-2.5 px-2 text-xs text-text-secondary hidden lg:table-cell">
                 {t.category(p.category).full}
               </td>
               <td className="py-2.5 px-2 text-xs text-text-muted hidden md:table-cell line-clamp-1 max-w-md">
                 {p.positioning ?? "—"}
               </td>
-              <td className="py-2.5 px-2 text-right text-xs num text-text-secondary">
+              <td className="py-2.5 px-2 text-right text-xs num text-text-secondary hidden sm:table-cell w-16">
                 ↓ {p.downloadCount.toLocaleString()}
               </td>
-              <td className="py-2.5 px-2 text-right text-xs text-accent-gold hidden sm:table-cell">
+              <td className="py-2.5 px-2 text-right text-xs text-accent-gold hidden md:table-cell">
                 {t.plan(p.requiredPlan).short}
               </td>
             </tr>

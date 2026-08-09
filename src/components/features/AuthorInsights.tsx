@@ -98,32 +98,34 @@ export function AuthorInsights() {
             })}
           </div>
 
-          {/* 文章主表 (10 行, fxssi/cn.investing 风格) */}
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-[10px] uppercase tracking-wider text-text-muted border-b border-border">
-                <th className="text-left py-1.5 px-3 font-normal w-20">日期</th>
-                <th className="text-left py-1.5 px-3 font-normal">标题</th>
-                <th className="text-right py-1.5 px-3 font-normal w-16">阅读</th>
-                <th className="text-right py-1.5 px-3 font-normal w-20 hidden sm:table-cell">时长</th>
-              </tr>
-            </thead>
-            <tbody>
-              {posts.map((p, i) => (
-                <tr key={i} className="border-b border-border last:border-0 hover:bg-bg-tertiary transition-colors group cursor-pointer">
-                  <td className="py-2.5 px-3 text-[10px] text-text-muted num align-top">{p.date}</td>
-                  <td className="py-2.5 px-3">
-                    <div className="text-text-primary font-medium group-hover:text-accent-blue transition-colors line-clamp-1 mb-0.5">
-                      {p.title}
-                    </div>
-                    <div className="text-[11px] text-text-muted line-clamp-1">{p.excerpt}</div>
-                  </td>
-                  <td className="py-2.5 px-3 text-right text-[10px] text-text-muted num align-top">👁 {p.views.toLocaleString()}</td>
-                  <td className="py-2.5 px-3 text-right text-[10px] text-text-muted num align-top hidden sm:table-cell">{p.readMin} 分钟</td>
+          {/* 文章主表 (10 行, fxssi/cn.investing 风格) - v22.0 Phase 7.4 移动端只显示 2 列 + overflow-x-auto */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[280px] sm:min-w-[480px]">
+              <thead>
+                <tr className="text-[10px] uppercase tracking-wider text-text-muted border-b border-border">
+                  <th className="text-left py-1.5 px-3 font-normal hidden sm:table-cell w-20">日期</th>
+                  <th className="text-left py-1.5 px-3 font-normal">标题</th>
+                  <th className="text-right py-1.5 px-3 font-normal hidden sm:table-cell w-16">阅读</th>
+                  <th className="text-right py-1.5 px-3 font-normal hidden md:table-cell w-20">时长</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {posts.map((p, i) => (
+                  <tr key={i} className="border-b border-border last:border-0 hover:bg-bg-tertiary transition-colors group">
+                    <td className="py-2.5 px-3 text-[10px] text-text-muted num align-top hidden sm:table-cell">{p.date}</td>
+                    <td className="py-2.5 px-3">
+                      <div className="text-text-primary font-medium group-hover:text-accent-blue transition-colors line-clamp-2 mb-0.5">
+                        {p.title}
+                      </div>
+                      <div className="text-[11px] text-text-muted line-clamp-2 sm:line-clamp-1">{p.excerpt}</div>
+                    </td>
+                    <td className="py-2.5 px-3 text-right text-[10px] text-text-muted num align-top hidden sm:table-cell">👁 {p.views.toLocaleString()}</td>
+                    <td className="py-2.5 px-3 text-right text-[10px] text-text-muted num align-top hidden md:table-cell">{p.readMin} 分钟</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* 右: 侧栏 (3 个密集块, 无 card-base, 1px 底边线分隔) */}
