@@ -161,13 +161,13 @@ body {
 /* ── v21.0 season2 排版基础类 (统一全站 18 页) ─────────────── */
 
 /* T1) 标题阶梯 (v22.0 Phase 7.24 BATCH 16 PATCH 1: hero h1 三档对齐, 2026-08-14)
-   - .h1 标准 (12 页): tools/articles/admin/dashboard/login/register/account/legal/dashboard等
-   - .h1-lg 加大 (2 营销页): guides/quant-custody/wealth
-   - .h1-xl 巨标 (3 营销 hero): about/membership/mtt-terminal
+   - .h1 标准 (12 页): 30/36px font-bold tracking-tight leading-tight text-text-primary
+   - .h1-lg 加大 (3 营销页): 30/36/40px (lg 用 arbitrary 40px, 避免 Tailwind 5xl=48px 偏大)
+   - .h1-xl 巨标 (3 营销 hero): 36/48/56px (lg 用 arbitrary 56px, 避免 Tailwind 6xl=60px 偏大)
    - 颜色一律 text-text-primary, 字重 font-bold, 字距 tracking-tight */
 .h1 { @apply text-3xl lg:text-4xl font-bold tracking-tight leading-tight text-text-primary; }
-.h1-lg { @apply text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.2] text-text-primary; }
-.h1-xl { @apply text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] text-text-primary; }
+.h1-lg { @apply text-3xl sm:text-4xl lg:text-[40px] font-bold tracking-tight leading-[1.2] text-text-primary; }
+.h1-xl { @apply text-4xl sm:text-5xl lg:text-[56px] font-bold tracking-tight leading-[1.1] text-text-primary; }
 .h2 { @apply text-xl lg:text-2xl font-semibold tracking-tight leading-snug; }
 .h3 { @apply text-base font-semibold leading-snug; }
 .h4 { @apply text-sm font-semibold leading-snug; }
