@@ -11,6 +11,14 @@ export const BRAND = {
     en: 'CProTrading',
     short: 'CProTrading',
   },
+  // v22.0 Phase 7.10+: 公司品牌字母简称 + 完整 slogan
+  // PM 品宣材料: 品牌 MTT = More Than That, slogan "让散户交易不只于此 | 不止于此"
+  mtt: {
+    abbr: 'MTT',
+    full: 'More Than That',
+    slogan: '让散户交易不只于此',
+    altSlogan: '不止于此',
+  },
   domain: 'cprotrading.com',
   entity: 'CProTrading 城诺科技',
   slogan: {
@@ -44,10 +52,11 @@ export const BRAND = {
     },
     // === 强调色（C2-A 拍板） ===
     accent: {
-      blue: '#2962FF',  // TV 经典蓝 — 主 CTA / 链接
-      gold: '#D4AF37',  // 品牌金 — 会员/Premium 专属 (降级)
-      up:   '#26a69a',  // Gemini 涨色 / Buy
-      down: '#ef5350',  // Gemini 跌色 / Sell
+      blue:   '#2962FF',  // TV 经典蓝 — 主 CTA / 链接
+      gold:   '#D4AF37',  // 品牌金 — 会员/Premium 专属 (降级)
+      purple: '#6c9cfc',  // v22.0 Phase 7.24 Batch 5: 借鉴 fxssi.com 蓝紫, /products 主色
+      up:     '#26a69a',  // Gemini 涨色 / Buy
+      down:   '#ef5350',  // Gemini 跌色 / Sell
     },
     // === 历史主色（仅字体/营销位用, 严禁替换 accent.* 语义） ===
     primary:    '#D4AF37',  // 品牌金 — 营销位/字体强调
@@ -71,14 +80,27 @@ export const BRAND = {
     note: '禁用 rounded-xl (12px) / rounded-2xl / rounded-full',
   },
   copyright: {
-    year: 2026,
+    // v22.0 Phase 7.24 BATCH 15 PATCH 14: PM 2026-08-13 提供 ICP 备案号
+    year: '2026',
     entity: 'CProTrading 城诺科技',
-    icp: '[ICP_FILING_NUMBER]',
+    icp: '粤ICP备2026051198号-1',
+    // 公安备案占位 (待 PM 后续提供, 格式: 京公网安备 11010102000000号)
+    mps: '[MPS_FILING_NUMBER_TBD]',
   },
   contact: {
-    email: 'support@cprotrading.com',
-    phone: '[SUPPORT_PHONE]',
-    wechat: 'Lookee333',
+    // v22.0 Phase 7.24 Batch 2 PATCH: 4 触点具体化 (PM 决策)
+    // - GitHub → QQ: 3624597882
+    // - 客服微信 → 官方微信 (虚位以待)
+    // - 订阅群 → 公众号 (虚位以待)
+    // - 邮箱 → 飞书 (虚位以待)
+    // - X → 手机: 18688198932
+    email: 'support@cprotrading.com',  // 保留邮箱 (支持链接)
+    phone: '18688198932',              // PM 指定
+    qq: '3624597882',                  // PM 指定
+    wechat: 'Lookee333',               // 个人微信 (内部用, footer 不显示)
+    officialWechat: '[OFFICIAL_WECHAT]',   // 官方微信 (footer 4 触点 + 二维码)
+    wechatOfficial: '[WECHAT_OFFICIAL]',   // 公众号 (footer 二维码)
+    feishu: '[FEISHU_ID]',             // 飞书 (footer 4 触点 + 二维码)
   },
   legal: {
     privacyPolicy: '/privacy',
