@@ -65,8 +65,9 @@ export default function AccountPage() {
 
   if (!loading && !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-bg-primary">
-        <div className="max-w-md w-full px-4">
+      // v22.0 Phase 7.24 BATCH 15 PATCH 7: pt-12 sm:pt-14 (8px 基准, 96/112px)
+      <div className="min-h-screen bg-bg-primary pt-12 sm:pt-14 pb-12">
+        <div className="max-w-md w-full mx-auto px-4 sm:px-6">
           <div className="card-base p-8 text-center">
             <UserIcon size={48} className="text-accent-blue mx-auto mb-4" />
             <h2 className="h2 mb-3">登录后查看</h2>

@@ -88,9 +88,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg-primary">
-      <div className="w-full max-w-md px-8">
-        <div className="text-center mb-10">
+    // v22.0 Phase 7.24 BATCH 15 PATCH 7: 修移动端 Header 遮挡 + 项目 8px spacing 基准理解
+    // - BUG 根因: globals.css --spacing: 8px (8px 基准), pt-N 渲染 = N * 8px (不是 Tailwind 默认 4px)
+    //   pt-24 = 24*8 = 192px, pt-28 = 28*8 = 224px (远超 Header 108px, 内容被推到屏幕外)
+    // - 修: pt-12 sm:pt-14 (12*8=96 / 14*8=112, 跟 Header 108 紧贴)
+    // - 也修 flex items-center → block (避免 flex + pt 双重偏移)
+    // - 移动 max-w-sm + px-4, 桌面 max-w-xl + px-8
+    <div className="min-h-screen bg-bg-primary pt-12 sm:pt-14 pb-12">
+      <div className="w-full max-w-sm sm:max-w-xl mx-auto px-4 sm:px-8">
+        <div className="text-center mb-6">
           <h1 className="h1 mb-2">
             <span className="text-accent-blue">CPro</span>Trading
           </h1>
@@ -189,9 +195,9 @@ export default function LoginPage() {
                   <input type="checkbox" className="rounded auth-checkbox" />
                   <span className="text-text-muted">记住我</span>
                 </label>
-                <a href="#" className="font-medium text-accent">
+                <Link href="/login?forgot=1" className="font-medium text-accent-blue hover:underline">
                   忘记密码？
-                </a>
+                </Link>
               </div>
 
               <button
@@ -221,8 +227,8 @@ export default function LoginPage() {
 
         <p className="text-center text-xs mt-6 text-text-muted">
           登录即表示同意{" "}
-          <a href="#" className="text-accent">服务条款</a> 和{" "}
-          <a href="#" className="text-accent">隐私政策</a>
+          <Link href="/legal/terms" className="text-accent-blue hover:underline">服务条款</Link> 和{" "}
+          <Link href="/legal/privacy" className="text-accent-blue hover:underline">隐私政策</Link>
         </p>
       </div>
     </div>

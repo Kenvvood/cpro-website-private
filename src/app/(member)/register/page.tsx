@@ -151,9 +151,10 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg-primary">
-      <div className="w-full max-w-md px-8">
-        <div className="text-center mb-10">
+    // v22.0 Phase 7.24 BATCH 15 PATCH 7: pt-12 sm:pt-14 (8px 基准, 96/112px 跟 Header 紧贴)
+    <div className="min-h-screen bg-bg-primary pt-12 sm:pt-14 pb-12">
+      <div className="w-full max-w-sm sm:max-w-xl mx-auto px-4 sm:px-8">
+        <div className="text-center mb-6">
           <h1 className="h1 mb-2">
             <span className="text-accent-blue">CPro</span>Trading
           </h1>
@@ -311,8 +312,8 @@ export default function RegisterPage() {
 
         <p className="text-center text-xs mt-6 text-text-muted">
           注册即表示同意{" "}
-          <a href="#" className="text-accent">服务条款</a> 和{" "}
-          <a href="#" className="text-accent">隐私政策</a>
+          <Link href="/legal/terms" className="text-accent-blue hover:underline">服务条款</Link> 和{" "}
+          <Link href="/legal/privacy" className="text-accent-blue hover:underline">隐私政策</Link>
         </p>
       </div>
     </div>

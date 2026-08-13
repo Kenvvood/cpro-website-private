@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   UsersIcon,
   DownloadIcon,
@@ -10,6 +11,8 @@ import {
   BarChart3Icon,
   SearchIcon,
   Loader2Icon,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react";
 
 interface User {
@@ -31,6 +34,7 @@ interface Stats {
   thisMonthUsers: number;
   totalDownloads: number;
   products: Product[];
+  pendingRefunds?: number;  // v22.0 BATCH 15 PATCH 10: 待审批退款数
 }
 
 type AdminTab = "users" | "products" | "messages";
@@ -91,7 +95,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-primary">
+    <div className="min-h-screen bg-bg-primary pt-2 sm:pt-12 lg:pt-14">
       <div>
         {/* Admin Header */}
         <header className="border-b border-border bg-bg-secondary">
@@ -101,9 +105,9 @@ export default function AdminPage() {
           </div>
         </header>
 
-        {/* Stats Overview */}
+        {/* Stats Overview - v22.0 BATCH 15 PATCH 10: 加待审批退款卡片 */}
         <div className="px-20 py-8">
-          <div className="grid grid-cols-4 gap-6">
+          <div className="grid grid-cols-5 gap-6">
             <div className="p-6 card-base">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-lg bg-accent/20">
@@ -156,6 +160,25 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
+            {/* PATCH 10: 待审批退款卡片 (可点击跳 /admin/refunds) */}
+            <Link
+              href="/admin/refunds?status=PENDING"
+              className="p-6 card-base hover:border-accent-blue transition-colors group"
+            >
+              <div className="flex items-center gap-4">
+                <div className={`p-3 rounded-lg ${(stats?.pendingRefunds ?? 0) > 0 ? 'bg-red-500/20' : 'bg-accent-blue/20'}`}>
+                  <RefreshCw size={24} className={(stats?.pendingRefunds ?? 0) > 0 ? 'text-red-400' : 'text-accent-blue'} />
+                </div>
+                <div>
+                  <p className={`text-2xl font-bold ${(stats?.pendingRefunds ?? 0) > 0 ? 'text-red-400' : 'text-gray-100'} num`}>
+                    {stats?.pendingRefunds ?? 0}
+                  </p>
+                  <p className="text-xs text-text-muted group-hover:text-text-primary inline-flex items-center gap-1">
+                    待审批退款 {(stats?.pendingRefunds ?? 0) > 0 && <AlertCircle size={10} />}
+                  </p>
+                </div>
+              </div>
+            </Link>
           </div>
         </div>
 

@@ -1,8 +1,9 @@
 // src/app/tutorials/page.tsx
 // task052 L4: TV 风拉平 + 风险徽章改 accent 语义色 + task065: 接入 i18n
+// 关键修复: import 别名改 i18nT, 避免跟局部参数 t (tutorial) 在 Turbopack minify 冲突
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { t } from "@/lib/i18n";
+import { t as i18nT } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export default async function TutorialsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-bg-primary">
+    <div className="min-h-screen bg-bg-primary pt-2 sm:pt-12 lg:pt-14">
       <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-12">
         <header className="mb-8 border-b border-border pb-6">
           <div className="flex items-baseline gap-3 mb-2">
@@ -41,8 +42,8 @@ export default async function TutorialsPage() {
           <div className="text-center text-text-muted text-sm py-8 border-y border-border">暂无已发布研报</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {tutorials.map((t) => (
-              <TutCard key={t.id} t={t} />
+            {tutorials.map((tut) => (
+              <TutCard key={tut.id} tut={tut} />
             ))}
           </div>
         )}
@@ -57,38 +58,38 @@ export default async function TutorialsPage() {
   );
 }
 
-function TutCard({ t }: { t: any }) {
+function TutCard({ tut }: { tut: any }) {
   return (
     <Link
-      href={`/tutorials/${t.slug}`}
+      href={`/tutorials/${tut.slug}`}
       className="card-base p-5 hover:border-border-focus transition-colors group block"
     >
       <div className="flex items-start justify-between gap-2 mb-3">
         <h3 className="text-base font-semibold text-text-primary leading-tight line-clamp-2 group-hover:text-accent-blue">
-          {t.release.title}
+          {tut.release.title}
         </h3>
-        {t.riskLevel && (
-          <span className={`shrink-0 px-2 py-0.5 border rounded-sm text-xs ${RISK_BADGE[t.riskLevel] ?? "border-border text-text-muted"}`}>
-            {t.riskLevel}风险
+        {tut.riskLevel && (
+          <span className={`shrink-0 px-2 py-0.5 border rounded-sm text-xs ${RISK_BADGE[tut.riskLevel] ?? "border-border text-text-muted"}`}>
+            {tut.riskLevel}风险
           </span>
         )}
       </div>
       <div className="flex flex-wrap gap-2 text-xs mb-3">
         <span className="px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">
-          {t.regime(t.marketRegime).short}
+          {i18nT.regime(tut.marketRegime).short}
         </span>
-        {t.timeframe && (
+        {tut.timeframe && (
           <span className="px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">
-            {t.timeframe(t.timeframe).short}
+            {i18nT.timeframe(tut.timeframe).short}
           </span>
         )}
         <span className="px-2 py-0.5 bg-bg-tertiary text-text-secondary rounded-sm">
-          {t.license(t.release.license).short}
+          {i18nT.license(tut.release.license).short}
         </span>
       </div>
-      <p className="text-xs text-text-secondary line-clamp-2">{t.strategyLogic}</p>
+      <p className="text-xs text-text-secondary line-clamp-2">{tut.strategyLogic}</p>
       <div className="mt-3 pt-3 border-t border-border text-xs text-text-muted flex justify-between num">
-        <span>👁 {t.viewCount.toLocaleString()}</span>
+        <span>👁 {tut.viewCount.toLocaleString()}</span>
         <span>📄 阅读全文 →</span>
       </div>
     </Link>

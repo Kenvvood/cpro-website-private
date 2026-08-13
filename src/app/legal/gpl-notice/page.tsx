@@ -17,7 +17,7 @@ const LICENSE_RISKS = [
 
 export default function GplNoticePage() {
   return (
-    <div className="min-h-screen bg-bg-primary">
+    <div className="min-h-screen bg-bg-primary pt-2 sm:pt-12 lg:pt-14">
       <main className="w-full px-4 sm:px-6 lg:px-8 2xl:px-12 py-12">
         <header className="mb-8 border-b border-border pb-6">
           <h1 className="h1 mb-2">免责声明与开源合规声明</h1>
@@ -91,7 +91,7 @@ export default function GplNoticePage() {
         </section>
 
         <p className="text-xs text-text-muted">
-          返回 <Link href="/open-source" className="text-accent-blue hover:underline">开源专区</Link>
+          返回 <Link href="/content" className="text-accent-blue hover:underline">大航海时代</Link>
         </p>
       </main>
     </div>
