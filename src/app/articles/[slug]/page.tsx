@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${a.title} - ${BRAND.name.short} 文章`,
     description: desc,
     keywords: ['CProTrading', 'MTT', '城诺科技', '量化交易', 'XAUUSD', '黄金', 'MQL5', 'EA', '套利', a.type === 'OPEN_SOURCE' ? '源码解读' : '纯文章'],
-    authors: [{ name: 'Lookee · CProTrading 城诺科技' }],
+    authors: [{ name: '山治廿一 · CProTrading 城诺科技' }],
     openGraph: {
       title: a.title,
       description: desc,
@@ -156,7 +156,7 @@ export default async function ArticleDetail({ params }: Props) {
     dateModified: article.updatedAt?.toISOString(),
     author: {
       '@type': 'Person',
-      name: author?.username ?? 'Lookee',
+      name: author?.username ?? '山治廿一',
       url: `https://${BRAND.domain}/content`,
     },
     publisher: {

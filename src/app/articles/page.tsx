@@ -51,7 +51,7 @@ export default async function ArticlesPage() {
             严选 EA 开发心得 · 黄金套利实战 · 仓位管理 · 风险控制 · 部署教程
           </p>
           <p className="mt-2 text-xs text-text-muted num">
-            作者: Lookee · CProTrading 城诺科技 · 持续更新中
+            作者: 山治廿一 · CProTrading 城诺科技 · 持续更新中
           </p>
         </header>
 
