@@ -6,9 +6,14 @@
  *  - 主区 3fr 横向产品 list + 分页 (12/页)
  *  - 排序: 最新/最热/评分
  *  - 蓝紫 #6c9cfc + 粉红 #f47885 涨跌色
+ * v22.0 BATCH 16 PATCH 6 (2026-08-14): 列表项加 ProductDownloadButton 按钮 (跟详情页 PATCH 5 一致)
  */
 import Link from 'next/link';
+import { getServerSession } from 'next-auth';
+import { Flame } from 'lucide-react';
+import { authOptions } from '@/lib/auth';
 import { FilterPanel } from '@/components/FilterPanel';
+import { ProductDownloadButton } from '@/components/ProductDownloadButton';
 import { prisma } from '@/lib/prisma';
 import { getCategoryAliases, t } from '@/lib/i18n';
 import { Footer } from '@/components/layout/footer';
@@ -16,6 +21,7 @@ import { Footer } from '@/components/layout/footer';
 export const dynamic = 'force-dynamic';
 
 const PAGE_SIZE = 12;
+const PLAN_LEVEL: Record<string, number> = { WEEKLY: 1, MONTHLY: 2, ANNUAL: 3 };
 
 interface Props {
   searchParams: { tier?: string; type?: string; tag?: string; page?: string; sort?: string };
@@ -46,10 +52,29 @@ export default async function ProductsPage({ searchParams }: Props) {
     ...(tag ? { capabilityTags: { contains: `"${tag}"` } } : {}),
   };
 
-  const orderBy =
-    sort === 'popular' ? [{ downloadCount: 'desc' as const }] :
-    sort === 'score' ? [{ score: 'desc' as const }] :
-    [{ createdAt: 'desc' as const }];
+  const orderBy = sort === 'popular'
+    ? [{ isFeatured: 'desc' as const }, { downloadCount: 'desc' as const }]
+    : sort === 'score'
+    ? [{ isFeatured: 'desc' as const }, { score: 'desc' as const }]
+    : [{ isFeatured: 'desc' as const }, { createdAt: 'desc' as const }];
+
+  const session = await getServerSession(authOptions);
+  const userId = (session?.user as any)?.id as string | undefined;
+
+  // v22.0 BATCH 16 PATCH 6: 一次性查用户所有 ACTIVE 订阅, 算最高 plan level
+  // (WEEKLY=1 < MONTHLY=2 < ANNUAL=3)
+  const memberships = userId
+    ? await prisma.membership.findMany({
+        where: { userId, status: 'ACTIVE', expireAt: { gt: new Date() } },
+        select: { plan: true },
+      })
+    : [];
+  const userLevel = memberships.reduce(
+    (max, m) => Math.max(max, PLAN_LEVEL[m.plan] ?? 0),
+    0,
+  );
+  const hasAccessFor = (requiredPlan: string) =>
+    userLevel >= (PLAN_LEVEL[requiredPlan] ?? 1);
 
   const [products, total, allActive] = await Promise.all([
     prisma.product.findMany({ where, orderBy, skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE }),
@@ -79,7 +104,7 @@ export default async function ProductsPage({ searchParams }: Props) {
             </div>
             <h1 className="h1">
               严选可商用 <span className="text-accent-blue">EA</span>
-              <span className="text-base font-normal text-text-muted ml-3">贴牌封装 · 持续更新 · 4h 工单 · 终身质保</span>
+              <span className="text-base font-normal text-text-muted ml-3">5 款热门门面 · 持续更新 · 4h 工单 · 终身质保</span>
             </h1>
             <p className="text-xs text-text-muted leading-relaxed">
               <span className="text-text-secondary font-medium">商业授权贴牌</span>
@@ -149,14 +174,25 @@ export default async function ProductsPage({ searchParams }: Props) {
                     <Link
                       key={p.id}
                       href={`/products/${p.id}`}
-                      className="group grid grid-cols-[60px_120px_1fr_100px_60px] items-center gap-4 lg:gap-6 py-3 border-b border-border last:border-0 hover:bg-bg-secondary transition-colors px-3 -mx-3"
+                      className={`group relative grid grid-cols-[60px_120px_1fr_100px_60px] items-center gap-4 lg:gap-6 py-3 border-b border-border last:border-0 hover:bg-bg-secondary transition-colors px-3 -mx-3 ${
+                        p.isFeatured ? 'bg-accent-gold/5 border-l-2 border-l-accent-gold -ml-px' : ''
+                      }`}
                     >
                       {/* EA 缩略图标识 (SVG 替代位) */}
-                      <div className="w-12 h-12 rounded-md border border-border bg-bg-secondary flex items-center justify-center text-accent-purple font-mono font-bold text-sm group-hover:border-accent-purple transition-colors">
+                      <div className={`w-12 h-12 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm transition-colors ${
+                        p.isFeatured
+                          ? 'border-accent-gold text-accent-gold group-hover:border-accent-gold'
+                          : 'border-border text-accent-purple group-hover:border-accent-purple'
+                      }`}>
                         {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
                       </div>
-                      {/* tier + type */}
+                      {/* tier + type + 热门徽章 (PATCH 7) */}
                       <div className="space-y-1">
+                        {p.isFeatured && (
+                          <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-accent-gold/15 text-accent-gold text-[9px] font-bold tracking-wider uppercase rounded">
+                            <Flame size={9} className="fill-current" /> 热门
+                          </div>
+                        )}
                         <div className="text-[10px] uppercase tracking-wider text-accent-purple font-mono">
                           {t.category(p.category).full}
                         </div>
@@ -173,9 +209,17 @@ export default async function ProductsPage({ searchParams }: Props) {
                           {tags.slice(0, 4).map(t.tag).join(' · ') || '—'}
                         </div>
                       </div>
-                      {/* 下载数 */}
-                      <div className="text-xs text-text-muted num text-right">
-                        <span className="text-accent-purple">↓</span> {(p.downloadCount ?? 0).toLocaleString()}
+                      {/* 下载数 + 下载按钮 (PATCH 6) */}
+                      <div className="text-right space-y-1.5">
+                        <div className="text-xs text-text-muted num">
+                          <span className="text-accent-purple">↓</span> {(p.downloadCount ?? 0).toLocaleString()}
+                        </div>
+                        <ProductDownloadButton
+                          productId={p.id}
+                          requiredPlan={p.requiredPlan}
+                          hasAccess={hasAccessFor(p.requiredPlan)}
+                          userId={userId}
+                        />
                       </div>
                       {/* 评分 + 计划 */}
                       <div className="text-right">
