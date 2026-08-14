@@ -8,6 +8,11 @@
  *  - 蓝紫 #6c9cfc + 粉红 #f47885 涨跌色
  * v22.0 BATCH 16 PATCH 6 (2026-08-14): 列表项加 ProductDownloadButton 按钮 (跟详情页 PATCH 5 一致)
  * v22.0 BATCH 16 PATCH 7.2 (2026-08-14): 移动端响应式 (PM 反馈: 竖屏 5 列挤; 改 3 列 [图 48 + 内容 1fr + 按钮 auto])
+ * v22.0 BATCH 16 PATCH 7.3 (2026-08-14): 桌面列宽重平衡 (PM 反馈: 后面几项列宽不对齐, 1fr 被外层 60px 网格压成 0)
+ *   - 修复 col-span bug: Link 改纯 block, 桌面 5 列由内层 div 独立 grid
+ *   - 列宽: [60+120+1fr+100+60] → [80+200+1fr+220+120], 1fr 在 1920px 视口 ~890px
+ *   - 缩略图 48→64px, 评分 60→120px (强调), 按钮 100→220px (含下载数右侧)
+ *   - 标签区 120→200px, 容纳完整中文 tier 标签 (典藏级 VIP / 专业级 Pro)
  */
 import Link from 'next/link';
 import Image from 'next/image';
@@ -136,9 +141,14 @@ export default async function ProductsPage({ searchParams }: Props) {
               源码可读可改 · 适配 MT4/MT5 双终端 · 配套策略说明 + 调参指导
             </p>
           </div>
-          <div className="text-xs text-text-muted num">
-            共 <span className="text-accent-purple font-semibold">{total}</span> 款 ·
-            第 <span className="text-text-primary font-semibold">{page}</span> / {totalPages} 页
+          <div className="text-xs text-text-muted num flex items-center gap-3">
+            <span className="inline-flex items-center gap-1 px-2 py-1 bg-accent-up/10 text-accent-up text-[10px] font-semibold rounded">
+              游客可浏览全部
+            </span>
+            <span>
+              共 <span className="text-accent-purple font-semibold">{total}</span> 款 ·
+              第 <span className="text-text-primary font-semibold">{page}</span> / {totalPages} 页
+            </span>
           </div>
         </div>
       </section>
@@ -198,8 +208,12 @@ export default async function ProductsPage({ searchParams }: Props) {
                     <Link
                       key={p.id}
                       href={`/products/${p.id}`}
-                      // PATCH 7.2: 移动端卡片式 (图+内容横排, 按钮在底部), 桌面 5 列横排
-                      className={`group relative block lg:grid lg:grid-cols-[60px_120px_1fr_100px_60px] lg:items-center lg:gap-6 border-b border-border last:border-0 hover:bg-bg-secondary transition-colors px-3 -mx-3 py-3 ${
+                      // PATCH 7.3 (2026-08-14): 桌面 5 列列宽重平衡 + 修复 col-span bug
+                      //  旧: [60+120+1fr+100+60] = 340px fixed (1fr 易被外层 60px 网格压成 0, 标题被截断)
+                      //  新: [80+200+1fr+220+120] = 620px fixed (1fr 在 1920px 视口 ~890px, 充分利用页宽)
+                      //  Link 改为纯 block, 桌面 5 列横排由内层 div 独立 grid 渲染
+                      //  缩略图 48→64px, 评分 60→120px, 按钮 100→220px (含下载数)
+                      className={`group relative block border-b border-border last:border-0 hover:bg-bg-secondary transition-colors px-3 -mx-3 py-3 ${
                         p.isFeatured ? 'bg-accent-gold/5 border-l-2 border-l-accent-gold -ml-px' : ''
                       }`}
                     >
@@ -250,35 +264,35 @@ export default async function ProductsPage({ searchParams }: Props) {
                         />
                       </div>
 
-                      {/* 桌面布局 (lg+): 5 列横排 */}
+                      {/* 桌面布局 (lg+): 5 列横排 [80+200+1fr+220+120] (PATCH 7.3 改善列宽) */}
                       <div className="hidden lg:block">
-                        <div className="grid grid-cols-[60px_120px_1fr_100px_60px] items-center gap-6">
-                          {/* EA 缩略图 */}
+                        <div className="grid grid-cols-[80px_200px_1fr_220px_120px] items-center gap-6">
+                          {/* 1. EA 缩略图 (48→64px, 更醒目) */}
                           {getThumbnail(p.id) ? (
-                            <div className={`w-12 h-12 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${p.isFeatured ? 'border-accent-gold/40' : 'border-border'}`}>
-                              <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={48} height={48} className="w-full h-full object-cover" />
+                            <div className={`w-16 h-16 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${p.isFeatured ? 'border-accent-gold/40' : 'border-border'}`}>
+                              <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={64} height={64} className="w-full h-full object-cover" />
                             </div>
                           ) : (
-                            <div className={`w-12 h-12 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm ${p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'}`}>
+                            <div className={`w-16 h-16 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-base ${p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'}`}>
                               {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
                             </div>
                           )}
-                          {/* tier + type + 热门徽章 */}
+                          {/* 2. tier + type + 热门徽章 (120→200px, 容纳完整中文标签) */}
                           <div className="space-y-1 min-w-0">
                             {p.isFeatured && (
-                              <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-accent-gold/15 text-accent-gold text-[9px] font-bold tracking-wider uppercase rounded">
-                                <Flame size={9} className="fill-current" /> 热门
+                              <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-accent-gold/15 text-accent-gold text-[10px] font-bold tracking-wider uppercase rounded">
+                                <Flame size={10} className="fill-current" /> 热门
                               </div>
                             )}
-                            <div className="text-[10px] uppercase tracking-wider text-accent-purple font-mono truncate">
+                            <div className="text-[11px] uppercase tracking-wider text-accent-purple font-mono truncate">
                               {t.category(p.category).full}
                             </div>
-                            <div className="text-[10px] text-text-muted">
+                            <div className="text-[11px] text-text-muted truncate">
                               {t.tier(p.tier).short}
                             </div>
                           </div>
-                          {/* 标题 + tag */}
-                          <div>
+                          {/* 3. 标题 + tag (1fr, 充分利用主区宽度) */}
+                          <div className="min-w-0">
                             <div className="text-sm lg:text-base font-semibold text-text-primary leading-[22px] group-hover:text-accent-purple transition-colors line-clamp-1">
                               {p.positioning ?? p.name}
                             </div>
@@ -286,10 +300,13 @@ export default async function ProductsPage({ searchParams }: Props) {
                               {tags.slice(0, 4).map(t.tag).join(' · ') || '—'}
                             </div>
                           </div>
-                          {/* 下载数 + 按钮 */}
-                          <div className="text-right space-y-1.5">
-                            <div className="text-xs text-text-muted num">
-                              <span className="text-accent-purple">↓</span> {(p.downloadCount ?? 0).toLocaleString()}
+                          {/* 4. 下载数 + 按钮 (100→220px, 按钮+数字更舒展) */}
+                          <div className="flex items-center justify-end gap-3">
+                            <div className="text-right">
+                              <div className="text-xs text-text-muted num whitespace-nowrap">
+                                <span className="text-accent-purple">↓</span> {(p.downloadCount ?? 0).toLocaleString()}
+                              </div>
+                              <div className="text-[10px] text-text-muted">下载</div>
                             </div>
                             <ProductDownloadButton
                               productId={p.id}
@@ -298,10 +315,10 @@ export default async function ProductsPage({ searchParams }: Props) {
                               userId={userId}
                             />
                           </div>
-                          {/* 评分 + 计划 */}
+                          {/* 5. 评分 + 计划 (60→120px, 强调评分视觉) */}
                           <div className="text-right">
-                            <div className="text-xs text-accent-purple num font-mono">★ {rating10}</div>
-                            <div className="text-[10px] text-accent-gold">{t.plan(p.requiredPlan).short}</div>
+                            <div className="text-base font-semibold text-accent-purple num font-mono">★ {rating10}</div>
+                            <div className="text-[10px] text-accent-gold mt-0.5">{t.plan(p.requiredPlan).short}</div>
                           </div>
                         </div>
                       </div>
