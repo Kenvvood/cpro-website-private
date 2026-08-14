@@ -78,7 +78,7 @@ export default async function ProductsPage({ searchParams }: Props) {
               <span className="text-[10px] text-text-muted">MQL4 / MQL5 双版本 · 严选品质</span>
             </div>
             <h1 className="h1">
-              严选可商用 <span className="text-accent-purple">EA</span>
+              严选可商用 <span className="text-accent-blue">EA</span>
               <span className="text-base font-normal text-text-muted ml-3">贴牌封装 · 持续更新 · 4h 工单 · 终身质保</span>
             </h1>
             <p className="text-xs text-text-muted leading-relaxed">

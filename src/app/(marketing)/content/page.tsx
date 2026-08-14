@@ -60,7 +60,7 @@ export default async function ContentPage() {
               <span className="text-[10px] text-text-muted">投研教程 · 策略分享 · 开源合规再分发</span>
             </div>
             <h1 className="h1">
-              大航海时代
+              <span className="text-accent-blue">大航海</span>时代
               <span className="text-base font-normal text-text-muted ml-3">从跟单到自建 · 源码可读 · 协议合规</span>
             </h1>
             <p className="text-xs text-text-muted leading-relaxed">

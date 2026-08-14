@@ -168,6 +168,7 @@ export default async function ProductDetail({ params }: Props) {
           <div>
             <StickyActionPanel
               product={{
+                id: product.id,
                 tier: product.tier ?? 'N/A',
                 requiredPlan: product.requiredPlan,
                 capabilityTags: parseJsonArray(product.capabilityTags) ?? [],
@@ -175,6 +176,7 @@ export default async function ProductDetail({ params }: Props) {
                 downloadCount: product.downloadCount ?? 0,
               }}
               hasAccess={hasAccess}
+              userId={userId}
             />
           </div>
         </div>
