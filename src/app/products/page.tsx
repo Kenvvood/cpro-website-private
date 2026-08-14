@@ -7,6 +7,7 @@
  *  - 排序: 最新/最热/评分
  *  - 蓝紫 #6c9cfc + 粉红 #f47885 涨跌色
  * v22.0 BATCH 16 PATCH 6 (2026-08-14): 列表项加 ProductDownloadButton 按钮 (跟详情页 PATCH 5 一致)
+ * v22.0 BATCH 16 PATCH 7.2 (2026-08-14): 移动端响应式 (PM 反馈: 竖屏 5 列挤; 改 3 列 [图 48 + 内容 1fr + 按钮 auto])
  */
 import Link from 'next/link';
 import Image from 'next/image';
@@ -197,60 +198,50 @@ export default async function ProductsPage({ searchParams }: Props) {
                     <Link
                       key={p.id}
                       href={`/products/${p.id}`}
-                      className={`group relative grid grid-cols-[60px_120px_1fr_100px_60px] items-center gap-4 lg:gap-6 py-3 border-b border-border last:border-0 hover:bg-bg-secondary transition-colors px-3 -mx-3 ${
+                      // PATCH 7.2: 移动端卡片式 (图+内容横排, 按钮在底部), 桌面 5 列横排
+                      className={`group relative block lg:grid lg:grid-cols-[60px_120px_1fr_100px_60px] lg:items-center lg:gap-6 border-b border-border last:border-0 hover:bg-bg-secondary transition-colors px-3 -mx-3 py-3 ${
                         p.isFeatured ? 'bg-accent-gold/5 border-l-2 border-l-accent-gold -ml-px' : ''
                       }`}
                     >
-                      {/* EA 缩略图 (51 严选产品都有图, 没有图才用 tier 数字占位) */}
-                      {getThumbnail(p.id) ? (
-                        <div className={`w-12 h-12 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${
-                          p.isFeatured ? 'border-accent-gold/40' : 'border-border'
-                        }`}>
-                          <Image
-                            src={getThumbnail(p.id)!}
-                            alt={p.positioning ?? p.name}
-                            width={48}
-                            height={48}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      ) : (
-                        <div className={`w-12 h-12 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm transition-colors ${
-                          p.isFeatured
-                            ? 'border-accent-gold text-accent-gold group-hover:border-accent-gold'
-                            : 'border-border text-accent-purple group-hover:border-accent-purple'
-                        }`}>
-                          {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
-                        </div>
-                      )}
-                      {/* tier + type + 热门徽章 (PATCH 7) */}
-                      <div className="space-y-1">
-                        {p.isFeatured && (
-                          <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-accent-gold/15 text-accent-gold text-[9px] font-bold tracking-wider uppercase rounded">
-                            <Flame size={9} className="fill-current" /> 热门
+                      {/* 移动端布局 (< lg): 卡片式 */}
+                      <div className="flex items-center gap-3 lg:hidden">
+                        {/* EA 缩略图 (51 严选产品都有图) */}
+                        {getThumbnail(p.id) ? (
+                          <div className={`w-12 h-12 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${
+                            p.isFeatured ? 'border-accent-gold/40' : 'border-border'
+                          }`}>
+                            <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={48} height={48} className="w-full h-full object-cover" />
+                          </div>
+                        ) : (
+                          <div className={`w-12 h-12 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm shrink-0 ${
+                            p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'
+                          }`}>
+                            {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
                           </div>
                         )}
-                        <div className="text-[10px] uppercase tracking-wider text-accent-purple font-mono">
-                          {t.category(p.category).full}
-                        </div>
-                        <div className="text-[10px] text-text-muted">
-                          {t.tier(p.tier).short}
+                        {/* 移动端内容: 标题 + meta 行 */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            {p.isFeatured && (
+                              <span className="inline-flex items-center gap-0.5 px-1 py-0.5 bg-accent-gold/15 text-accent-gold text-[9px] font-bold tracking-wider uppercase rounded">
+                                <Flame size={8} className="fill-current" /> 热门
+                              </span>
+                            )}
+                            <span className="text-[10px] text-text-muted truncate">
+                              {t.category(p.category).full} · {t.tier(p.tier).short} · {t.plan(p.requiredPlan).short}
+                            </span>
+                          </div>
+                          <div className="text-sm font-semibold text-text-primary leading-snug group-hover:text-accent-purple transition-colors line-clamp-1">
+                            {p.positioning ?? p.name}
+                          </div>
+                          <div className="flex items-center gap-3 mt-1 text-[11px] text-text-muted">
+                            <span className="num"><span className="text-accent-purple">↓</span> {(p.downloadCount ?? 0).toLocaleString()}</span>
+                            <span className="num text-accent-purple font-mono">★ {rating10}</span>
+                          </div>
                         </div>
                       </div>
-                      {/* 标题 + 描述 + tag chips */}
-                      <div>
-                        <div className="text-sm lg:text-base font-semibold text-text-primary leading-[22px] group-hover:text-accent-purple transition-colors line-clamp-1">
-                          {p.positioning ?? p.name}
-                        </div>
-                        <div className="text-xs text-text-muted leading-[18px] line-clamp-1 mt-1">
-                          {tags.slice(0, 4).map(t.tag).join(' · ') || '—'}
-                        </div>
-                      </div>
-                      {/* 下载数 + 下载按钮 (PATCH 6) */}
-                      <div className="text-right space-y-1.5">
-                        <div className="text-xs text-text-muted num">
-                          <span className="text-accent-purple">↓</span> {(p.downloadCount ?? 0).toLocaleString()}
-                        </div>
+                      {/* 移动端底部按钮 (独占一行) */}
+                      <div className="mt-2 lg:hidden">
                         <ProductDownloadButton
                           productId={p.id}
                           requiredPlan={p.requiredPlan}
@@ -258,10 +249,61 @@ export default async function ProductsPage({ searchParams }: Props) {
                           userId={userId}
                         />
                       </div>
-                      {/* 评分 + 计划 */}
-                      <div className="text-right">
-                        <div className="text-xs text-accent-purple num font-mono">★ {rating10}</div>
-                        <div className="text-[10px] text-accent-gold">{t.plan(p.requiredPlan).short}</div>
+
+                      {/* 桌面布局 (lg+): 5 列横排 */}
+                      <div className="hidden lg:block">
+                        <div className="grid grid-cols-[60px_120px_1fr_100px_60px] items-center gap-6">
+                          {/* EA 缩略图 */}
+                          {getThumbnail(p.id) ? (
+                            <div className={`w-12 h-12 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${p.isFeatured ? 'border-accent-gold/40' : 'border-border'}`}>
+                              <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={48} height={48} className="w-full h-full object-cover" />
+                            </div>
+                          ) : (
+                            <div className={`w-12 h-12 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm ${p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'}`}>
+                              {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
+                            </div>
+                          )}
+                          {/* tier + type + 热门徽章 */}
+                          <div className="space-y-1 min-w-0">
+                            {p.isFeatured && (
+                              <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-accent-gold/15 text-accent-gold text-[9px] font-bold tracking-wider uppercase rounded">
+                                <Flame size={9} className="fill-current" /> 热门
+                              </div>
+                            )}
+                            <div className="text-[10px] uppercase tracking-wider text-accent-purple font-mono truncate">
+                              {t.category(p.category).full}
+                            </div>
+                            <div className="text-[10px] text-text-muted">
+                              {t.tier(p.tier).short}
+                            </div>
+                          </div>
+                          {/* 标题 + tag */}
+                          <div>
+                            <div className="text-sm lg:text-base font-semibold text-text-primary leading-[22px] group-hover:text-accent-purple transition-colors line-clamp-1">
+                              {p.positioning ?? p.name}
+                            </div>
+                            <div className="text-xs text-text-muted leading-[18px] line-clamp-1 mt-1">
+                              {tags.slice(0, 4).map(t.tag).join(' · ') || '—'}
+                            </div>
+                          </div>
+                          {/* 下载数 + 按钮 */}
+                          <div className="text-right space-y-1.5">
+                            <div className="text-xs text-text-muted num">
+                              <span className="text-accent-purple">↓</span> {(p.downloadCount ?? 0).toLocaleString()}
+                            </div>
+                            <ProductDownloadButton
+                              productId={p.id}
+                              requiredPlan={p.requiredPlan}
+                              hasAccess={hasAccessFor(p.requiredPlan)}
+                              userId={userId}
+                            />
+                          </div>
+                          {/* 评分 + 计划 */}
+                          <div className="text-right">
+                            <div className="text-xs text-accent-purple num font-mono">★ {rating10}</div>
+                            <div className="text-[10px] text-accent-gold">{t.plan(p.requiredPlan).short}</div>
+                          </div>
+                        </div>
                       </div>
                     </Link>
                   );

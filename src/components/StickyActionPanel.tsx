@@ -6,6 +6,7 @@
  *   - 已登录未订阅: toast "需订阅 X 会员" + CTA 跳 /membership
  *   - 已订阅: 实际下载 (POST /api/downloads/[productId])
  *   - 之前 hasAccess=false 时显示 Lock 升级按钮, 用户看不到下载 → 转化不透明
+ * v22.0 BATCH 16 PATCH 7.2 (2026-08-14): 移动端不 sticky (PM: 竖屏 sticky 跟主区堆叠体验差, 改为正常位置)
  */
 'use client';
 
@@ -81,8 +82,8 @@ export function StickyActionPanel({ product, hasAccess, userId }: Props) {
   };
 
   return (
-    <aside className="sticky top-24 bg-bg-secondary border border-border
-      rounded-lg overflow-hidden">
+    <aside className="bg-bg-secondary border border-border rounded-lg
+      overflow-hidden lg:sticky lg:top-24">
       {/* 顶部 plan + tier 彩色带 */}
       <div className="bg-bg-tertiary px-5 py-4 border-b border-border">
         <div className="text-xs text-text-muted mb-1.5">所需计划</div>

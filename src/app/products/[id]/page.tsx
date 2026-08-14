@@ -5,6 +5,7 @@
  *  - 适配 mtt- 字段 (positioning/description/capabilityTags)
  *  - 加底部相关推荐 (同 category, 4 个, 按下载数 desc)
  *  - 2 列 grid (主区 1fr + sidebar 360px sticky)
+ * v22.0 BATCH 16 PATCH 7.2 (2026-08-14): 移动端响应式 (PM 反馈: 竖屏不舒服, 移动端 grid 顺序改为 sidebar 在前 [CTA 优先], 桌面维持原顺序)
  */
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
@@ -147,9 +148,10 @@ export default async function ProductDetail({ params }: Props) {
         </header>
 
         {/* 主体: 2 列 grid (主区 1fr + sidebar 360px sticky) */}
+        {/* PATCH 7.2: 移动端 sidebar (CTA) 在前, 主区在后 (PM 反馈: 移动端先看 CTA); 桌面维持主区在前 sidebar 在后 */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
-          {/* 主区 */}
-          <div>
+          {/* 主区 - 移动端 order-2, 桌面 order-1 */}
+          <div className="order-2 lg:order-1">
             <MainContent
               product={{
                 positioning: product.positioning ?? '',
@@ -164,8 +166,8 @@ export default async function ProductDetail({ params }: Props) {
             />
           </div>
 
-          {/* Sidebar sticky */}
-          <div>
+          {/* Sidebar sticky - 移动端 order-1, 桌面 order-2 */}
+          <div className="order-1 lg:order-2">
             <StickyActionPanel
               product={{
                 id: product.id,
