@@ -1,12 +1,9 @@
 @import "./tokens.css";
 @import "tailwindcss";
-/* v22.0 BATCH 16 PATCH 7.6 (2026-08-15): 绝对路径扫 source, 之前相对路径 ECS build 解析失败
- * - 之前: @source "../components/**/*.{ts,tsx}" (相对 globals.css 路径, ECS 解析时拿到 .next/components/ 等不存在)
- * - 现在: 绝对 /var/www/cpro-website/src/... 让 Tailwind v4 扫到所有 .ts/.tsx
- * - 本地开发用相对路径 OK, 部署到 ECS 必须用绝对
+/* v22.0 BATCH 16 PATCH 7.7: Tailwind v4 默认自动扫所有 .ts/.tsx (从 build 入口开始)
+ * 之前 @source 相对路径 ECS 解析失败, 绝对路径 CSS 不支持
+ * 删掉 @source, 让 Tailwind v4 自动从 globals.css 引用关系扫整个 src
  */
-@source "/var/www/cpro-website/src/components/**/*.{ts,tsx}";
-@source "/var/www/cpro-website/src/app/**/*.{ts,tsx}";
 
 /* Tailwind v4 Theme - 引用 tokens.css CSS 变量
  * ARCHIVE v12.0 [UI_TRADINGVIEW_RESTART] 锁定
