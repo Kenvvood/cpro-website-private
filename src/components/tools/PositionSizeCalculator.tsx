@@ -1,7 +1,8 @@
 "use client";
-// PositionSizeCalculator — 持仓规模 (XAUUSD 实战必用)
+// PositionSizeCalculator — 持仓规模 (XAUUSD 黄金实战必用)
 // 输入: 账户余额 / 单笔风险% / 入场价 / 止损价
 // 输出: 仓位手数 (XAUUSD 1 标准手 = 100 oz)
+// v22.0 Phase 7.24 Batch 11: 移除 EURUSD 按钮 (项目只做 XAUUSD + 套利对, 工具页面聚焦主力)
 import { useState } from "react";
 
 export function PositionSizeCalculator() {
@@ -9,7 +10,6 @@ export function PositionSizeCalculator() {
   const [riskPct,     setRiskPct]     = useState("1.0");
   const [entry,       setEntry]       = useState("3320.00");
   const [stopLoss,    setStopLoss]    = useState("3310.00");
-  const [instrument,  setInstrument]  = useState<"XAUUSD" | "EURUSD">("XAUUSD");
 
   const bal  = parseFloat(balance);
   const risk = parseFloat(riskPct);
@@ -17,20 +17,18 @@ export function PositionSizeCalculator() {
   const sl   = parseFloat(stopLoss);
   const valid = !isNaN(bal) && !isNaN(risk) && !isNaN(e) && !isNaN(sl) && bal > 0 && risk > 0 && risk <= 100 && e > 0 && sl > 0;
 
+  // XAUUSD 合约大小 = 100 oz
+  const contractSize = 100;
   // 风险金额
   const riskAmount = valid ? (bal * risk) / 100 : 0;
-  // 每手合约大小: XAUUSD = 100 oz, EURUSD = 100000
-  const contractSize = instrument === "XAUUSD" ? 100 : 100000;
-  // 止损距离 (点数)
+  // 止损距离 (USD/oz)
   const stopDistance = valid ? Math.abs(e - sl) : 0;
-  // 1 手 1 点的价值 (USD): XAUUSD 1 点 = $1/oz × 100 oz = $100/手
-  //                       EURUSD 1 点 = $10/lot (100000 × 0.0001)
-  const pipValuePerLot = instrument === "XAUUSD" ? 1 * contractSize * 1 : 10;
-  // 1 手 止损总价值
-  const lossPerLot = valid ? stopDistance * pipValuePerLot : 0;
+  // 1 oz 1 美元的价值 = $1/oz
+  // 1 手 (100 oz) 1 美元距离 = $100
+  const lossPerLot = valid ? stopDistance * contractSize : 0;
   // 仓位手数
   const lots = valid && lossPerLot > 0 ? riskAmount / lossPerLot : 0;
-  // 仓位 oz (XAUUSD)
+  // 仓位 oz
   const oz = lots * contractSize;
 
   return (
@@ -71,20 +69,10 @@ export function PositionSizeCalculator() {
           </div>
           <div className="md:col-span-2">
             <label className="text-xs text-text-muted block mb-1">交易品种</label>
-            <div className="flex">
-              <button
-                onClick={() => setInstrument("XAUUSD")}
-                className={`flex-1 py-2 text-sm border ${instrument === "XAUUSD" ? "bg-accent-blue/20 border-accent-blue text-accent-blue" : "border-border text-text-secondary hover:bg-bg-tertiary"}`}
-              >
-                XAUUSD 黄金 (1 手 = 100 oz)
-              </button>
-              <button
-                onClick={() => setInstrument("EURUSD")}
-                className={`flex-1 py-2 text-sm border-l-0 border ${instrument === "EURUSD" ? "bg-accent-blue/20 border-accent-blue text-accent-blue" : "border-border text-text-secondary hover:bg-bg-tertiary"}`}
-              >
-                EURUSD 欧元 (1 手 = 100,000)
-              </button>
+            <div className="px-3 py-2 text-sm border border-accent-blue/40 bg-accent-blue/10 text-accent-blue">
+              XAUUSD 黄金 (1 手 = 100 oz) · 项目主力
             </div>
+            <p className="text-[10px] text-text-muted mt-1">套利对仓位计算见各 EA 配置文件</p>
           </div>
         </div>
         {!valid && (
@@ -108,7 +96,7 @@ export function PositionSizeCalculator() {
             <div className="p-5">
               <div className="text-[10px] uppercase tracking-wider text-text-muted mb-1">止损距离</div>
               <div className="text-2xl num font-bold text-text-primary">{stopDistance.toFixed(2)}</div>
-              <div className="text-[10px] text-text-muted mt-1">{instrument === "XAUUSD" ? "美元 / oz" : "点 (pip)"}</div>
+              <div className="text-[10px] text-text-muted mt-1">美元 / oz</div>
             </div>
             <div className="p-5">
               <div className="text-[10px] uppercase tracking-wider text-text-muted mb-1">建议仓位</div>
@@ -118,7 +106,7 @@ export function PositionSizeCalculator() {
             <div className="p-5">
               <div className="text-[10px] uppercase tracking-wider text-text-muted mb-1">实际 oz</div>
               <div className="text-2xl num font-bold text-accent-up">{oz.toFixed(0)}</div>
-              <div className="text-[10px] text-text-muted mt-1">{instrument === "XAUUSD" ? "oz 黄金" : "基础货币"}</div>
+              <div className="text-[10px] text-text-muted mt-1">oz 黄金</div>
             </div>
           </div>
           <div className="px-5 py-3 border-t border-border bg-bg-tertiary text-[10px] text-text-muted leading-relaxed">

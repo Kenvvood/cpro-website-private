@@ -112,3 +112,28 @@ export type UpgradeConversion = Prisma.UpgradeConversionModel
  * 
  */
 export type OpenSourceTutorial = Prisma.OpenSourceTutorialModel
+/**
+ * Model Comment
+ * 
+ */
+export type Comment = Prisma.CommentModel
+/**
+ * Model Article
+ * 
+ */
+export type Article = Prisma.ArticleModel
+/**
+ * Model ModeratorApplication
+ * 
+ */
+export type ModeratorApplication = Prisma.ModeratorApplicationModel
+/**
+ * Model Like
+ * 点赞 (评论 / 文章 通用)
+ */
+export type Like = Prisma.LikeModel
+/**
+ * Model PromotionLog
+ * 任命审计日志 (版主任命版主, 管理员任命版主/管理员, 都要留痕)
+ */
+export type PromotionLog = Prisma.PromotionLogModel

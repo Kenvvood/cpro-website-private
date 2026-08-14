@@ -8,7 +8,7 @@ const TIER_COLOR_CLASSES = {
   未分级: 'bg-text-muted/10 text-text-muted border-text-muted/30',
 } as const;
 
-export function TierBadge({ tier }: { tier?: string }) {
+export function TierBadge({ tier }: { tier?: string | null }) {
   const entry = t.tier(tier);
   const label = entry.short;
   const cls = (TIER_COLOR_CLASSES as Record<string, string>)[label] ?? TIER_COLOR_CLASSES['未分级'];

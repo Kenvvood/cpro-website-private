@@ -2,6 +2,7 @@
 // 投研研报详情页 (task-0046 → task051 PAYMENT-REBUILD Bug-2 修复)
 // L0 游客: 截断到关键章节前, 显示 ContentPaywall
 // L1+ 已登录: 全文渲染
+// v22.0 Phase 7.24 Batch 9: 加评论区
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -9,6 +10,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ContentPaywall } from "@/components/paywall/ContentPaywall";
+import { CommentSection, type CommentItem } from "@/components/CommentSection";
 import { t as i18n } from "@/lib/i18n";
 
 // task051 PAYMENT-REBUILD: 截断关键章节 (PM D6=D11 决策)
@@ -17,7 +19,7 @@ const PAYWALL_KEYWORDS = ["## 实盘案例", "## 关键参数", "## 回测数据
 // task061 3: 教程详情页动态 metadata (Tutorial.title 由 release.title 提供)
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const t = await prisma.openSourceTutorial.findUnique({
+  const tutorial = await prisma.openSourceTutorial.findUnique({
     where: { slug },
     select: {
       marketRegime: true,
@@ -25,9 +27,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       release: { select: { title: true } },
     },
   });
-  if (!t) return { title: "研报未找到 - CProTrading" };
-  const title = t.release.title;
-  const desc = `${t.marketRegime ?? ""} ${t.timeframe ?? ""} 投研研报`.trim();
+  if (!tutorial) return { title: "研报未找到 - CProTrading" };
+  const title = tutorial.release.title;
+  const desc = `${tutorial.marketRegime ?? ""} ${tutorial.timeframe ?? ""} 投研研报`.trim();
   return {
     title: `${title} - 投研研报 - CProTrading`,
     description: desc.slice(0, 160),
@@ -180,7 +182,7 @@ export default async function TutorialDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const t = await prisma.openSourceTutorial.findUnique({
+  const tutorial = await prisma.openSourceTutorial.findUnique({
     where: { slug },
     include: {
       release: {
@@ -188,24 +190,95 @@ export default async function TutorialDetail({
       },
     },
   });
-  if (!t) return notFound();
+  if (!tutorial) return notFound();
 
   // 自增 view
   await prisma.openSourceTutorial.update({
-    where: { id: t.id },
+    where: { id: tutorial.id },
     data: { viewCount: { increment: 1 } },
   });
 
   // task051 Bug-2: L0 游客 → 截断; L1+ 已登录 → 全文
   const session = await getServerSession(authOptions);
   const isLoggedIn = !!session?.user;
-  const { truncated, isTruncated, paywallHeadings } = truncateMarkdown(t.content);
-  const renderContent = isLoggedIn ? t.content : truncated;
+  const { truncated, isTruncated, paywallHeadings } = truncateMarkdown(tutorial.content);
+  const renderContent = isLoggedIn ? tutorial.content : truncated;
 
-  const warnings: string[] = t.riskWarnings ? JSON.parse(t.riskWarnings) : [];
+  // 兼容纯文本 / JSON 数组: 优先当 JSON 解析, 失败则按 [text] 包装 (v22.0 b9 p12)
+  const warnings: string[] = (() => {
+    if (!tutorial.riskWarnings) return [];
+    try {
+      const parsed = JSON.parse(tutorial.riskWarnings);
+      return Array.isArray(parsed) ? parsed : [String(parsed)];
+    } catch {
+      return [tutorial.riskWarnings];
+    }
+  })();
+
+  // Batch 9: 评论区 (targetType='TUTORIAL', targetId=tutorial.id)
+  const dbComments = await prisma.comment.findMany({
+    where: { targetType: 'TUTORIAL', targetId: tutorial.id },
+    orderBy: { createdAt: 'asc' },
+  });
+  const authorIds = Array.from(new Set(dbComments.map(c => c.authorId)));
+  const authors = authorIds.length > 0
+    ? await prisma.user.findMany({
+        where: { id: { in: authorIds } },
+        select: { id: true, username: true, role: true },
+      })
+    : [];
+  const authorMap = new Map(authors.map(a => [a.id, a]));
+
+  // 点赞统计 + 当前用户点赞状态
+  const commentIds = dbComments.map(c => c.id);
+  const [likeAgg, userLikes] = commentIds.length > 0
+    ? await Promise.all([
+        prisma.like.groupBy({
+          by: ['targetId'],
+          where: { targetType: 'COMMENT', targetId: { in: commentIds } },
+          _count: { _all: true },
+        }),
+        session?.user?.id
+          ? prisma.like.findMany({
+              where: { targetType: 'COMMENT', targetId: { in: commentIds }, userId: session.user.id },
+              select: { targetId: true },
+            })
+          : Promise.resolve([] as { targetId: string }[]),
+      ])
+    : [[], [] as { targetId: string }[]];
+  const likeCountMap = new Map((likeAgg as any[]).map(l => [l.targetId, l._count._all]));
+  const likedSet = new Set((userLikes as { targetId: string }[]).map(l => l.targetId));
+
+  const comments: CommentItem[] = dbComments.map(c => {
+    const a = authorMap.get(c.authorId);
+    return {
+      id: c.id,
+      authorId: c.authorId,
+      authorName: a?.username ?? '匿名会员',
+      authorRole: a?.role,
+      content: c.content,
+      status: c.status as any,
+      sensitiveWords: c.sensitiveWords,
+      forwardCount: c.forwardCount,
+      likeCount: likeCountMap.get(c.id) ?? 0,
+      liked: likedSet.has(c.id),
+      createdAt: c.createdAt.toISOString(),
+      parentId: c.parentId,
+    };
+  });
+
+  // 当前用户角色 (CommentSection 用)
+  const currentUser = session?.user
+    ? {
+        id: session.user.id,
+        name: session.user.name ?? session.user.username ?? '会员',
+        role: (session.user.role as any) ?? 'MEMBER',
+        isSubscriber: false,
+      }
+    : null;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
+    <div className="mx-auto max-w-4xl px-4 pt-2 sm:pt-12 lg:pt-14 py-12">
       <Link href="/tutorials" className="text-sm text-muted-foreground hover:text-foreground">
         ← 返回研报列表
       </Link>
@@ -217,21 +290,21 @@ export default async function TutorialDetail({
             CProTrading 投研
           </span>
           <span className="px-2.5 py-1 rounded bg-muted text-xs">
-            {i18n.regime(t.marketRegime).short}
+            {i18n.regime(tutorial.marketRegime).short}
           </span>
-          {t.timeframe && (
+          {tutorial.timeframe && (
             <span className="px-2.5 py-1 rounded bg-muted text-xs">
-              {i18n.timeframe(t.timeframe).short}
+              {i18n.timeframe(tutorial.timeframe).short}
             </span>
           )}
-          {t.riskLevel && (
-            <span className={`px-2.5 py-1 rounded border text-xs ${RISK_BADGE[t.riskLevel] ?? "bg-muted"}`}>
-              {t.riskLevel}风险
+          {tutorial.riskLevel && (
+            <span className={`px-2.5 py-1 rounded border text-xs ${RISK_BADGE[tutorial.riskLevel] ?? "bg-muted"}`}>
+              {tutorial.riskLevel}风险
             </span>
           )}
-          {t.maxDrawdownPct && (
+          {tutorial.maxDrawdownPct && (
             <span className="px-2.5 py-1 rounded bg-red-500/10 text-red-700 border border-red-500/30 text-xs">
-              最大回撤 {Number(t.maxDrawdownPct)}%
+              最大回撤 {Number(tutorial.maxDrawdownPct)}%
             </span>
           )}
         </div>
@@ -240,11 +313,11 @@ export default async function TutorialDetail({
         <div className="text-xs text-muted-foreground mb-6 pb-6 border-b border-border">
           <span className="font-semibold text-foreground">作者：CProTrading 投研团队</span>
           <span className="mx-2">·</span>
-          <span>来源：{t.release.originalSource}</span>
+          <span>来源：{tutorial.release.originalSource}</span>
           <span className="mx-2">·</span>
-          <span>协议：{i18n.license(t.release.license).short}</span>
+          <span>协议：{i18n.license(tutorial.release.license).short}</span>
           <span className="mx-2">·</span>
-          <span>{t.viewCount.toLocaleString()} 次阅读</span>
+          <span>{tutorial.viewCount.toLocaleString()} 次阅读</span>
         </div>
 
         {/* === 正文 Markdown 渲染 === */}
@@ -276,16 +349,24 @@ export default async function TutorialDetail({
         <aside className="mt-10 p-6 rounded border border-border bg-card">
           <h3 className="font-bold mt-0 mb-2">📄 阅读关联开源资源</h3>
           <p className="text-sm text-muted-foreground mb-3">
-            本研报基于 <code className="font-mono">{t.release.title}</code> 源码撰写。
+            本研报基于 <code className="font-mono">{tutorial.release.title}</code> 源码撰写。
             付费会员可下载该 EA 的双署名版本 (含中文 input 注释 + 启动弹窗)。
           </p>
           <Link
-            href={`/open-source/${t.release.id}`}
+            href={`/open-source/${tutorial.release.id}`}
             className="inline-block px-4 py-2 rounded bg-primary text-primary-foreground hover:bg-primary/90 text-sm"
           >
             → 查看开源资源
           </Link>
         </aside>
+
+        {/* === 评论区 (Batch 9) === */}
+        <CommentSection
+          targetType="TUTORIAL"
+          targetId={tutorial.id}
+          comments={comments}
+          currentUser={currentUser}
+        />
 
         {/* === 底部免责声明 === */}
         <footer className="mt-10 pt-6 border-t border-border text-xs text-muted-foreground">

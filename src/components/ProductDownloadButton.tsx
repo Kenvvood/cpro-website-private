@@ -72,10 +72,11 @@ export function ProductDownloadButton({ productId, requiredPlan, hasAccess, user
   };
 
   // 3 状态图标 + 文案 + 配色
+  // v22.0 BATCH 16 PATCH 7.1 (2026-08-14): "需登录" → "登录", "需升级" → "升级" (PM: 列表窄列 2 行换行 难看)
   const Icon = loading ? Loader2 : (hasAccess ? Download : (userId ? Sparkles : Lock));
   const label = loading
     ? '准备中'
-    : (hasAccess ? '下载' : (userId ? '需升级' : '需登录'));
+    : (hasAccess ? '下载' : (userId ? '升级' : '登录'));
   const cls = hasAccess
     ? 'bg-accent text-bg-primary hover:bg-accent/90'
     : 'bg-bg-tertiary text-text-primary border border-border hover:border-accent-gold hover:text-accent-gold';
@@ -90,11 +91,11 @@ export function ProductDownloadButton({ productId, requiredPlan, hasAccess, user
           : (userId ? `需订阅 ${planEntry.full} 会员` : '登录后即可下载')
       }
       className={`inline-flex items-center justify-center gap-1
-        px-2 py-1 rounded text-xs font-semibold transition-colors
+        px-2 py-1 rounded text-xs font-semibold transition-colors whitespace-nowrap
         ${cls} disabled:opacity-50`}
     >
       <Icon className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
-      <span className="hidden sm:inline">{label}</span>
+      <span>{label}</span>
     </button>
   );
 }

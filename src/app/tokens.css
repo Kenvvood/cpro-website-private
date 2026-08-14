@@ -25,6 +25,7 @@
   /* 强调色 (C2-A 拍板: TV 蓝主, 品牌金降级) */
   --accent-blue: #2962FF;
   --accent-gold: #D4AF37;
+  --accent-purple: #6c9cfc;  /* v22.0 Phase 7.24 Batch 5: 借鉴 fxssi.com 蓝紫, /products 主色 */
   --accent-up:   #26a69a;
   --accent-down: #ef5350;
 

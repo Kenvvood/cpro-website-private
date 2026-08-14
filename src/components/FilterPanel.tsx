@@ -56,8 +56,7 @@ export function FilterPanel({ currentTier, currentType, currentTag }: {
   const hasAnyFilter = !!(currentTier || currentType || currentTag);
 
   return (
-    <aside className="bg-bg-secondary border border-border rounded-lg p-5
-      sticky top-20 h-fit">
+    <aside className="bg-bg-secondary border border-border rounded-lg p-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-text-primary">筛选</h2>
         {hasAnyFilter && (

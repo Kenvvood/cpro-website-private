@@ -297,6 +297,7 @@ export type UserWhereInput = {
   referralsTaken?: Prisma.ReferralListRelationFilter
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogListRelationFilter
   upgradeConversions?: Prisma.UpgradeConversionListRelationFilter
+  articles?: Prisma.ArticleListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -323,6 +324,7 @@ export type UserOrderByWithRelationInput = {
   referralsTaken?: Prisma.ReferralOrderByRelationAggregateInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogOrderByRelationAggregateInput
   upgradeConversions?: Prisma.UpgradeConversionOrderByRelationAggregateInput
+  articles?: Prisma.ArticleOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -352,6 +354,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   referralsTaken?: Prisma.ReferralListRelationFilter
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogListRelationFilter
   upgradeConversions?: Prisma.UpgradeConversionListRelationFilter
+  articles?: Prisma.ArticleListRelationFilter
 }, "id" | "username" | "email" | "phone">
 
 export type UserOrderByWithAggregationInput = {
@@ -420,6 +423,7 @@ export type UserCreateInput = {
   referralsTaken?: Prisma.ReferralCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -446,6 +450,7 @@ export type UserUncheckedCreateInput = {
   referralsTaken?: Prisma.ReferralUncheckedCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUpdateInput = {
@@ -472,6 +477,7 @@ export type UserUpdateInput = {
   referralsTaken?: Prisma.ReferralUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -498,6 +504,7 @@ export type UserUncheckedUpdateInput = {
   referralsTaken?: Prisma.ReferralUncheckedUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -780,6 +787,20 @@ export type UserUpdateOneRequiredWithoutUpgradeConversionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUpgradeConversionsInput, Prisma.UserUpdateWithoutUpgradeConversionsInput>, Prisma.UserUncheckedUpdateWithoutUpgradeConversionsInput>
 }
 
+export type UserCreateNestedOneWithoutArticlesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutArticlesInput, Prisma.UserUncheckedCreateWithoutArticlesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutArticlesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutArticlesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutArticlesInput, Prisma.UserUncheckedCreateWithoutArticlesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutArticlesInput
+  upsert?: Prisma.UserUpsertWithoutArticlesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutArticlesInput, Prisma.UserUpdateWithoutArticlesInput>, Prisma.UserUncheckedUpdateWithoutArticlesInput>
+}
+
 export type UserCreateWithoutMembershipsInput = {
   id?: string
   username: string
@@ -803,6 +824,7 @@ export type UserCreateWithoutMembershipsInput = {
   referralsTaken?: Prisma.ReferralCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -828,6 +850,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   referralsTaken?: Prisma.ReferralUncheckedCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -869,6 +892,7 @@ export type UserUpdateWithoutMembershipsInput = {
   referralsTaken?: Prisma.ReferralUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -894,6 +918,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   referralsTaken?: Prisma.ReferralUncheckedUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -919,6 +944,7 @@ export type UserCreateWithoutOrdersInput = {
   referralsTaken?: Prisma.ReferralCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -944,6 +970,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   referralsTaken?: Prisma.ReferralUncheckedCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -985,6 +1012,7 @@ export type UserUpdateWithoutOrdersInput = {
   referralsTaken?: Prisma.ReferralUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -1010,6 +1038,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   referralsTaken?: Prisma.ReferralUncheckedUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateWithoutDownloadRecordsInput = {
@@ -1035,6 +1064,7 @@ export type UserCreateWithoutDownloadRecordsInput = {
   referralsTaken?: Prisma.ReferralCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutDownloadRecordsInput = {
@@ -1060,6 +1090,7 @@ export type UserUncheckedCreateWithoutDownloadRecordsInput = {
   referralsTaken?: Prisma.ReferralUncheckedCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutDownloadRecordsInput = {
@@ -1101,6 +1132,7 @@ export type UserUpdateWithoutDownloadRecordsInput = {
   referralsTaken?: Prisma.ReferralUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDownloadRecordsInput = {
@@ -1126,6 +1158,7 @@ export type UserUncheckedUpdateWithoutDownloadRecordsInput = {
   referralsTaken?: Prisma.ReferralUncheckedUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -1151,6 +1184,7 @@ export type UserCreateWithoutReviewsInput = {
   referralsTaken?: Prisma.ReferralCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -1176,6 +1210,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   referralsTaken?: Prisma.ReferralUncheckedCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -1217,6 +1252,7 @@ export type UserUpdateWithoutReviewsInput = {
   referralsTaken?: Prisma.ReferralUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -1242,6 +1278,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   referralsTaken?: Prisma.ReferralUncheckedUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateWithoutReviewRepliesInput = {
@@ -1267,6 +1304,7 @@ export type UserCreateWithoutReviewRepliesInput = {
   referralsTaken?: Prisma.ReferralCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutReviewRepliesInput = {
@@ -1292,6 +1330,7 @@ export type UserUncheckedCreateWithoutReviewRepliesInput = {
   referralsTaken?: Prisma.ReferralUncheckedCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutReviewRepliesInput = {
@@ -1333,6 +1372,7 @@ export type UserUpdateWithoutReviewRepliesInput = {
   referralsTaken?: Prisma.ReferralUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewRepliesInput = {
@@ -1358,6 +1398,7 @@ export type UserUncheckedUpdateWithoutReviewRepliesInput = {
   referralsTaken?: Prisma.ReferralUncheckedUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateWithoutReferralsGivenInput = {
@@ -1383,6 +1424,7 @@ export type UserCreateWithoutReferralsGivenInput = {
   referralsTaken?: Prisma.ReferralCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutReferralsGivenInput = {
@@ -1408,6 +1450,7 @@ export type UserUncheckedCreateWithoutReferralsGivenInput = {
   referralsTaken?: Prisma.ReferralUncheckedCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutReferralsGivenInput = {
@@ -1438,6 +1481,7 @@ export type UserCreateWithoutReferralsTakenInput = {
   referralsGiven?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutReferralsTakenInput = {
@@ -1463,6 +1507,7 @@ export type UserUncheckedCreateWithoutReferralsTakenInput = {
   referralsGiven?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedCreateNestedManyWithoutUserInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutReferralsTakenInput = {
@@ -1504,6 +1549,7 @@ export type UserUpdateWithoutReferralsGivenInput = {
   referralsTaken?: Prisma.ReferralUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralsGivenInput = {
@@ -1529,6 +1575,7 @@ export type UserUncheckedUpdateWithoutReferralsGivenInput = {
   referralsTaken?: Prisma.ReferralUncheckedUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUpsertWithoutReferralsTakenInput = {
@@ -1565,6 +1612,7 @@ export type UserUpdateWithoutReferralsTakenInput = {
   referralsGiven?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralsTakenInput = {
@@ -1590,6 +1638,7 @@ export type UserUncheckedUpdateWithoutReferralsTakenInput = {
   referralsGiven?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedUpdateManyWithoutUserNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateWithoutOpenSourceAccessLogsInput = {
@@ -1615,6 +1664,7 @@ export type UserCreateWithoutOpenSourceAccessLogsInput = {
   referralsGiven?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsTaken?: Prisma.ReferralCreateNestedManyWithoutRefereeInput
   upgradeConversions?: Prisma.UpgradeConversionCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutOpenSourceAccessLogsInput = {
@@ -1640,6 +1690,7 @@ export type UserUncheckedCreateWithoutOpenSourceAccessLogsInput = {
   referralsGiven?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsTaken?: Prisma.ReferralUncheckedCreateNestedManyWithoutRefereeInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutOpenSourceAccessLogsInput = {
@@ -1681,6 +1732,7 @@ export type UserUpdateWithoutOpenSourceAccessLogsInput = {
   referralsGiven?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsTaken?: Prisma.ReferralUpdateManyWithoutRefereeNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOpenSourceAccessLogsInput = {
@@ -1706,6 +1758,7 @@ export type UserUncheckedUpdateWithoutOpenSourceAccessLogsInput = {
   referralsGiven?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsTaken?: Prisma.ReferralUncheckedUpdateManyWithoutRefereeNestedInput
   upgradeConversions?: Prisma.UpgradeConversionUncheckedUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserCreateWithoutUpgradeConversionsInput = {
@@ -1731,6 +1784,7 @@ export type UserCreateWithoutUpgradeConversionsInput = {
   referralsGiven?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsTaken?: Prisma.ReferralCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleCreateNestedManyWithoutAuthorInput
 }
 
 export type UserUncheckedCreateWithoutUpgradeConversionsInput = {
@@ -1756,6 +1810,7 @@ export type UserUncheckedCreateWithoutUpgradeConversionsInput = {
   referralsGiven?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsTaken?: Prisma.ReferralUncheckedCreateNestedManyWithoutRefereeInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedCreateNestedManyWithoutUserInput
+  articles?: Prisma.ArticleUncheckedCreateNestedManyWithoutAuthorInput
 }
 
 export type UserCreateOrConnectWithoutUpgradeConversionsInput = {
@@ -1797,6 +1852,7 @@ export type UserUpdateWithoutUpgradeConversionsInput = {
   referralsGiven?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsTaken?: Prisma.ReferralUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUpdateManyWithoutAuthorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUpgradeConversionsInput = {
@@ -1822,6 +1878,127 @@ export type UserUncheckedUpdateWithoutUpgradeConversionsInput = {
   referralsGiven?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsTaken?: Prisma.ReferralUncheckedUpdateManyWithoutRefereeNestedInput
   openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedUpdateManyWithoutUserNestedInput
+  articles?: Prisma.ArticleUncheckedUpdateManyWithoutAuthorNestedInput
+}
+
+export type UserCreateWithoutArticlesInput = {
+  id?: string
+  username: string
+  email?: string | null
+  phone?: string | null
+  passwordHash: string
+  wechatOpenid?: string | null
+  wechatUnionid?: string | null
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  kycVerified?: boolean
+  kycDocUrl?: string | null
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  reviewReplies?: Prisma.ReviewReplyCreateNestedManyWithoutUserInput
+  downloadRecords?: Prisma.DownloadRecordCreateNestedManyWithoutUserInput
+  referralsGiven?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralsTaken?: Prisma.ReferralCreateNestedManyWithoutRefereeInput
+  openSourceAccessLogs?: Prisma.OpenSourceAccessLogCreateNestedManyWithoutUserInput
+  upgradeConversions?: Prisma.UpgradeConversionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutArticlesInput = {
+  id?: string
+  username: string
+  email?: string | null
+  phone?: string | null
+  passwordHash: string
+  wechatOpenid?: string | null
+  wechatUnionid?: string | null
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  kycVerified?: boolean
+  kycDocUrl?: string | null
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewReplies?: Prisma.ReviewReplyUncheckedCreateNestedManyWithoutUserInput
+  downloadRecords?: Prisma.DownloadRecordUncheckedCreateNestedManyWithoutUserInput
+  referralsGiven?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralsTaken?: Prisma.ReferralUncheckedCreateNestedManyWithoutRefereeInput
+  openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedCreateNestedManyWithoutUserInput
+  upgradeConversions?: Prisma.UpgradeConversionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutArticlesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutArticlesInput, Prisma.UserUncheckedCreateWithoutArticlesInput>
+}
+
+export type UserUpsertWithoutArticlesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutArticlesInput, Prisma.UserUncheckedUpdateWithoutArticlesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutArticlesInput, Prisma.UserUncheckedCreateWithoutArticlesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutArticlesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutArticlesInput, Prisma.UserUncheckedUpdateWithoutArticlesInput>
+}
+
+export type UserUpdateWithoutArticlesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  wechatOpenid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wechatUnionid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  kycVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kycDocUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  reviewReplies?: Prisma.ReviewReplyUpdateManyWithoutUserNestedInput
+  downloadRecords?: Prisma.DownloadRecordUpdateManyWithoutUserNestedInput
+  referralsGiven?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralsTaken?: Prisma.ReferralUpdateManyWithoutRefereeNestedInput
+  openSourceAccessLogs?: Prisma.OpenSourceAccessLogUpdateManyWithoutUserNestedInput
+  upgradeConversions?: Prisma.UpgradeConversionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutArticlesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  wechatOpenid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wechatUnionid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  kycVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kycDocUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewReplies?: Prisma.ReviewReplyUncheckedUpdateManyWithoutUserNestedInput
+  downloadRecords?: Prisma.DownloadRecordUncheckedUpdateManyWithoutUserNestedInput
+  referralsGiven?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralsTaken?: Prisma.ReferralUncheckedUpdateManyWithoutRefereeNestedInput
+  openSourceAccessLogs?: Prisma.OpenSourceAccessLogUncheckedUpdateManyWithoutUserNestedInput
+  upgradeConversions?: Prisma.UpgradeConversionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1839,6 +2016,7 @@ export type UserCountOutputType = {
   referralsTaken: number
   openSourceAccessLogs: number
   upgradeConversions: number
+  articles: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1851,6 +2029,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   referralsTaken?: boolean | UserCountOutputTypeCountReferralsTakenArgs
   openSourceAccessLogs?: boolean | UserCountOutputTypeCountOpenSourceAccessLogsArgs
   upgradeConversions?: boolean | UserCountOutputTypeCountUpgradeConversionsArgs
+  articles?: boolean | UserCountOutputTypeCountArticlesArgs
 }
 
 /**
@@ -1926,6 +2105,13 @@ export type UserCountOutputTypeCountUpgradeConversionsArgs<ExtArgs extends runti
   where?: Prisma.UpgradeConversionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountArticlesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ArticleWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1951,6 +2137,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   referralsTaken?: boolean | Prisma.User$referralsTakenArgs<ExtArgs>
   openSourceAccessLogs?: boolean | Prisma.User$openSourceAccessLogsArgs<ExtArgs>
   upgradeConversions?: boolean | Prisma.User$upgradeConversionsArgs<ExtArgs>
+  articles?: boolean | Prisma.User$articlesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2016,6 +2203,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   referralsTaken?: boolean | Prisma.User$referralsTakenArgs<ExtArgs>
   openSourceAccessLogs?: boolean | Prisma.User$openSourceAccessLogsArgs<ExtArgs>
   upgradeConversions?: boolean | Prisma.User$upgradeConversionsArgs<ExtArgs>
+  articles?: boolean | Prisma.User$articlesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2033,6 +2221,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     referralsTaken: Prisma.$ReferralPayload<ExtArgs>[]
     openSourceAccessLogs: Prisma.$OpenSourceAccessLogPayload<ExtArgs>[]
     upgradeConversions: Prisma.$UpgradeConversionPayload<ExtArgs>[]
+    articles: Prisma.$ArticlePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2452,6 +2641,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   referralsTaken<T extends Prisma.User$referralsTakenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$referralsTakenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReferralPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   openSourceAccessLogs<T extends Prisma.User$openSourceAccessLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$openSourceAccessLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OpenSourceAccessLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   upgradeConversions<T extends Prisma.User$upgradeConversionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$upgradeConversionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UpgradeConversionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  articles<T extends Prisma.User$articlesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$articlesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3099,6 +3289,30 @@ export type User$upgradeConversionsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.UpgradeConversionScalarFieldEnum | Prisma.UpgradeConversionScalarFieldEnum[]
+}
+
+/**
+ * User.articles
+ */
+export type User$articlesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Article
+   */
+  select?: Prisma.ArticleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Article
+   */
+  omit?: Prisma.ArticleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ArticleInclude<ExtArgs> | null
+  where?: Prisma.ArticleWhereInput
+  orderBy?: Prisma.ArticleOrderByWithRelationInput | Prisma.ArticleOrderByWithRelationInput[]
+  cursor?: Prisma.ArticleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ArticleScalarFieldEnum | Prisma.ArticleScalarFieldEnum[]
 }
 
 /**

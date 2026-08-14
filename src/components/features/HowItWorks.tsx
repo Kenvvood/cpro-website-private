@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { Search, CreditCard, Rocket, ArrowRight } from "lucide-react";
 
-// v22.0 Phase 7.0: 2 栏杂志风重构 (PM 反馈 "首页排版呆板")
-// - 之前: 标题 + 1 张密集表 (跟其他板块同节奏, 显呆板)
-// - 现在: 左 30% 标题区 (h2 大 + 副标 + 简介 + 底部 CTA) / 右 70% 步骤区
-//   3 个 step 横向 card-less 大字编号 (01/02/03) + icon + 标题 + 描述
-// 借鉴 cn.investing 头条区 2 栏 + 杂志感
+// v22.0 Phase 7.10: 简化 - 去掉自己的 1fr_2fr 标题区 (跟 E AuthorInsights 共享 page.tsx 的 grid)
+// 之前: 板块自带 1fr_2fr 左标题 + 右步骤 (双 grid 嵌套)
+// 现在: 板块只输出 标题 + 步骤, 左标题区从 E 那边借, 步骤区宽度自动跟 E 主表同宽
+// v22.0 Phase 7.24 Batch 1: 工作流背景换白色 (PM 决策, 突出卡片化效果)
 const STEPS = [
   {
     n: "01",
@@ -32,46 +31,42 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    // v22.0 Phase 7.3: 响应式 - lg 单列堆叠 / xl 起 2 栏 (1fr:2fr 左标题 + 右步骤)
-    <section className="grid grid-cols-1 xl:grid-cols-[1fr_2fr] gap-8 xl:gap-10 2xl:gap-14 items-start">
-      {/* 左 30% 标题区 - v22.0 Phase 7.4: sticky 只在 xl+ 启用, 移动端不 sticky */}
-      <div className="space-y-4 xl:sticky xl:top-20">
-        <div className="text-[10px] uppercase tracking-wider text-accent-blue font-semibold">
-          工作流
+    // v22.0 Phase 7.24 Batch 1 PATCH: 去 p-4 (父容器改白底后, page.tsx 已有 py-6/8/10, 重复 padding 让留白过多)
+    <section className="bg-white -mx-2 px-2">
+      {/* 板块头: h2 跟 E AuthorInsights 对齐 (h2 + 副标 + 同行 CTA) */}
+      <div className="flex justify-between items-end mb-3 flex-wrap gap-2">
+        <div>
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <h2 className="h2">工作流</h2>
+            <span className="text-[10px] uppercase tracking-wider text-accent-blue font-semibold border border-accent-blue/30 px-1.5 py-0.5">
+              3 步闭环
+            </span>
+          </div>
+          <p className="text-xs text-text-muted">
+            严选合规再分发 · 链上 USDT 收银 · 工作室级服务 · 订阅即开通
+          </p>
         </div>
-        <h2 className="text-2xl lg:text-3xl font-semibold text-text-primary leading-snug">
-          从浏览到部署
-          <br />
-          <span className="text-text-muted text-lg">3 步闭环</span>
-        </h2>
-        <p className="text-sm text-text-secondary leading-relaxed max-w-xs">
-          严选合规再分发, 链上 USDT 收银, 工作室级服务。
-          订阅即开通, 不画饼, 不套路。
-        </p>
-        <div className="pt-2">
-          <Link
-            href="/membership"
-            className="btn-primary inline-flex items-center gap-2 text-sm"
-          >
-            立即开通会员
-            <ArrowRight size={16} />
-          </Link>
-        </div>
+        <Link href="/membership" className="btn-primary inline-flex items-center gap-2 text-sm shrink-0">
+          立即开通会员
+          <ArrowRight size={14} />
+        </Link>
       </div>
 
-      {/* 右 70% 步骤区: 3 个 step 横向大编号 + 1px 顶线分组 */}
+      {/* 3 步: 大编号 + 1px 顶线分组, 跟 E 主表宽度自动对齐 (都共享 page.tsx 的 1fr 列)
+          v22.0 Phase 7.12: 压缩行高 py-3 → py-2 (PM: '工作流高度压缩更紧凑')
+          v22.0 Phase 7.24 Batch 1: hover 改 bg-tertiary (白底上 hover 浅灰可见, 原 bg-primary=白 hover 无效果) */}
       <div className="divide-y divide-border border-t border-border">
         {STEPS.map((s) => {
           const Icon = s.icon;
           return (
-            <div key={s.n} className="py-3 grid grid-cols-[auto_1fr] gap-4 items-start hover:bg-bg-primary transition-colors -mx-2 px-2">
-              <div className="flex flex-col items-start gap-2 w-16">
+            <div key={s.n} className="py-2 grid grid-cols-[auto_1fr] gap-4 items-start hover:bg-bg-tertiary transition-colors -mx-2 px-2">
+              <div className="flex flex-col items-start gap-1.5 w-16">
                 <span className="text-2xl lg:text-3xl xl:text-4xl font-bold num text-accent-blue/40 leading-none">
                   {s.n}
                 </span>
                 <Icon size={18} className="text-accent-blue" />
               </div>
-              <div className="space-y-1.5 min-w-0">
+              <div className="space-y-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-base font-semibold text-text-primary">{s.title}</h3>
                   <span className="text-[10px] text-text-muted px-1.5 py-0.5 border border-border bg-bg-primary">

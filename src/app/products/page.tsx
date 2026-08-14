@@ -9,6 +9,7 @@
  * v22.0 BATCH 16 PATCH 6 (2026-08-14): 列表项加 ProductDownloadButton 按钮 (跟详情页 PATCH 5 一致)
  */
 import Link from 'next/link';
+import Image from 'next/image';
 import { getServerSession } from 'next-auth';
 import { Flame } from 'lucide-react';
 import { authOptions } from '@/lib/auth';
@@ -22,6 +23,23 @@ export const dynamic = 'force-dynamic';
 
 const PAGE_SIZE = 12;
 const PLAN_LEVEL: Record<string, number> = { WEEKLY: 1, MONTHLY: 2, ANNUAL: 3 };
+
+// v22.0 BATCH 16 PATCH 7.1 (2026-08-14): 51 个严选产品全部有缩略图 (PM 拍板: 全部产品都要图, 不只是 5 王牌)
+// 5 王牌: 特殊 AI 生成独特图 (gold-*.jpg)
+// 46 mtt-*: 7 个 SVG 模板程序化生成 (mtt-{id}.jpg)
+// 总大小 ~270KB, 240x240 JPG
+function getThumbnail(id: string): string | null {
+  const aceMap: Record<string, string> = {
+    'mtt-ace-dca-gold-grid-v1': '/products/gold-grid.jpg',
+    'mtt-ace-gold-arbitrage-v1': '/products/gold-arbitrage.jpg',
+    'mtt-ace-gold-warrior-v1': '/products/gold-hedge.jpg',
+    'mtt-ace-xau-scalper-v1': '/products/gold-scalper.jpg',
+    'mtt-ace-martingail-v1': '/products/gold-martingale.jpg',
+  };
+  if (aceMap[id]) return aceMap[id];
+  if (id.startsWith('mtt-')) return `/products/${id}.jpg`;
+  return null;
+}
 
 interface Props {
   searchParams: { tier?: string; type?: string; tag?: string; page?: string; sort?: string };
@@ -183,14 +201,28 @@ export default async function ProductsPage({ searchParams }: Props) {
                         p.isFeatured ? 'bg-accent-gold/5 border-l-2 border-l-accent-gold -ml-px' : ''
                       }`}
                     >
-                      {/* EA 缩略图标识 (SVG 替代位) */}
-                      <div className={`w-12 h-12 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm transition-colors ${
-                        p.isFeatured
-                          ? 'border-accent-gold text-accent-gold group-hover:border-accent-gold'
-                          : 'border-border text-accent-purple group-hover:border-accent-purple'
-                      }`}>
-                        {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
-                      </div>
+                      {/* EA 缩略图 (51 严选产品都有图, 没有图才用 tier 数字占位) */}
+                      {getThumbnail(p.id) ? (
+                        <div className={`w-12 h-12 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${
+                          p.isFeatured ? 'border-accent-gold/40' : 'border-border'
+                        }`}>
+                          <Image
+                            src={getThumbnail(p.id)!}
+                            alt={p.positioning ?? p.name}
+                            width={48}
+                            height={48}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className={`w-12 h-12 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm transition-colors ${
+                          p.isFeatured
+                            ? 'border-accent-gold text-accent-gold group-hover:border-accent-gold'
+                            : 'border-border text-accent-purple group-hover:border-accent-purple'
+                        }`}>
+                          {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
+                        </div>
+                      )}
                       {/* tier + type + 热门徽章 (PATCH 7) */}
                       <div className="space-y-1">
                         {p.isFeatured && (

@@ -4,10 +4,12 @@ import { PLAN_LABEL_CN, USDT_RATES, PLAN_DURATION_DAYS } from "@/lib/payment-con
 // L4 v1.6: 会员价表 3 档 (实色金/蓝/边框 · 中央月付高亮)
 // v22.0 Phase 2.1-D: 去 3 卡片 → 1 张密集表格 (反 AI 卡片感)
 // 借鉴 fxssi / cn.investing 风格: 1 张表 3 行
+// v22.0 Phase 7.8: 权益/时长列加 whitespace-nowrap + 缩 desc - 防止窄列竖排
+// PM: '会员订阅模块没有整体对齐右侧的产品中心模块' - 窄列 (1fr_2fr 左侧 33%) 下权益列字一字一行
 export function PricingTable() {
   const plans = [
-    { plan: "WEEKLY" as const,  label: "周付会员", desc: "7 天入门 · 严选资源不限次",                                       highlight: false },
-    { plan: "MONTHLY" as const, label: "月付会员", desc: "30 天持续 · 含投研教程 · 每周更新",                              highlight: true  },
+    { plan: "WEEKLY" as const,  label: "周付会员", desc: "7 天入门 · 严选资源",                                            highlight: false },
+    { plan: "MONTHLY" as const, label: "月付会员", desc: "30 天持续 · 投研教程 · 每周更新",                                highlight: true  },
     { plan: "ANNUAL" as const,  label: "年付会员", desc: "365 天长期 · 节省 70% · 新工具优先",                              highlight: false },
   ];
 
@@ -15,15 +17,16 @@ export function PricingTable() {
     // 1 张密集表格 (3 行, fxssi 价格表风格)
     // v22.0 Phase 7.0: 中间档"推荐" - 行高 + 蓝边 + 徽章 + 强调
     // v22.0 Phase 7.5: 去掉 max-w-4xl mx-auto 居中 (page.tsx grid 控宽)
+    // v22.0 Phase 7.8: 表格列宽分配 - 档位/权益固定 min-w, 其余 flex + nowrap
     <div className="border-y border-border overflow-x-auto">
       <table className="w-full text-sm min-w-[280px]">
         <thead>
           <tr className="text-[10px] uppercase tracking-wider text-text-muted border-b border-border">
-            <th className="text-left py-2 px-2 font-normal">档位</th>
-            <th className="text-left py-2 px-2 font-normal hidden sm:table-cell">权益</th>
-            <th className="text-right py-2 px-2 font-normal">价格</th>
-            <th className="text-right py-2 px-2 font-normal hidden sm:table-cell">时长</th>
-            <th className="text-right py-2 px-2 font-normal w-32">操作</th>
+            <th className="text-left py-2 px-2 font-normal whitespace-nowrap">档位</th>
+            <th className="text-left py-2 px-2 font-normal hidden sm:table-cell whitespace-nowrap">权益</th>
+            <th className="text-right py-2 px-2 font-normal whitespace-nowrap">价格</th>
+            <th className="text-right py-2 px-2 font-normal hidden sm:table-cell whitespace-nowrap">时长</th>
+            <th className="text-right py-2 px-2 font-normal w-28">操作</th>
           </tr>
         </thead>
         <tbody>
@@ -36,7 +39,7 @@ export function PricingTable() {
                   : "hover:bg-bg-tertiary"
               }`}
             >
-              <td className="py-2.5 px-2">
+              <td className="py-2.5 px-2 whitespace-nowrap">
                 <div className="flex items-center gap-2 flex-wrap">
                   {p.highlight && (
                     <span className="text-[9px] font-bold uppercase tracking-wider text-accent-blue border border-accent-blue px-1.5 py-0.5 bg-bg-primary">
@@ -48,19 +51,19 @@ export function PricingTable() {
                   </span>
                 </div>
               </td>
-              <td className="py-2.5 px-2 text-xs text-text-secondary hidden sm:table-cell">
+              <td className="py-2.5 px-2 text-xs text-text-secondary hidden sm:table-cell whitespace-nowrap">
                 {p.desc}
               </td>
-              <td className="py-2.5 px-2 text-right num">
+              <td className="py-2.5 px-2 text-right num whitespace-nowrap">
                 <span className={`${p.highlight ? "text-2xl" : "text-lg"} font-bold text-accent-blue`}>
                   ${USDT_RATES[p.plan]}
                 </span>
                 <span className="text-[10px] text-text-muted ml-1">USDT</span>
               </td>
-              <td className="py-2.5 px-2 text-right text-xs text-text-muted num hidden sm:table-cell">
+              <td className="py-2.5 px-2 text-right text-xs text-text-muted num hidden sm:table-cell whitespace-nowrap">
                 {PLAN_DURATION_DAYS[p.plan]} 天
               </td>
-              <td className="py-2.5 px-2 text-right">
+              <td className="py-2.5 px-2 text-right whitespace-nowrap">
                 <Link
                   href="/membership"
                   className={`inline-block text-xs font-semibold px-3 py-1.5 ${

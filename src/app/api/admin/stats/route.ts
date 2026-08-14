@@ -9,7 +9,7 @@ export async function GET() {
     return NextResponse.json({ error: "未授权" }, { status: 401 });
   }
   try {
-    const [userCount, monthStart, products, downloadsCount] = await Promise.all([
+    const [userCount, monthStart, products, downloadsCount, pendingRefunds] = await Promise.all([
       prisma.user.count(),
       new Date(new Date().getFullYear(), new Date().getMonth(), 1),
       prisma.product.findMany({
@@ -21,6 +21,7 @@ export async function GET() {
         orderBy: { downloadCount: "desc" },
       }),
       prisma.downloadRecord.count(),
+      prisma.refund.count({ where: { status: 'PENDING' } }), // v22.0 BATCH 15 PATCH 10
     ]);
 
     const thisMonthUsers = await prisma.user.count({
@@ -36,6 +37,7 @@ export async function GET() {
         thisMonthUsers,
         totalDownloads: downloadsCount,
         products,
+        pendingRefunds,
       },
     });
   } catch (error) {

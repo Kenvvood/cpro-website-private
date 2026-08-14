@@ -11,6 +11,7 @@
 
 export const UserRole = {
   ADMIN: 'ADMIN',
+  MODERATOR: 'MODERATOR',
   CREATOR: 'CREATOR',
   MEMBER: 'MEMBER'
 } as const
@@ -137,3 +138,46 @@ export const TutorialStatus = {
 } as const
 
 export type TutorialStatus = (typeof TutorialStatus)[keyof typeof TutorialStatus]
+
+
+export const CommentTargetType = {
+  OPEN_SOURCE_RELEASE: 'OPEN_SOURCE_RELEASE',
+  TUTORIAL: 'TUTORIAL',
+  ARTICLE: 'ARTICLE'
+} as const
+
+export type CommentTargetType = (typeof CommentTargetType)[keyof typeof CommentTargetType]
+
+
+export const CommentStatus = {
+  PUBLISHED: 'PUBLISHED',
+  HIDDEN: 'HIDDEN',
+  DELETED: 'DELETED'
+} as const
+
+export type CommentStatus = (typeof CommentStatus)[keyof typeof CommentStatus]
+
+
+export const ArticleType = {
+  PURE: 'PURE',
+  OPEN_SOURCE: 'OPEN_SOURCE'
+} as const
+
+export type ArticleType = (typeof ArticleType)[keyof typeof ArticleType]
+
+
+export const ApplicationTarget = {
+  MODERATOR: 'MODERATOR',
+  ADMIN: 'ADMIN'
+} as const
+
+export type ApplicationTarget = (typeof ApplicationTarget)[keyof typeof ApplicationTarget]
+
+
+export const ApplicationStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type ApplicationStatus = (typeof ApplicationStatus)[keyof typeof ApplicationStatus]

@@ -64,6 +64,7 @@ export type ProductMinAggregateOutputType = {
   subcategory: string | null
   capabilityTags: string | null
   isActive: boolean | null
+  isFeatured: boolean | null
   publishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -94,6 +95,7 @@ export type ProductMaxAggregateOutputType = {
   subcategory: string | null
   capabilityTags: string | null
   isActive: boolean | null
+  isFeatured: boolean | null
   publishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -124,6 +126,7 @@ export type ProductCountAggregateOutputType = {
   subcategory: number
   capabilityTags: number
   isActive: number
+  isFeatured: number
   publishedAt: number
   createdAt: number
   updatedAt: number
@@ -170,6 +173,7 @@ export type ProductMinAggregateInputType = {
   subcategory?: true
   capabilityTags?: true
   isActive?: true
+  isFeatured?: true
   publishedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -200,6 +204,7 @@ export type ProductMaxAggregateInputType = {
   subcategory?: true
   capabilityTags?: true
   isActive?: true
+  isFeatured?: true
   publishedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -230,6 +235,7 @@ export type ProductCountAggregateInputType = {
   subcategory?: true
   capabilityTags?: true
   isActive?: true
+  isFeatured?: true
   publishedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -347,6 +353,7 @@ export type ProductGroupByOutputType = {
   subcategory: string | null
   capabilityTags: string | null
   isActive: boolean
+  isFeatured: boolean
   publishedAt: Date | null
   createdAt: Date
   updatedAt: Date
@@ -400,6 +407,7 @@ export type ProductWhereInput = {
   subcategory?: Prisma.StringNullableFilter<"Product"> | string | null
   capabilityTags?: Prisma.StringNullableFilter<"Product"> | string | null
   isActive?: Prisma.BoolFilter<"Product"> | boolean
+  isFeatured?: Prisma.BoolFilter<"Product"> | boolean
   publishedAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -435,6 +443,7 @@ export type ProductOrderByWithRelationInput = {
   subcategory?: Prisma.SortOrderInput | Prisma.SortOrder
   capabilityTags?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -473,6 +482,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   subcategory?: Prisma.StringNullableFilter<"Product"> | string | null
   capabilityTags?: Prisma.StringNullableFilter<"Product"> | string | null
   isActive?: Prisma.BoolFilter<"Product"> | boolean
+  isFeatured?: Prisma.BoolFilter<"Product"> | boolean
   publishedAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -508,6 +518,7 @@ export type ProductOrderByWithAggregationInput = {
   subcategory?: Prisma.SortOrderInput | Prisma.SortOrder
   capabilityTags?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -546,6 +557,7 @@ export type ProductScalarWhereWithAggregatesInput = {
   subcategory?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   capabilityTags?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
+  isFeatured?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -576,6 +588,7 @@ export type ProductCreateInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -610,6 +623,7 @@ export type ProductUncheckedCreateInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -644,6 +658,7 @@ export type ProductUpdateInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -678,6 +693,7 @@ export type ProductUncheckedUpdateInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -712,6 +728,7 @@ export type ProductCreateManyInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -742,6 +759,7 @@ export type ProductUpdateManyMutationInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -771,6 +789,7 @@ export type ProductUncheckedUpdateManyInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -801,6 +820,7 @@ export type ProductCountOrderByAggregateInput = {
   subcategory?: Prisma.SortOrder
   capabilityTags?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -838,6 +858,7 @@ export type ProductMaxOrderByAggregateInput = {
   subcategory?: Prisma.SortOrder
   capabilityTags?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -868,6 +889,7 @@ export type ProductMinOrderByAggregateInput = {
   subcategory?: Prisma.SortOrder
   capabilityTags?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -1037,6 +1059,7 @@ export type ProductCreateWithoutDownloadRecordsInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1070,6 +1093,7 @@ export type ProductUncheckedCreateWithoutDownloadRecordsInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1119,6 +1143,7 @@ export type ProductUpdateWithoutDownloadRecordsInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1152,6 +1177,7 @@ export type ProductUncheckedUpdateWithoutDownloadRecordsInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1185,6 +1211,7 @@ export type ProductCreateWithoutReviewsInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1218,6 +1245,7 @@ export type ProductUncheckedCreateWithoutReviewsInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1267,6 +1295,7 @@ export type ProductUpdateWithoutReviewsInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1300,6 +1329,7 @@ export type ProductUncheckedUpdateWithoutReviewsInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1333,6 +1363,7 @@ export type ProductCreateWithoutOpenSourceReleaseInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1366,6 +1397,7 @@ export type ProductUncheckedCreateWithoutOpenSourceReleaseInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1415,6 +1447,7 @@ export type ProductUpdateWithoutOpenSourceReleaseInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1448,6 +1481,7 @@ export type ProductUncheckedUpdateWithoutOpenSourceReleaseInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1481,6 +1515,7 @@ export type ProductCreateWithoutUpgradeConversionsInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1514,6 +1549,7 @@ export type ProductUncheckedCreateWithoutUpgradeConversionsInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1563,6 +1599,7 @@ export type ProductUpdateWithoutUpgradeConversionsInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1596,6 +1633,7 @@ export type ProductUncheckedUpdateWithoutUpgradeConversionsInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1629,6 +1667,7 @@ export type ProductCreateWithoutTutorialInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1662,6 +1701,7 @@ export type ProductUncheckedCreateWithoutTutorialInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1723,6 +1763,7 @@ export type ProductScalarWhereInput = {
   subcategory?: Prisma.StringNullableFilter<"Product"> | string | null
   capabilityTags?: Prisma.StringNullableFilter<"Product"> | string | null
   isActive?: Prisma.BoolFilter<"Product"> | boolean
+  isFeatured?: Prisma.BoolFilter<"Product"> | boolean
   publishedAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -1753,6 +1794,7 @@ export type ProductCreateManyTutorialInput = {
   subcategory?: string | null
   capabilityTags?: string | null
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1782,6 +1824,7 @@ export type ProductUpdateWithoutTutorialInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1815,6 +1858,7 @@ export type ProductUncheckedUpdateWithoutTutorialInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1848,6 +1892,7 @@ export type ProductUncheckedUpdateManyWithoutTutorialInput = {
   subcategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   capabilityTags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1926,6 +1971,7 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   subcategory?: boolean
   capabilityTags?: boolean
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1962,6 +2008,7 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   subcategory?: boolean
   capabilityTags?: boolean
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1993,6 +2040,7 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   subcategory?: boolean
   capabilityTags?: boolean
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -2024,13 +2072,14 @@ export type ProductSelectScalar = {
   subcategory?: boolean
   capabilityTags?: boolean
   isActive?: boolean
+  isFeatured?: boolean
   publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   openSourceTutorialId?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "category" | "fileUrl" | "ex5Url" | "ex4Url" | "version" | "requiredPlan" | "isFree" | "rating" | "ratingCount" | "downloadCount" | "tier" | "score" | "positioning" | "productHighlights" | "algorithmicCore" | "practicalApplication" | "riskControl" | "subcategory" | "capabilityTags" | "isActive" | "publishedAt" | "createdAt" | "updatedAt" | "openSourceTutorialId", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "category" | "fileUrl" | "ex5Url" | "ex4Url" | "version" | "requiredPlan" | "isFree" | "rating" | "ratingCount" | "downloadCount" | "tier" | "score" | "positioning" | "productHighlights" | "algorithmicCore" | "practicalApplication" | "riskControl" | "subcategory" | "capabilityTags" | "isActive" | "isFeatured" | "publishedAt" | "createdAt" | "updatedAt" | "openSourceTutorialId", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   downloadRecords?: boolean | Prisma.Product$downloadRecordsArgs<ExtArgs>
   reviews?: boolean | Prisma.Product$reviewsArgs<ExtArgs>
@@ -2079,6 +2128,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     subcategory: string | null
     capabilityTags: string | null
     isActive: boolean
+    isFeatured: boolean
     publishedAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -2534,6 +2584,7 @@ export interface ProductFieldRefs {
   readonly subcategory: Prisma.FieldRef<"Product", 'String'>
   readonly capabilityTags: Prisma.FieldRef<"Product", 'String'>
   readonly isActive: Prisma.FieldRef<"Product", 'Boolean'>
+  readonly isFeatured: Prisma.FieldRef<"Product", 'Boolean'>
   readonly publishedAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Product", 'DateTime'>

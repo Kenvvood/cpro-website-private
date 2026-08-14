@@ -69,7 +69,12 @@ export const ModelName = {
   OpenSourceRelease: 'OpenSourceRelease',
   OpenSourceAccessLog: 'OpenSourceAccessLog',
   UpgradeConversion: 'UpgradeConversion',
-  OpenSourceTutorial: 'OpenSourceTutorial'
+  OpenSourceTutorial: 'OpenSourceTutorial',
+  Comment: 'Comment',
+  Article: 'Article',
+  ModeratorApplication: 'ModeratorApplication',
+  Like: 'Like',
+  PromotionLog: 'PromotionLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -156,6 +161,14 @@ export const RefundScalarFieldEnum = {
   status: 'status',
   txHash: 'txHash',
   processedAt: 'processedAt',
+  timeBucket: 'timeBucket',
+  downloadBucket: 'downloadBucket',
+  timeRefundPct: 'timeRefundPct',
+  downloadRefundPct: 'downloadRefundPct',
+  actualRefundPct: 'actualRefundPct',
+  refundedBytes: 'refundedBytes',
+  refundedCount: 'refundedCount',
+  adminNote: 'adminNote',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -187,6 +200,7 @@ export const ProductScalarFieldEnum = {
   subcategory: 'subcategory',
   capabilityTags: 'capabilityTags',
   isActive: 'isActive',
+  isFeatured: 'isFeatured',
   publishedAt: 'publishedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -364,6 +378,7 @@ export const OpenSourceReleaseScalarFieldEnum = {
   tier: 'tier',
   requiredPlan: 'requiredPlan',
   isFeatured: 'isFeatured',
+  isFree: 'isFree',
   downloadCount: 'downloadCount',
   viewCount: 'viewCount',
   publishedAt: 'publishedAt',
@@ -422,6 +437,91 @@ export const OpenSourceTutorialScalarFieldEnum = {
 } as const
 
 export type OpenSourceTutorialScalarFieldEnum = (typeof OpenSourceTutorialScalarFieldEnum)[keyof typeof OpenSourceTutorialScalarFieldEnum]
+
+
+export const CommentScalarFieldEnum = {
+  id: 'id',
+  authorId: 'authorId',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  parentId: 'parentId',
+  content: 'content',
+  status: 'status',
+  sensitiveWords: 'sensitiveWords',
+  forwardCount: 'forwardCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+export const ArticleScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  title: 'title',
+  summary: 'summary',
+  content: 'content',
+  coverImage: 'coverImage',
+  authorId: 'authorId',
+  type: 'type',
+  fileUrl: 'fileUrl',
+  license: 'license',
+  originalAuthor: 'originalAuthor',
+  originalSource: 'originalSource',
+  status: 'status',
+  reviewStatus: 'reviewStatus',
+  reviewReason: 'reviewReason',
+  publishedAt: 'publishedAt',
+  viewCount: 'viewCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ArticleScalarFieldEnum = (typeof ArticleScalarFieldEnum)[keyof typeof ArticleScalarFieldEnum]
+
+
+export const ModeratorApplicationScalarFieldEnum = {
+  id: 'id',
+  applicantId: 'applicantId',
+  applyingFor: 'applyingFor',
+  articleCount: 'articleCount',
+  commentCount: 'commentCount',
+  likeCount: 'likeCount',
+  reason: 'reason',
+  status: 'status',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  reviewNote: 'reviewNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ModeratorApplicationScalarFieldEnum = (typeof ModeratorApplicationScalarFieldEnum)[keyof typeof ModeratorApplicationScalarFieldEnum]
+
+
+export const LikeScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  createdAt: 'createdAt'
+} as const
+
+export type LikeScalarFieldEnum = (typeof LikeScalarFieldEnum)[keyof typeof LikeScalarFieldEnum]
+
+
+export const PromotionLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fromRole: 'fromRole',
+  toRole: 'toRole',
+  promotedById: 'promotedById',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type PromotionLogScalarFieldEnum = (typeof PromotionLogScalarFieldEnum)[keyof typeof PromotionLogScalarFieldEnum]
 
 
 export const SortOrder = {

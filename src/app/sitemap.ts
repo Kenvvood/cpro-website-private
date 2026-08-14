@@ -6,14 +6,14 @@ const SITE_URL = "https://www.cprotrading.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 静态页
+  // v22.0 Phase 7.23: 删 /open-source (合并到 /content), 大航海时代升 priority 0.6→0.9
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, changeFrequency: "daily", priority: 1.0 },
     { url: `${SITE_URL}/products`, changeFrequency: "hourly", priority: 0.9 },
-    { url: `${SITE_URL}/open-source`, changeFrequency: "daily", priority: 0.9 },
     { url: `${SITE_URL}/tutorials`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/membership`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/about`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${SITE_URL}/content`, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${SITE_URL}/content`, changeFrequency: "daily", priority: 0.9 },
     { url: `${SITE_URL}/download`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_URL}/legal/gpl-notice`, changeFrequency: "monthly", priority: 0.3 },
   ];
@@ -32,19 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // 动态开源页 (OpenSourceRelease 没有 status 字段, 取全部前 1000 条)
-  const releases = await prisma.openSourceRelease.findMany({
-    select: { id: true, updatedAt: true },
-    orderBy: { updatedAt: "desc" },
-    take: 1000,
-  });
-  const releaseRoutes: MetadataRoute.Sitemap = releases.map((r) => ({
-    url: `${SITE_URL}/open-source/${r.id}`,
-    lastModified: r.updatedAt,
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
-
+  // v22.0 Phase 7.23: 删 releaseRoutes (源码专区 /open-source 入口已删, 详情页 /open-source/[id] 仍可用但不放 sitemap)
   // 动态教程页
   const tutorials = await prisma.openSourceTutorial.findMany({
     where: { status: "PUBLISHED" },
@@ -59,5 +47,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...productRoutes, ...releaseRoutes, ...tutorialRoutes];
+  return [...staticRoutes, ...productRoutes, ...tutorialRoutes];
 }

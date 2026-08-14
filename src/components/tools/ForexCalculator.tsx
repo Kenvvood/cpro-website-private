@@ -1,6 +1,7 @@
 "use client";
 // ForexCalculator — 汇率换算 (基础工具)
-// 9 币种实时换算 (USD/EUR/GBP/JPY/AUD/CAD/CHF/HKD/CNY)
+// 9 币种参考汇率 (USD/EUR/GBP/JPY/AUD/CAD/CHF/HKD/CNY)
+// v22.0 Phase 7.24 Batch 11: 注 - 工具计算不限于项目实盘对, 是通用汇率换算
 import { useState } from "react";
 
 const CURRENCIES = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "HKD", "CNY"] as const;

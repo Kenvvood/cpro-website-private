@@ -27,7 +27,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@upstash/redis": "^1.38.2",
     "bcryptjs": "^3.0.3",
-    "class-variance-authority": "^0.7.1",
+    "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "decimal.js": "^10.6.0",
     "lucide-react": "^1.8.0",

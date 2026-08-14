@@ -50,6 +50,7 @@ export type OpenSourceReleaseMinAggregateOutputType = {
   tier: string | null
   requiredPlan: $Enums.MembershipPlan | null
   isFeatured: boolean | null
+  isFree: boolean | null
   downloadCount: number | null
   viewCount: number | null
   publishedAt: Date | null
@@ -71,6 +72,7 @@ export type OpenSourceReleaseMaxAggregateOutputType = {
   tier: string | null
   requiredPlan: $Enums.MembershipPlan | null
   isFeatured: boolean | null
+  isFree: boolean | null
   downloadCount: number | null
   viewCount: number | null
   publishedAt: Date | null
@@ -92,6 +94,7 @@ export type OpenSourceReleaseCountAggregateOutputType = {
   tier: number
   requiredPlan: number
   isFeatured: number
+  isFree: number
   downloadCount: number
   viewCount: number
   publishedAt: number
@@ -125,6 +128,7 @@ export type OpenSourceReleaseMinAggregateInputType = {
   tier?: true
   requiredPlan?: true
   isFeatured?: true
+  isFree?: true
   downloadCount?: true
   viewCount?: true
   publishedAt?: true
@@ -146,6 +150,7 @@ export type OpenSourceReleaseMaxAggregateInputType = {
   tier?: true
   requiredPlan?: true
   isFeatured?: true
+  isFree?: true
   downloadCount?: true
   viewCount?: true
   publishedAt?: true
@@ -167,6 +172,7 @@ export type OpenSourceReleaseCountAggregateInputType = {
   tier?: true
   requiredPlan?: true
   isFeatured?: true
+  isFree?: true
   downloadCount?: true
   viewCount?: true
   publishedAt?: true
@@ -275,6 +281,7 @@ export type OpenSourceReleaseGroupByOutputType = {
   tier: string | null
   requiredPlan: $Enums.MembershipPlan
   isFeatured: boolean
+  isFree: boolean
   downloadCount: number
   viewCount: number
   publishedAt: Date | null
@@ -319,6 +326,7 @@ export type OpenSourceReleaseWhereInput = {
   tier?: Prisma.StringNullableFilter<"OpenSourceRelease"> | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFilter<"OpenSourceRelease"> | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFilter<"OpenSourceRelease"> | boolean
+  isFree?: Prisma.BoolFilter<"OpenSourceRelease"> | boolean
   downloadCount?: Prisma.IntFilter<"OpenSourceRelease"> | number
   viewCount?: Prisma.IntFilter<"OpenSourceRelease"> | number
   publishedAt?: Prisma.DateTimeNullableFilter<"OpenSourceRelease"> | Date | string | null
@@ -343,6 +351,7 @@ export type OpenSourceReleaseOrderByWithRelationInput = {
   tier?: Prisma.SortOrderInput | Prisma.SortOrder
   requiredPlan?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
+  isFree?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -370,6 +379,7 @@ export type OpenSourceReleaseWhereUniqueInput = Prisma.AtLeast<{
   tier?: Prisma.StringNullableFilter<"OpenSourceRelease"> | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFilter<"OpenSourceRelease"> | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFilter<"OpenSourceRelease"> | boolean
+  isFree?: Prisma.BoolFilter<"OpenSourceRelease"> | boolean
   downloadCount?: Prisma.IntFilter<"OpenSourceRelease"> | number
   viewCount?: Prisma.IntFilter<"OpenSourceRelease"> | number
   publishedAt?: Prisma.DateTimeNullableFilter<"OpenSourceRelease"> | Date | string | null
@@ -394,6 +404,7 @@ export type OpenSourceReleaseOrderByWithAggregationInput = {
   tier?: Prisma.SortOrderInput | Prisma.SortOrder
   requiredPlan?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
+  isFree?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -423,6 +434,7 @@ export type OpenSourceReleaseScalarWhereWithAggregatesInput = {
   tier?: Prisma.StringNullableWithAggregatesFilter<"OpenSourceRelease"> | string | null
   requiredPlan?: Prisma.EnumMembershipPlanWithAggregatesFilter<"OpenSourceRelease"> | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolWithAggregatesFilter<"OpenSourceRelease"> | boolean
+  isFree?: Prisma.BoolWithAggregatesFilter<"OpenSourceRelease"> | boolean
   downloadCount?: Prisma.IntWithAggregatesFilter<"OpenSourceRelease"> | number
   viewCount?: Prisma.IntWithAggregatesFilter<"OpenSourceRelease"> | number
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"OpenSourceRelease"> | Date | string | null
@@ -443,6 +455,7 @@ export type OpenSourceReleaseCreateInput = {
   tier?: string | null
   requiredPlan?: $Enums.MembershipPlan
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: number
   viewCount?: number
   publishedAt?: Date | string | null
@@ -467,6 +480,7 @@ export type OpenSourceReleaseUncheckedCreateInput = {
   tier?: string | null
   requiredPlan?: $Enums.MembershipPlan
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: number
   viewCount?: number
   publishedAt?: Date | string | null
@@ -489,6 +503,7 @@ export type OpenSourceReleaseUpdateInput = {
   tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFieldUpdateOperationsInput | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -513,6 +528,7 @@ export type OpenSourceReleaseUncheckedUpdateInput = {
   tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFieldUpdateOperationsInput | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -536,6 +552,7 @@ export type OpenSourceReleaseCreateManyInput = {
   tier?: string | null
   requiredPlan?: $Enums.MembershipPlan
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: number
   viewCount?: number
   publishedAt?: Date | string | null
@@ -556,6 +573,7 @@ export type OpenSourceReleaseUpdateManyMutationInput = {
   tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFieldUpdateOperationsInput | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -577,6 +595,7 @@ export type OpenSourceReleaseUncheckedUpdateManyInput = {
   tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFieldUpdateOperationsInput | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -603,6 +622,7 @@ export type OpenSourceReleaseCountOrderByAggregateInput = {
   tier?: Prisma.SortOrder
   requiredPlan?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
+  isFree?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
@@ -629,6 +649,7 @@ export type OpenSourceReleaseMaxOrderByAggregateInput = {
   tier?: Prisma.SortOrder
   requiredPlan?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
+  isFree?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
@@ -650,6 +671,7 @@ export type OpenSourceReleaseMinOrderByAggregateInput = {
   tier?: Prisma.SortOrder
   requiredPlan?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
+  isFree?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
@@ -744,6 +766,7 @@ export type OpenSourceReleaseCreateWithoutProductInput = {
   tier?: string | null
   requiredPlan?: $Enums.MembershipPlan
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: number
   viewCount?: number
   publishedAt?: Date | string | null
@@ -766,6 +789,7 @@ export type OpenSourceReleaseUncheckedCreateWithoutProductInput = {
   tier?: string | null
   requiredPlan?: $Enums.MembershipPlan
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: number
   viewCount?: number
   publishedAt?: Date | string | null
@@ -804,6 +828,7 @@ export type OpenSourceReleaseUpdateWithoutProductInput = {
   tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFieldUpdateOperationsInput | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -826,6 +851,7 @@ export type OpenSourceReleaseUncheckedUpdateWithoutProductInput = {
   tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFieldUpdateOperationsInput | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -848,6 +874,7 @@ export type OpenSourceReleaseCreateWithoutAccessLogsInput = {
   tier?: string | null
   requiredPlan?: $Enums.MembershipPlan
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: number
   viewCount?: number
   publishedAt?: Date | string | null
@@ -871,6 +898,7 @@ export type OpenSourceReleaseUncheckedCreateWithoutAccessLogsInput = {
   tier?: string | null
   requiredPlan?: $Enums.MembershipPlan
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: number
   viewCount?: number
   publishedAt?: Date | string | null
@@ -908,6 +936,7 @@ export type OpenSourceReleaseUpdateWithoutAccessLogsInput = {
   tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFieldUpdateOperationsInput | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -931,6 +960,7 @@ export type OpenSourceReleaseUncheckedUpdateWithoutAccessLogsInput = {
   tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFieldUpdateOperationsInput | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -952,6 +982,7 @@ export type OpenSourceReleaseCreateWithoutOpenSourceTutorialInput = {
   tier?: string | null
   requiredPlan?: $Enums.MembershipPlan
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: number
   viewCount?: number
   publishedAt?: Date | string | null
@@ -975,6 +1006,7 @@ export type OpenSourceReleaseUncheckedCreateWithoutOpenSourceTutorialInput = {
   tier?: string | null
   requiredPlan?: $Enums.MembershipPlan
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: number
   viewCount?: number
   publishedAt?: Date | string | null
@@ -1012,6 +1044,7 @@ export type OpenSourceReleaseUpdateWithoutOpenSourceTutorialInput = {
   tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFieldUpdateOperationsInput | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1035,6 +1068,7 @@ export type OpenSourceReleaseUncheckedUpdateWithoutOpenSourceTutorialInput = {
   tier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requiredPlan?: Prisma.EnumMembershipPlanFieldUpdateOperationsInput | $Enums.MembershipPlan
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
   viewCount?: Prisma.IntFieldUpdateOperationsInput | number
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1088,6 +1122,7 @@ export type OpenSourceReleaseSelect<ExtArgs extends runtime.Types.Extensions.Int
   tier?: boolean
   requiredPlan?: boolean
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: boolean
   viewCount?: boolean
   publishedAt?: boolean
@@ -1113,6 +1148,7 @@ export type OpenSourceReleaseSelectCreateManyAndReturn<ExtArgs extends runtime.T
   tier?: boolean
   requiredPlan?: boolean
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: boolean
   viewCount?: boolean
   publishedAt?: boolean
@@ -1135,6 +1171,7 @@ export type OpenSourceReleaseSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   tier?: boolean
   requiredPlan?: boolean
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: boolean
   viewCount?: boolean
   publishedAt?: boolean
@@ -1157,6 +1194,7 @@ export type OpenSourceReleaseSelectScalar = {
   tier?: boolean
   requiredPlan?: boolean
   isFeatured?: boolean
+  isFree?: boolean
   downloadCount?: boolean
   viewCount?: boolean
   publishedAt?: boolean
@@ -1164,7 +1202,7 @@ export type OpenSourceReleaseSelectScalar = {
   updatedAt?: boolean
 }
 
-export type OpenSourceReleaseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "sourceFileId" | "license" | "originalAuthor" | "originalSource" | "title" | "description" | "fileUrl" | "originalFileUrl" | "tier" | "requiredPlan" | "isFeatured" | "downloadCount" | "viewCount" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["openSourceRelease"]>
+export type OpenSourceReleaseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "sourceFileId" | "license" | "originalAuthor" | "originalSource" | "title" | "description" | "fileUrl" | "originalFileUrl" | "tier" | "requiredPlan" | "isFeatured" | "isFree" | "downloadCount" | "viewCount" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["openSourceRelease"]>
 export type OpenSourceReleaseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.OpenSourceRelease$productArgs<ExtArgs>
   accessLogs?: boolean | Prisma.OpenSourceRelease$accessLogsArgs<ExtArgs>
@@ -1199,6 +1237,7 @@ export type $OpenSourceReleasePayload<ExtArgs extends runtime.Types.Extensions.I
     tier: string | null
     requiredPlan: $Enums.MembershipPlan
     isFeatured: boolean
+    isFree: boolean
     downloadCount: number
     viewCount: number
     publishedAt: Date | null
@@ -1643,6 +1682,7 @@ export interface OpenSourceReleaseFieldRefs {
   readonly tier: Prisma.FieldRef<"OpenSourceRelease", 'String'>
   readonly requiredPlan: Prisma.FieldRef<"OpenSourceRelease", 'MembershipPlan'>
   readonly isFeatured: Prisma.FieldRef<"OpenSourceRelease", 'Boolean'>
+  readonly isFree: Prisma.FieldRef<"OpenSourceRelease", 'Boolean'>
   readonly downloadCount: Prisma.FieldRef<"OpenSourceRelease", 'Int'>
   readonly viewCount: Prisma.FieldRef<"OpenSourceRelease", 'Int'>
   readonly publishedAt: Prisma.FieldRef<"OpenSourceRelease", 'DateTime'>

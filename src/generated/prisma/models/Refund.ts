@@ -28,10 +28,20 @@ export type AggregateRefund = {
 
 export type RefundAvgAggregateOutputType = {
   amount: runtime.Decimal | null
+  timeRefundPct: number | null
+  downloadRefundPct: number | null
+  actualRefundPct: number | null
+  refundedBytes: number | null
+  refundedCount: number | null
 }
 
 export type RefundSumAggregateOutputType = {
   amount: runtime.Decimal | null
+  timeRefundPct: number | null
+  downloadRefundPct: number | null
+  actualRefundPct: number | null
+  refundedBytes: number | null
+  refundedCount: number | null
 }
 
 export type RefundMinAggregateOutputType = {
@@ -43,6 +53,14 @@ export type RefundMinAggregateOutputType = {
   status: $Enums.RefundStatus | null
   txHash: string | null
   processedAt: Date | null
+  timeBucket: string | null
+  downloadBucket: string | null
+  timeRefundPct: number | null
+  downloadRefundPct: number | null
+  actualRefundPct: number | null
+  refundedBytes: number | null
+  refundedCount: number | null
+  adminNote: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +74,14 @@ export type RefundMaxAggregateOutputType = {
   status: $Enums.RefundStatus | null
   txHash: string | null
   processedAt: Date | null
+  timeBucket: string | null
+  downloadBucket: string | null
+  timeRefundPct: number | null
+  downloadRefundPct: number | null
+  actualRefundPct: number | null
+  refundedBytes: number | null
+  refundedCount: number | null
+  adminNote: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -69,6 +95,14 @@ export type RefundCountAggregateOutputType = {
   status: number
   txHash: number
   processedAt: number
+  timeBucket: number
+  downloadBucket: number
+  timeRefundPct: number
+  downloadRefundPct: number
+  actualRefundPct: number
+  refundedBytes: number
+  refundedCount: number
+  adminNote: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -77,10 +111,20 @@ export type RefundCountAggregateOutputType = {
 
 export type RefundAvgAggregateInputType = {
   amount?: true
+  timeRefundPct?: true
+  downloadRefundPct?: true
+  actualRefundPct?: true
+  refundedBytes?: true
+  refundedCount?: true
 }
 
 export type RefundSumAggregateInputType = {
   amount?: true
+  timeRefundPct?: true
+  downloadRefundPct?: true
+  actualRefundPct?: true
+  refundedBytes?: true
+  refundedCount?: true
 }
 
 export type RefundMinAggregateInputType = {
@@ -92,6 +136,14 @@ export type RefundMinAggregateInputType = {
   status?: true
   txHash?: true
   processedAt?: true
+  timeBucket?: true
+  downloadBucket?: true
+  timeRefundPct?: true
+  downloadRefundPct?: true
+  actualRefundPct?: true
+  refundedBytes?: true
+  refundedCount?: true
+  adminNote?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -105,6 +157,14 @@ export type RefundMaxAggregateInputType = {
   status?: true
   txHash?: true
   processedAt?: true
+  timeBucket?: true
+  downloadBucket?: true
+  timeRefundPct?: true
+  downloadRefundPct?: true
+  actualRefundPct?: true
+  refundedBytes?: true
+  refundedCount?: true
+  adminNote?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -118,6 +178,14 @@ export type RefundCountAggregateInputType = {
   status?: true
   txHash?: true
   processedAt?: true
+  timeBucket?: true
+  downloadBucket?: true
+  timeRefundPct?: true
+  downloadRefundPct?: true
+  actualRefundPct?: true
+  refundedBytes?: true
+  refundedCount?: true
+  adminNote?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -218,6 +286,14 @@ export type RefundGroupByOutputType = {
   status: $Enums.RefundStatus
   txHash: string | null
   processedAt: Date | null
+  timeBucket: string | null
+  downloadBucket: string | null
+  timeRefundPct: number
+  downloadRefundPct: number
+  actualRefundPct: number
+  refundedBytes: number
+  refundedCount: number
+  adminNote: string | null
   createdAt: Date
   updatedAt: Date
   _count: RefundCountAggregateOutputType | null
@@ -254,6 +330,14 @@ export type RefundWhereInput = {
   status?: Prisma.EnumRefundStatusFilter<"Refund"> | $Enums.RefundStatus
   txHash?: Prisma.StringNullableFilter<"Refund"> | string | null
   processedAt?: Prisma.DateTimeNullableFilter<"Refund"> | Date | string | null
+  timeBucket?: Prisma.StringNullableFilter<"Refund"> | string | null
+  downloadBucket?: Prisma.StringNullableFilter<"Refund"> | string | null
+  timeRefundPct?: Prisma.IntFilter<"Refund"> | number
+  downloadRefundPct?: Prisma.IntFilter<"Refund"> | number
+  actualRefundPct?: Prisma.IntFilter<"Refund"> | number
+  refundedBytes?: Prisma.IntFilter<"Refund"> | number
+  refundedCount?: Prisma.IntFilter<"Refund"> | number
+  adminNote?: Prisma.StringNullableFilter<"Refund"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Refund"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Refund"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
@@ -268,6 +352,14 @@ export type RefundOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   txHash?: Prisma.SortOrderInput | Prisma.SortOrder
   processedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  timeBucket?: Prisma.SortOrderInput | Prisma.SortOrder
+  downloadBucket?: Prisma.SortOrderInput | Prisma.SortOrder
+  timeRefundPct?: Prisma.SortOrder
+  downloadRefundPct?: Prisma.SortOrder
+  actualRefundPct?: Prisma.SortOrder
+  refundedBytes?: Prisma.SortOrder
+  refundedCount?: Prisma.SortOrder
+  adminNote?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   order?: Prisma.OrderOrderByWithRelationInput
@@ -285,6 +377,14 @@ export type RefundWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumRefundStatusFilter<"Refund"> | $Enums.RefundStatus
   txHash?: Prisma.StringNullableFilter<"Refund"> | string | null
   processedAt?: Prisma.DateTimeNullableFilter<"Refund"> | Date | string | null
+  timeBucket?: Prisma.StringNullableFilter<"Refund"> | string | null
+  downloadBucket?: Prisma.StringNullableFilter<"Refund"> | string | null
+  timeRefundPct?: Prisma.IntFilter<"Refund"> | number
+  downloadRefundPct?: Prisma.IntFilter<"Refund"> | number
+  actualRefundPct?: Prisma.IntFilter<"Refund"> | number
+  refundedBytes?: Prisma.IntFilter<"Refund"> | number
+  refundedCount?: Prisma.IntFilter<"Refund"> | number
+  adminNote?: Prisma.StringNullableFilter<"Refund"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Refund"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Refund"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
@@ -299,6 +399,14 @@ export type RefundOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   txHash?: Prisma.SortOrderInput | Prisma.SortOrder
   processedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  timeBucket?: Prisma.SortOrderInput | Prisma.SortOrder
+  downloadBucket?: Prisma.SortOrderInput | Prisma.SortOrder
+  timeRefundPct?: Prisma.SortOrder
+  downloadRefundPct?: Prisma.SortOrder
+  actualRefundPct?: Prisma.SortOrder
+  refundedBytes?: Prisma.SortOrder
+  refundedCount?: Prisma.SortOrder
+  adminNote?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.RefundCountOrderByAggregateInput
@@ -320,6 +428,14 @@ export type RefundScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumRefundStatusWithAggregatesFilter<"Refund"> | $Enums.RefundStatus
   txHash?: Prisma.StringNullableWithAggregatesFilter<"Refund"> | string | null
   processedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Refund"> | Date | string | null
+  timeBucket?: Prisma.StringNullableWithAggregatesFilter<"Refund"> | string | null
+  downloadBucket?: Prisma.StringNullableWithAggregatesFilter<"Refund"> | string | null
+  timeRefundPct?: Prisma.IntWithAggregatesFilter<"Refund"> | number
+  downloadRefundPct?: Prisma.IntWithAggregatesFilter<"Refund"> | number
+  actualRefundPct?: Prisma.IntWithAggregatesFilter<"Refund"> | number
+  refundedBytes?: Prisma.IntWithAggregatesFilter<"Refund"> | number
+  refundedCount?: Prisma.IntWithAggregatesFilter<"Refund"> | number
+  adminNote?: Prisma.StringNullableWithAggregatesFilter<"Refund"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Refund"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Refund"> | Date | string
 }
@@ -332,6 +448,14 @@ export type RefundCreateInput = {
   status?: $Enums.RefundStatus
   txHash?: string | null
   processedAt?: Date | string | null
+  timeBucket?: string | null
+  downloadBucket?: string | null
+  timeRefundPct?: number
+  downloadRefundPct?: number
+  actualRefundPct?: number
+  refundedBytes?: number
+  refundedCount?: number
+  adminNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutRefundsInput
@@ -346,6 +470,14 @@ export type RefundUncheckedCreateInput = {
   status?: $Enums.RefundStatus
   txHash?: string | null
   processedAt?: Date | string | null
+  timeBucket?: string | null
+  downloadBucket?: string | null
+  timeRefundPct?: number
+  downloadRefundPct?: number
+  actualRefundPct?: number
+  refundedBytes?: number
+  refundedCount?: number
+  adminNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -358,6 +490,14 @@ export type RefundUpdateInput = {
   status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
   txHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  timeBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  downloadRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  actualRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedCount?: Prisma.IntFieldUpdateOperationsInput | number
+  adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutRefundsNestedInput
@@ -372,6 +512,14 @@ export type RefundUncheckedUpdateInput = {
   status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
   txHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  timeBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  downloadRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  actualRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedCount?: Prisma.IntFieldUpdateOperationsInput | number
+  adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -385,6 +533,14 @@ export type RefundCreateManyInput = {
   status?: $Enums.RefundStatus
   txHash?: string | null
   processedAt?: Date | string | null
+  timeBucket?: string | null
+  downloadBucket?: string | null
+  timeRefundPct?: number
+  downloadRefundPct?: number
+  actualRefundPct?: number
+  refundedBytes?: number
+  refundedCount?: number
+  adminNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -397,6 +553,14 @@ export type RefundUpdateManyMutationInput = {
   status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
   txHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  timeBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  downloadRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  actualRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedCount?: Prisma.IntFieldUpdateOperationsInput | number
+  adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -410,6 +574,14 @@ export type RefundUncheckedUpdateManyInput = {
   status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
   txHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  timeBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  downloadRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  actualRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedCount?: Prisma.IntFieldUpdateOperationsInput | number
+  adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -433,12 +605,25 @@ export type RefundCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   txHash?: Prisma.SortOrder
   processedAt?: Prisma.SortOrder
+  timeBucket?: Prisma.SortOrder
+  downloadBucket?: Prisma.SortOrder
+  timeRefundPct?: Prisma.SortOrder
+  downloadRefundPct?: Prisma.SortOrder
+  actualRefundPct?: Prisma.SortOrder
+  refundedBytes?: Prisma.SortOrder
+  refundedCount?: Prisma.SortOrder
+  adminNote?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type RefundAvgOrderByAggregateInput = {
   amount?: Prisma.SortOrder
+  timeRefundPct?: Prisma.SortOrder
+  downloadRefundPct?: Prisma.SortOrder
+  actualRefundPct?: Prisma.SortOrder
+  refundedBytes?: Prisma.SortOrder
+  refundedCount?: Prisma.SortOrder
 }
 
 export type RefundMaxOrderByAggregateInput = {
@@ -450,6 +635,14 @@ export type RefundMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   txHash?: Prisma.SortOrder
   processedAt?: Prisma.SortOrder
+  timeBucket?: Prisma.SortOrder
+  downloadBucket?: Prisma.SortOrder
+  timeRefundPct?: Prisma.SortOrder
+  downloadRefundPct?: Prisma.SortOrder
+  actualRefundPct?: Prisma.SortOrder
+  refundedBytes?: Prisma.SortOrder
+  refundedCount?: Prisma.SortOrder
+  adminNote?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -463,12 +656,25 @@ export type RefundMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   txHash?: Prisma.SortOrder
   processedAt?: Prisma.SortOrder
+  timeBucket?: Prisma.SortOrder
+  downloadBucket?: Prisma.SortOrder
+  timeRefundPct?: Prisma.SortOrder
+  downloadRefundPct?: Prisma.SortOrder
+  actualRefundPct?: Prisma.SortOrder
+  refundedBytes?: Prisma.SortOrder
+  refundedCount?: Prisma.SortOrder
+  adminNote?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type RefundSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder
+  timeRefundPct?: Prisma.SortOrder
+  downloadRefundPct?: Prisma.SortOrder
+  actualRefundPct?: Prisma.SortOrder
+  refundedBytes?: Prisma.SortOrder
+  refundedCount?: Prisma.SortOrder
 }
 
 export type RefundCreateNestedManyWithoutOrderInput = {
@@ -525,6 +731,14 @@ export type RefundCreateWithoutOrderInput = {
   status?: $Enums.RefundStatus
   txHash?: string | null
   processedAt?: Date | string | null
+  timeBucket?: string | null
+  downloadBucket?: string | null
+  timeRefundPct?: number
+  downloadRefundPct?: number
+  actualRefundPct?: number
+  refundedBytes?: number
+  refundedCount?: number
+  adminNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -537,6 +751,14 @@ export type RefundUncheckedCreateWithoutOrderInput = {
   status?: $Enums.RefundStatus
   txHash?: string | null
   processedAt?: Date | string | null
+  timeBucket?: string | null
+  downloadBucket?: string | null
+  timeRefundPct?: number
+  downloadRefundPct?: number
+  actualRefundPct?: number
+  refundedBytes?: number
+  refundedCount?: number
+  adminNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -578,6 +800,14 @@ export type RefundScalarWhereInput = {
   status?: Prisma.EnumRefundStatusFilter<"Refund"> | $Enums.RefundStatus
   txHash?: Prisma.StringNullableFilter<"Refund"> | string | null
   processedAt?: Prisma.DateTimeNullableFilter<"Refund"> | Date | string | null
+  timeBucket?: Prisma.StringNullableFilter<"Refund"> | string | null
+  downloadBucket?: Prisma.StringNullableFilter<"Refund"> | string | null
+  timeRefundPct?: Prisma.IntFilter<"Refund"> | number
+  downloadRefundPct?: Prisma.IntFilter<"Refund"> | number
+  actualRefundPct?: Prisma.IntFilter<"Refund"> | number
+  refundedBytes?: Prisma.IntFilter<"Refund"> | number
+  refundedCount?: Prisma.IntFilter<"Refund"> | number
+  adminNote?: Prisma.StringNullableFilter<"Refund"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Refund"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Refund"> | Date | string
 }
@@ -590,6 +820,14 @@ export type RefundCreateManyOrderInput = {
   status?: $Enums.RefundStatus
   txHash?: string | null
   processedAt?: Date | string | null
+  timeBucket?: string | null
+  downloadBucket?: string | null
+  timeRefundPct?: number
+  downloadRefundPct?: number
+  actualRefundPct?: number
+  refundedBytes?: number
+  refundedCount?: number
+  adminNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -602,6 +840,14 @@ export type RefundUpdateWithoutOrderInput = {
   status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
   txHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  timeBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  downloadRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  actualRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedCount?: Prisma.IntFieldUpdateOperationsInput | number
+  adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -614,6 +860,14 @@ export type RefundUncheckedUpdateWithoutOrderInput = {
   status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
   txHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  timeBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  downloadRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  actualRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedCount?: Prisma.IntFieldUpdateOperationsInput | number
+  adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -626,6 +880,14 @@ export type RefundUncheckedUpdateManyWithoutOrderInput = {
   status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
   txHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  timeBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadBucket?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timeRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  downloadRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  actualRefundPct?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  refundedCount?: Prisma.IntFieldUpdateOperationsInput | number
+  adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -641,6 +903,14 @@ export type RefundSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   status?: boolean
   txHash?: boolean
   processedAt?: boolean
+  timeBucket?: boolean
+  downloadBucket?: boolean
+  timeRefundPct?: boolean
+  downloadRefundPct?: boolean
+  actualRefundPct?: boolean
+  refundedBytes?: boolean
+  refundedCount?: boolean
+  adminNote?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
@@ -655,6 +925,14 @@ export type RefundSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   status?: boolean
   txHash?: boolean
   processedAt?: boolean
+  timeBucket?: boolean
+  downloadBucket?: boolean
+  timeRefundPct?: boolean
+  downloadRefundPct?: boolean
+  actualRefundPct?: boolean
+  refundedBytes?: boolean
+  refundedCount?: boolean
+  adminNote?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
@@ -669,6 +947,14 @@ export type RefundSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   status?: boolean
   txHash?: boolean
   processedAt?: boolean
+  timeBucket?: boolean
+  downloadBucket?: boolean
+  timeRefundPct?: boolean
+  downloadRefundPct?: boolean
+  actualRefundPct?: boolean
+  refundedBytes?: boolean
+  refundedCount?: boolean
+  adminNote?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
@@ -683,11 +969,19 @@ export type RefundSelectScalar = {
   status?: boolean
   txHash?: boolean
   processedAt?: boolean
+  timeBucket?: boolean
+  downloadBucket?: boolean
+  timeRefundPct?: boolean
+  downloadRefundPct?: boolean
+  actualRefundPct?: boolean
+  refundedBytes?: boolean
+  refundedCount?: boolean
+  adminNote?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type RefundOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "userId" | "amount" | "reason" | "status" | "txHash" | "processedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["refund"]>
+export type RefundOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "userId" | "amount" | "reason" | "status" | "txHash" | "processedAt" | "timeBucket" | "downloadBucket" | "timeRefundPct" | "downloadRefundPct" | "actualRefundPct" | "refundedBytes" | "refundedCount" | "adminNote" | "createdAt" | "updatedAt", ExtArgs["result"]["refund"]>
 export type RefundInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
 }
@@ -712,6 +1006,14 @@ export type $RefundPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     status: $Enums.RefundStatus
     txHash: string | null
     processedAt: Date | null
+    timeBucket: string | null
+    downloadBucket: string | null
+    timeRefundPct: number
+    downloadRefundPct: number
+    actualRefundPct: number
+    refundedBytes: number
+    refundedCount: number
+    adminNote: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["refund"]>
@@ -1146,6 +1448,14 @@ export interface RefundFieldRefs {
   readonly status: Prisma.FieldRef<"Refund", 'RefundStatus'>
   readonly txHash: Prisma.FieldRef<"Refund", 'String'>
   readonly processedAt: Prisma.FieldRef<"Refund", 'DateTime'>
+  readonly timeBucket: Prisma.FieldRef<"Refund", 'String'>
+  readonly downloadBucket: Prisma.FieldRef<"Refund", 'String'>
+  readonly timeRefundPct: Prisma.FieldRef<"Refund", 'Int'>
+  readonly downloadRefundPct: Prisma.FieldRef<"Refund", 'Int'>
+  readonly actualRefundPct: Prisma.FieldRef<"Refund", 'Int'>
+  readonly refundedBytes: Prisma.FieldRef<"Refund", 'Int'>
+  readonly refundedCount: Prisma.FieldRef<"Refund", 'Int'>
+  readonly adminNote: Prisma.FieldRef<"Refund", 'String'>
   readonly createdAt: Prisma.FieldRef<"Refund", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Refund", 'DateTime'>
 }

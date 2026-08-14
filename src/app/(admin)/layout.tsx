@@ -17,7 +17,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               CProTrading <span className="text-xs text-muted-foreground font-normal">Admin</span>
             </Link>
             <nav className="flex gap-4 text-sm">
-              <Link href="/dashboard" className="hover:text-primary">总览</Link>
+              <Link href="/admin" className="hover:text-primary">总览</Link>
+              <Link href="/admin/refunds" className="hover:text-primary">退款审批</Link>
+              <Link href="/dashboard" className="hover:text-primary">用户分析</Link>
               <Link href="/dashboard/conversions" className="hover:text-primary">转化漏斗</Link>
             </nav>
           </div>
