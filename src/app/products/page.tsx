@@ -40,11 +40,15 @@ export default async function ProductsPage({ searchParams }: Props) {
   const type = searchParams.type;
   const tag = searchParams.tag;
 
-  // 业务过滤: 只显示严选商品 (mtt- 系列, 有 positioning + description)
+  // 业务过滤: 只显示严选商品 (mtt- 系列 OR 5 王牌, 有 positioning + description)
   // 排除 MQL5 资料库的 11k+ 开源代码占位
+  // v22.0 BATCH 16 PATCH 7: 5 王牌 (isFeatured=true) 突破 mtt- 前缀限制
   const where = {
     isActive: true,
-    id: { startsWith: 'mtt-' },
+    OR: [
+      { id: { startsWith: 'mtt-' } },
+      { isFeatured: true },
+    ],
     positioning: { not: null },
     description: { not: null },
     ...(tier ? { tier } : {}),
@@ -80,7 +84,8 @@ export default async function ProductsPage({ searchParams }: Props) {
     prisma.product.findMany({ where, orderBy, skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE }),
     prisma.product.count({ where }),
     prisma.product.findMany({
-      where: { isActive: true, id: { startsWith: 'mtt-' } },
+      // PATCH 7: 5 王牌也参与分布统计
+      where: { isActive: true, OR: [{ id: { startsWith: 'mtt-' } }, { isFeatured: true }] },
       select: { tier: true, category: true, capabilityTags: true }
     }),
   ]);

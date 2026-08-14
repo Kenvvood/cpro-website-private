@@ -9,7 +9,8 @@ import { t } from "@/lib/i18n";
 // v22.0 BATCH 16 PATCH 7 (2026-08-14): 5 热门门面化 - sort by isFeatured DESC + 热门徽章 (PM: 王牌改热门, 避免二次元)
 export async function ProductGrid() {
   const products = await prisma.product.findMany({
-    where: { isActive: true },
+    // PATCH 7: 包含 5 王牌 (isFeatured=true, 突破 mtt- 前缀限制)
+    where: { isActive: true, OR: [{ id: { startsWith: "mtt-" } }, { isFeatured: true }] },
     orderBy: [{ isFeatured: "desc" }, { score: "desc" }, { publishedAt: "desc" }],
     // PATCH 7: 5 热门 (isFeatured DESC 优先) - 4 → 5 行, 5 款热门都露出
     // 注: 主页 PricingTable 3+1=4 行, 5 热门右栏会高 1 行 (PM 接受, 5 热门优先)
