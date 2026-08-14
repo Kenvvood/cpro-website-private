@@ -12,9 +12,7 @@ import { prisma } from "@/lib/prisma";
 import { ContentPaywall } from "@/components/paywall/ContentPaywall";
 import { CommentSection, type CommentItem } from "@/components/CommentSection";
 import { t as i18n } from "@/lib/i18n";
-
-// task051 PAYMENT-REBUILD: 截断关键章节 (PM D6=D11 决策)
-const PAYWALL_KEYWORDS = ["## 实盘案例", "## 关键参数", "## 回测数据"];
+import { truncateMarkdown } from "@/lib/markdown";
 
 // task061 3: 教程详情页动态 metadata (Tutorial.title 由 release.title 提供)
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -35,34 +33,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: desc.slice(0, 160),
     openGraph: { title, description: desc, type: "article" },
     alternates: { canonical: `/tutorials/${slug}` },
-  };
-}
-
-export function truncateMarkdown(content: string): {
-  truncated: string;
-  isTruncated: boolean;
-  paywallHeadings: string[];
-} {
-  const headings: string[] = [];
-  let cutIndex = -1;
-  for (const kw of PAYWALL_KEYWORDS) {
-    const idx = content.indexOf(kw);
-    if (idx !== -1 && (cutIndex === -1 || idx < cutIndex)) {
-      cutIndex = idx;
-      const lineEnd = content.indexOf("\n", idx);
-      headings.push(content.substring(idx, lineEnd === -1 ? idx + kw.length : lineEnd).trim());
-    }
-  }
-  if (cutIndex === -1) {
-    return { truncated: content, isTruncated: false, paywallHeadings: [] };
-  }
-  // 留前 1 行作为过渡 (保留 ## 实盘案例前一段落)
-  const beforeCut = content.substring(0, cutIndex);
-  const lastPara = beforeCut.lastIndexOf("\n\n");
-  return {
-    truncated: lastPara > 0 ? beforeCut.substring(0, lastPara) : beforeCut,
-    isTruncated: true,
-    paywallHeadings: headings,
   };
 }
 

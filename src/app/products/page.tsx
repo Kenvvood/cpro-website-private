@@ -13,6 +13,7 @@
  *   - 列宽: [60+120+1fr+100+60] → [80+200+1fr+220+120], 1fr 在 1920px 视口 ~890px
  *   - 缩略图 48→64px, 评分 60→120px (强调), 按钮 100→220px (含下载数右侧)
  *   - 标签区 120→200px, 容纳完整中文 tier 标签 (典藏级 VIP / 专业级 Pro)
+ * v22.0 BATCH 16 PATCH 7.4 (2026-08-14): 缩略图 64→48px (PM 反馈: 64px 突兀, 跟移动端统一)
  */
 import Link from 'next/link';
 import Image from 'next/image';
@@ -48,7 +49,10 @@ function getThumbnail(id: string): string | null {
 }
 
 interface Props {
-  searchParams: { tier?: string; type?: string; tag?: string; page?: string; sort?: string };
+  // v22.0 BATCH 16 PATCH 7.5 (2026-08-15): Next.js 16 要求 searchParams 是 Promise<>
+  // 之前 Turbopack 跳过 TS 严格检查, webpack build 抓出来 fail
+  // 同步类型在 16 之前能跑但 deprecated, 现在强制 Promise<>
+  searchParams: Promise<{ tier?: string; type?: string; tag?: string; page?: string; sort?: string }>;
 }
 
 const SORT_OPTIONS = [
@@ -58,11 +62,13 @@ const SORT_OPTIONS = [
 ];
 
 export default async function ProductsPage({ searchParams }: Props) {
-  const page = Math.max(1, parseInt(searchParams.page || '1', 10) || 1);
-  const sort = searchParams.sort || 'latest';
-  const tier = searchParams.tier;
-  const type = searchParams.type;
-  const tag = searchParams.tag;
+  // v22.0 BATCH 16 PATCH 7.5: Next.js 16 searchParams 必须 await
+  const sp = await searchParams;
+  const page = Math.max(1, parseInt(sp.page || '1', 10) || 1);
+  const sort = sp.sort || 'latest';
+  const tier = sp.tier;
+  const type = sp.type;
+  const tag = sp.tag;
 
   // 业务过滤: 只显示严选商品 (mtt- 系列 OR 5 王牌, 有 positioning + description)
   // 排除 MQL5 资料库的 11k+ 开源代码占位
@@ -161,7 +167,7 @@ export default async function ProductsPage({ searchParams }: Props) {
             {SORT_OPTIONS.map((s) => (
               <Link
                 key={s.v}
-                href={buildQuery(searchParams, { sort: s.v, page: undefined })}
+                href={buildQuery(sp, { sort: s.v, page: undefined })}
                 className={`text-xs px-3 py-1 rounded-full transition-colors ${
                   sort === s.v
                     ? 'bg-accent-purple text-white'
@@ -172,7 +178,7 @@ export default async function ProductsPage({ searchParams }: Props) {
               </Link>
             ))}
           </div>
-          <Pagination page={page} totalPages={totalPages} searchParams={searchParams} />
+          <Pagination page={page} totalPages={totalPages} searchParams={sp} />
         </div>
       </section>
 
@@ -182,9 +188,9 @@ export default async function ProductsPage({ searchParams }: Props) {
           {/* Sidebar: 紧凑数据表 (借鉴 fxssi Quick Sentiment) */}
           <aside className="space-y-4">
             <FilterPanel currentTier={tier} currentType={type} currentTag={tag} />
-            <DistTable title="Tier 分布" data={tierDist} paramKey="tier" searchParams={searchParams} />
-            <DistTable title="分类分布" data={typeDist} paramKey="type" searchParams={searchParams} />
-            <TagList tags={tagDist} activeTag={tag} searchParams={searchParams} />
+            <DistTable title="Tier 分布" data={tierDist} paramKey="tier" searchParams={sp} />
+            <DistTable title="分类分布" data={typeDist} paramKey="type" searchParams={sp} />
+            <TagList tags={tagDist} activeTag={tag} searchParams={sp} />
           </aside>
 
           {/* 主区: 横向产品 list */}
@@ -264,16 +270,16 @@ export default async function ProductsPage({ searchParams }: Props) {
                         />
                       </div>
 
-                      {/* 桌面布局 (lg+): 5 列横排 [80+200+1fr+220+120] (PATCH 7.3 改善列宽) */}
+                      {/* 桌面布局 (lg+): 5 列横排 [64+200+1fr+220+120] (PATCH 7.3 改善列宽 + PATCH 7.4 缩略图 64→48) */}
                       <div className="hidden lg:block">
-                        <div className="grid grid-cols-[80px_200px_1fr_220px_120px] items-center gap-6">
-                          {/* 1. EA 缩略图 (48→64px, 更醒目) */}
+                        <div className="grid grid-cols-[64px_200px_1fr_220px_120px] items-center gap-6">
+                          {/* 1. EA 缩略图 (PATCH 7.4: 64→48px, 跟移动端统一, 列表更紧凑) */}
                           {getThumbnail(p.id) ? (
-                            <div className={`w-16 h-16 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${p.isFeatured ? 'border-accent-gold/40' : 'border-border'}`}>
-                              <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={64} height={64} className="w-full h-full object-cover" />
+                            <div className={`w-12 h-12 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${p.isFeatured ? 'border-accent-gold/40' : 'border-border'}`}>
+                              <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={48} height={48} className="w-full h-full object-cover" />
                             </div>
                           ) : (
-                            <div className={`w-16 h-16 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-base ${p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'}`}>
+                            <div className={`w-12 h-12 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm ${p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'}`}>
                               {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
                             </div>
                           )}
@@ -331,7 +337,7 @@ export default async function ProductsPage({ searchParams }: Props) {
             {/* 分页 */}
             {totalPages > 1 && (
               <div className="mt-6 flex items-center justify-center">
-                <Pagination page={page} totalPages={totalPages} searchParams={searchParams} large />
+                <Pagination page={page} totalPages={totalPages} searchParams={sp} large />
               </div>
             )}
           </section>
@@ -344,7 +350,9 @@ export default async function ProductsPage({ searchParams }: Props) {
 }
 
 /* === 工具函数 === */
-function buildQuery(sp: Props['searchParams'], overrides: Record<string, string | undefined>) {
+// v22.0 BATCH 16 PATCH 7.5: 接收同步对象 (await 后的 searchParams), 不再是 Promise<>
+type Sp = { tier?: string; type?: string; tag?: string; page?: string; sort?: string };
+function buildQuery(sp: Sp, overrides: Record<string, string | undefined>) {
   const p = new URLSearchParams();
   const t = overrides.tier ?? sp.tier;
   const ty = overrides.type ?? sp.type;
@@ -393,7 +401,7 @@ function computeTagDist(items: any[]) {
 }
 
 /* === Sidebar: 分布数据表 (借鉴 fxssi Quick Sentiment) === */
-function DistTable({ title, data, paramKey, searchParams }: { title: string; data: { k: string; n: number; pct: number }[]; paramKey: string; searchParams: Props['searchParams'] }) {
+function DistTable({ title, data, paramKey, searchParams }: { title: string; data: { k: string; n: number; pct: number }[]; paramKey: string; searchParams: Sp }) {
   return (
     <div className="border border-border">
       <h3 className="text-xs text-text-muted tracking-widest uppercase px-4 py-3 border-b border-border flex items-center gap-2">
@@ -402,7 +410,7 @@ function DistTable({ title, data, paramKey, searchParams }: { title: string; dat
       </h3>
       <div>
         {data.map((d, i) => {
-          const active = searchParams[paramKey as keyof Props['searchParams']] === d.k;
+          const active = (searchParams as any)[paramKey] === d.k;
           return (
             <Link
               key={d.k}
@@ -425,7 +433,7 @@ function DistTable({ title, data, paramKey, searchParams }: { title: string; dat
 }
 
 /* === Sidebar: Tag 列表 === */
-function TagList({ tags, activeTag, searchParams }: { tags: { k: string; n: number }[]; activeTag?: string; searchParams: Props['searchParams'] }) {
+function TagList({ tags, activeTag, searchParams }: { tags: { k: string; n: number }[]; activeTag?: string; searchParams: Sp }) {
   if (tags.length === 0) return null;
   return (
     <div className="border border-border">
@@ -458,7 +466,7 @@ function TagList({ tags, activeTag, searchParams }: { tags: { k: string; n: numb
 }
 
 /* === 分页 === */
-function Pagination({ page, totalPages, searchParams, large }: { page: number; totalPages: number; searchParams: Props['searchParams']; large?: boolean }) {
+function Pagination({ page, totalPages, searchParams, large }: { page: number; totalPages: number; searchParams: Sp; large?: boolean }) {
   const pages = compactPages(page, totalPages);
   const cls = large ? 'text-sm px-3 py-2' : 'text-xs px-2.5 py-1';
   return (
