@@ -353,12 +353,15 @@ export default async function ProductsPage({ searchParams }: Props) {
 // v22.0 BATCH 16 PATCH 7.5: 接收同步对象 (await 后的 searchParams), 不再是 Promise<>
 type Sp = { tier?: string; type?: string; tag?: string; page?: string; sort?: string };
 function buildQuery(sp: Sp, overrides: Record<string, string | undefined>) {
+  // v22.0 BATCH 16 PATCH 7.9 (2026-08-15): 用 'in' 区分"未传"跟"传 undefined"
+  // 之前 `overrides.page ?? sp.page` 让 `page: undefined` (点 1 / 末页 disable) 继承当前页码
+  // 症状: /products?page=2 点 page 1 链接, href = /products?page=2 (跳回当前页)
   const p = new URLSearchParams();
-  const t = overrides.tier ?? sp.tier;
-  const ty = overrides.type ?? sp.type;
-  const tg = overrides.tag ?? sp.tag;
-  const s = overrides.sort ?? sp.sort;
-  const pg = overrides.page ?? sp.page;
+  const t = 'tier' in overrides ? overrides.tier : sp.tier;
+  const ty = 'type' in overrides ? overrides.type : sp.type;
+  const tg = 'tag' in overrides ? overrides.tag : sp.tag;
+  const s = 'sort' in overrides ? overrides.sort : sp.sort;
+  const pg = 'page' in overrides ? overrides.page : sp.page;
   if (t) p.set('tier', t);
   if (ty) p.set('type', ty);
   if (tg) p.set('tag', tg);
