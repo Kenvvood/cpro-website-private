@@ -36,10 +36,13 @@ const COLUMNS = [
   {
     title: "法律",
     links: [
-      { href: "/legal/gpl-notice", label: "隐私政策" },
-      { href: "/legal/gpl-notice", label: "服务条款" },
-      { href: "/legal/gpl-notice", label: "退款政策" },
-      { href: "/legal/gpl-notice", label: "安全说明" },
+      { href: "/legal/privacy", label: "隐私政策" },
+      { href: "/legal/terms", label: "服务条款" },
+      { href: "/legal/refund", label: "退款政策" },
+      { href: "/legal/cookies", label: "Cookie 政策" },
+      { href: "/legal/disclaimer", label: "免责声明" },
+      { href: "/legal/gpl-notice", label: "GPL 声明" },
+      { href: "/legal/mps", label: "公安备案" },
     ],
   },
 ];
@@ -182,8 +185,13 @@ export function Footer() {
                     {BRAND.copyright.icp}
                   </a>
                   <span>|</span>
-                  {/* 公安备案占位 (待 PM 提供) */}
-                  <span>{BRAND.copyright.mps}</span>
+                  {/* v22.0 PATCH 17.6: 公安备案链接到 /legal/mps 页面 (备案号占位 [MPS_FILING_NUMBER_TBD]) */}
+                  <Link
+                    href="/legal/mps"
+                    className="hover:text-gray-300 transition-colors"
+                  >
+                    {BRAND.copyright.mps}
+                  </Link>
                   <span>|</span>
                   <span>域名 {BRAND.domain}</span>
                 </p>
