@@ -469,22 +469,27 @@ function TagList({ tags, activeTag, searchParams }: { tags: { k: string; n: numb
 }
 
 /* === 分页 === */
+// v22.0 BATCH 16 PATCH 7.10 (2026-08-15): 分页改用 <a> 而不是 <Link>
+// 根因: page 1 链接 href = /products (无 query), 跟当前 /products?page=2 path 一样
+// Next.js 16 Link 客户端 router 在 path 一样 + searchParams 不同时, 复用 RSC cache
+// 导致 server component 不重 render, 显示内容不变 ("点 1 无反应")
+// 解法: 用原生 <a> 强制 full page navigation, 保证 server component 重新执行
 function Pagination({ page, totalPages, searchParams, large }: { page: number; totalPages: number; searchParams: Sp; large?: boolean }) {
   const pages = compactPages(page, totalPages);
   const cls = large ? 'text-sm px-3 py-2' : 'text-xs px-2.5 py-1';
   return (
     <div className="flex items-center gap-1">
-      <Link
+      <a
         href={buildQuery(searchParams, { page: page > 1 ? String(page - 1) : undefined })}
         className={`${cls} rounded border border-border text-text-secondary hover:bg-bg-tertiary ${page === 1 ? 'pointer-events-none opacity-40' : ''}`}
       >
         ‹ 上一页
-      </Link>
+      </a>
       {pages.map((p, i) =>
         p === '…' ? (
           <span key={`d${i}`} className={`${cls} text-text-muted`}>…</span>
         ) : (
-          <Link
+          <a
             key={p}
             href={buildQuery(searchParams, { page: p === 1 ? undefined : String(p) })}
             className={`${cls} rounded border ${
@@ -494,15 +499,15 @@ function Pagination({ page, totalPages, searchParams, large }: { page: number; t
             }`}
           >
             {p}
-          </Link>
+          </a>
         )
       )}
-      <Link
+      <a
         href={buildQuery(searchParams, { page: page < totalPages ? String(page + 1) : undefined })}
         className={`${cls} rounded border border-border text-text-secondary hover:bg-bg-tertiary ${page === totalPages ? 'pointer-events-none opacity-40' : ''}`}
       >
         下一页 ›
-      </Link>
+      </a>
     </div>
   );
 }
