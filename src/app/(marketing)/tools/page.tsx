@@ -13,6 +13,18 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { TOOLS } from "./layout";
 import { ToolIcon } from "@/components/tools/ToolIcon";
+import { buildSeoMetadata } from "@/lib/seo";
+
+// v22.0 BATCH 22 PATCH B (2026-08-17 00:40): 工具区 SEO 完整
+//  - 6 款工具是核心 SEO 资产 (Google 搜索 "斐波那契回撤" / "仓位计算器" 都引流到这)
+//  - 客户端计算不上传, 数据安全是核心卖点
+export const metadata = buildSeoMetadata({
+  title: "6 款实战工具 - 斐波那契 / 枢轴点 / 仓位 / R:R 客户端计算 | CProTrading",
+  description:
+    "严选 XAUUSD 黄金 + 黄金套利对日常交易场景的高频计算工具: 斐波那契回撤 / 枢轴点 / 持仓规模 / 点值&盈亏 / 风险回报比 / 汇率换算。客户端运行, 数据不上传。",
+  path: "/tools",
+  keywords: ["斐波那契回撤", "枢轴点", "持仓规模", "点值计算", "风险回报比", "R:R", "XAUUSD", "仓位计算器"],
+});
 
 export default function ToolsPage() {
   return (

@@ -25,6 +25,20 @@ import { ProductDownloadButton } from '@/components/ProductDownloadButton';
 import { prisma } from '@/lib/prisma';
 import { getCategoryAliases, t } from '@/lib/i18n';
 import { Footer } from '@/components/layout/footer';
+import { buildSeoMetadata } from '@/lib/seo';
+
+// v22.0 BATCH 22 PATCH B (2026-08-17 00:40): PLP SEO 完整
+//  - 注意: PLP 是动态页 (force-dynamic, 有 searchParams), 改用 generateMetadata 函数
+//  - 静态 title 包含产品数量 (后续 PATCH C 跟 ARMS 配合, 走 dynamic OG)
+export function generateMetadata() {
+  return buildSeoMetadata({
+    title: "产品中心 - 严选可商用 EA | CProTrading 城诺科技",
+    description:
+      "5 王牌门面 + 46 严选订阅 · 商业授权贴牌 · 源码可读可改 · 适配 MT4/MT5 双终端。配套策略说明 + 调参指导 + 4h 工单 + 终身质保。",
+    path: "/products",
+    keywords: ["产品中心", "严选 EA", "MQL5", "MQL4", "MT4", "MT5", "XAUUSD 黄金", "网格 EA", "趋势 EA"],
+  });
+}
 
 export const dynamic = 'force-dynamic';
 

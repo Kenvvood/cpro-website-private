@@ -10,6 +10,18 @@ import { MembershipPlans } from "@/components/checkout/MembershipPlans";
 import { BRAND } from "@/config/brand";
 import { Footer } from "@/components/layout/footer";
 import Link from "next/link";
+import { buildSeoMetadata } from "@/lib/seo";
+
+// v22.0 BATCH 22 PATCH B (2026-08-17 00:40): /membership SEO 完整
+//  - 订阅页是核心转化页, 标题含价格 / 链上 USDT 结算 / 终身质保
+//  - 注意: page 是动态 (force-dynamic), 但 metadata 是静态 OK, 不影响 SEO
+export const metadata = buildSeoMetadata({
+  title: "会员订阅 - 严选服务 周/月/年付 | CProTrading 城诺科技",
+  description:
+    "周付 ¥99 起 / 月付 ¥299 / 年付 ¥2999。链上 USDT 结算 · 4h 工单响应 · 终身质保 · 严选 5 王牌 + 46 EA 全部解锁。",
+  path: "/membership",
+  keywords: ["会员订阅", "USDT 订阅", "链上结算", "严选服务", "周付", "月付", "年付", "终身质保"],
+});
 
 export const dynamic = "force-dynamic";
 

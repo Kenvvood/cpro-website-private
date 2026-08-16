@@ -7,6 +7,18 @@ import { PricingTable } from "@/components/features/PricingTable";
 import { AuthorInsights } from "@/components/features/AuthorInsights";
 import { AuthorSidebar } from "@/components/features/AuthorSidebar";
 import { Footer } from "@/components/layout/footer";
+import { buildSeoMetadata } from "@/lib/seo";
+
+// v22.0 BATCH 22 PATCH B (2026-08-17 00:40): 6 marketing 页 SEO 统一
+//  - 之前 /guides /wealth 已有 (BATCH 13), 现在 / /products /tools /membership 也补
+//  - 全部用统一 /og-image.png (1200x630, 33KB 品牌图, BATCH 13 备好)
+export const metadata = buildSeoMetadata({
+  title: "CProTrading 城诺科技 - 看见严选可商用 EA | 量化交易基础设施",
+  description:
+    "严选可商用 MQL4/MQL5 EA · 5 王牌门面 + 46 严选订阅 · 投研教程 / 工具 / MTT 终端 — 一站覆盖从源码到实盘。链上 USDT 结算 · 4h 工单 · 终身质保。",
+  path: "/",
+  keywords: ["严选 EA", "MQL5", "MQL4", "MT4", "MT5", "量化交易", "XAUUSD", "黄金 EA", "CProTrading", "城诺科技"],
+});
 
 // v22.0 Phase 7.10: 架构重排 - PM 决策
 // 1) 顶部紧凑: TickerBar 紧跟 Header (无大留白), Hero padding py-2/3/4
