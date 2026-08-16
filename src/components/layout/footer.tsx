@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { MessageCircle, Phone, Globe, Mail } from "lucide-react";
 import { BRAND } from "@/config/brand";
+// v22.0 BATCH 25: 埋点 - 联系客服 (在 ContactLink 客户端组件中调用)
+// 注: footer.tsx 保持 server component, 通过 ContactLink 拆 client
+import { ContactLink } from "./ContactLink";
 
 // L4 v1.6: 借 TradingView cn.tradingview.com 多列页脚
 // v22.0 Phase 7.23: 链接同步导航重排 (删源码专区 合并进大航海时代)
@@ -150,18 +153,18 @@ export function Footer() {
               <div className="space-y-2 text-xs text-gray-400">
                 {SOCIALS.map((s) => {
                   const Icon = s.icon;
+                  // v22.0 BATCH 25: 埋点 - 联系客服 (按 label 映射 channel)
+                  // channel: 微信/飞书 → wechat, QQ → qq, 手机 → phone
+                  const channel = s.label.includes("QQ") ? "qq" : s.label.includes("手机") ? "phone" : "wechat";
                   return (
-                    <a
+                    <ContactLink
                       key={s.label}
                       href={s.href}
-                      target={s.href.startsWith("http") ? "_blank" : undefined}
-                      rel={s.href.startsWith("http") ? "nofollow noopener" : undefined}
-                      className="flex items-center gap-2 hover:text-white transition-colors w-fit"
-                    >
-                      <Icon size={14} className="text-gray-500 shrink-0" />
-                      <span className="font-semibold shrink-0">{s.label}:</span>
-                      <span className="num truncate">{s.value}</span>
-                    </a>
+                      label={s.label}
+                      value={s.value}
+                      channel={channel}
+                      icon={<Icon size={14} className="text-gray-500 shrink-0" />}
+                    />
                   );
                 })}
               </div>

@@ -5,6 +5,8 @@ import { Toaster } from "sonner";
 import { Header } from "@/components/layout/header";
 import { TickerBar } from "@/components/layout/TickerBar";
 import { BRAND } from "@/config/brand";
+import { ARMSBrowserInit } from "@/components/monitor/ARMSBrowserInit";
+import { PageviewTracker } from "@/components/monitor/PageviewTracker";
 
 // v22.0 Phase 1: 字体借鉴 cn.investing.com / fxssi.com
 // Inter (拉丁) + Noto Sans SC (中文) - Next.js build 时自托管, 运行时零外部依赖
@@ -77,6 +79,9 @@ export default function RootLayout({
             - Header sticky 108px 自身管 0 漏白 (跟 TickerBar 紧贴)
             - 各 page/section 内部自己管 padding-top (Hero 等组件自带 pt)
             - 滚动时 Header + TickerBar 永远黏在顶部 */}
+        <ARMSBrowserInit />
+        {/* v22.0 BATCH 25: 自动 pageview 跟踪 (路由变化触发) */}
+        <PageviewTracker />
         <Header />
         <main>
           {children}

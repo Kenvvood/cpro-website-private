@@ -15,6 +15,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { t } from '@/lib/i18n';
+// v22.0 BATCH 25: 埋点 - 下载成功/失败
+import { track } from '@/lib/analytics';
 
 interface Props {
   productId: string;
@@ -60,6 +62,8 @@ export function ProductDownloadButton({ productId, requiredPlan, hasAccess, user
         throw new Error(err.message || `下载失败 (${r.status})`);
       }
       const data = await r.json();
+      // v22.0 BATCH 25: 埋点 - 成功下载
+      track.downloadProduct(productId, true);
       if (data.url) {
         window.location.href = data.url;
       }
