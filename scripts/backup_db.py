@@ -19,6 +19,7 @@ import shutil
 import gzip
 import argparse
 import subprocess
+import re
 from pathlib import Path
 from datetime import datetime, timedelta
 
@@ -26,6 +27,33 @@ from datetime import datetime, timedelta
 ROOT = Path(__file__).parent.parent
 DB_PATH = ROOT / "prisma" / "dev.db"
 BACKUP_DIR = Path(os.environ.get("BACKUP_LOCAL_DIR", "/var/backups/cpro-website"))
+
+
+def _load_env_file(path: Path):
+    """轻量 .env 加载 (避免 dotenv 依赖, 手动解析 KEY=VALUE, 引号 + 注释)"""
+    if not path.exists():
+        return
+    try:
+        text = path.read_text(encoding="utf-8")
+    except Exception:
+        return
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        m = re.match(r"^([A-Z_][A-Z0-9_]*)\s*=\s*(.*)$", line)
+        if not m:
+            continue
+        key, val = m.group(1), m.group(2).strip()
+        # 去引号
+        if (val.startswith('"') and val.endswith('"')) or (val.startswith("'") and val.endswith("'")):
+            val = val[1:-1]
+        # 已有 env 不覆盖 (e.g. shell export)
+        os.environ.setdefault(key, val)
+
+
+# 启动时自动加载 .env.production (避免 PM 手动 set -a)
+_load_env_file(ROOT / ".env.production")
 
 
 def log(msg: str):
@@ -99,7 +127,11 @@ def cleanup_oss(retention_days: int, cfg: dict):
         cutoff = datetime.now() - timedelta(days=retention_days)
         removed = 0
         for obj in oss2.ObjectIterator(bucket, prefix="db/"):
-            if obj.last_modified < cutoff:
+            # 兼容 oss2 不同版本: last_modified 可能是 int (Unix ts) / float / datetime
+            lm = obj.last_modified
+            if isinstance(lm, (int, float)):
+                lm = datetime.fromtimestamp(lm)
+            if lm < cutoff:
                 bucket.delete_object(obj.key)
                 removed += 1
         if removed:
