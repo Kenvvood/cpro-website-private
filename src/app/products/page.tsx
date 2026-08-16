@@ -37,6 +37,8 @@ const PLAN_LEVEL: Record<string, number> = { WEEKLY: 1, MONTHLY: 2, ANNUAL: 3 };
 // 总大小 ~270KB, 240x240 JPG
 // v22.0 BATCH 21 (2026-08-16 23:45): 缩略图 48→40px (PM 反馈: 48px 还偏大, 列表更紧凑)
 // 桌面 col 64→52, 移动 w-12→w-10, 列间距 gap-6→gap-5
+// v22.0 BATCH 21 PATCH B (2026-08-17 00:08): 缩略图 40→32px (PM 反馈: 40px 仍偏大, 业界表格标准是 32px)
+// 桌面 col 52→44, 桌面/移动 w-10→w-8, 跟 GitHub/Stack Overflow/Bloomberg 表格一致
 function getThumbnail(id: string): string | null {
   const aceMap: Record<string, string> = {
     'mtt-ace-dca-gold-grid-v1': '/products/gold-grid.jpg',
@@ -262,15 +264,15 @@ export default async function ProductsPage({ searchParams }: Props) {
                     >
                       {/* 移动端布局 (< lg): 卡片式 */}
                       <div className="flex items-center gap-3 lg:hidden">
-                        {/* EA 缩略图 (BATCH 21: 48→40px, 列表更紧凑) */}
+                        {/* EA 缩略图 (BATCH 21 PATCH B: 40→32px, 业界表格标准) */}
                         {getThumbnail(p.id) ? (
-                          <div className={`w-10 h-10 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${
+                          <div className={`w-8 h-8 rounded border overflow-hidden bg-bg-secondary shrink-0 ${
                             p.isFeatured ? 'border-accent-gold/40' : 'border-border'
                           }`}>
-                            <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={40} height={40} className="w-full h-full object-cover" />
+                            <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={32} height={32} className="w-full h-full object-cover" />
                           </div>
                         ) : (
-                          <div className={`w-10 h-10 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm shrink-0 ${
+                          <div className={`w-8 h-8 rounded border bg-bg-secondary flex items-center justify-center font-mono font-bold text-xs shrink-0 ${
                             p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'
                           }`}>
                             {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
@@ -307,16 +309,16 @@ export default async function ProductsPage({ searchParams }: Props) {
                         />
                       </div>
 
-                      {/* 桌面布局 (lg+): 5 列横排 [52+200+1fr+220+120] (PATCH 7.3 改善列宽 + BATCH 21: 缩略图 64→52, 实际渲染 48→40) */}
+                      {/* 桌面布局 (lg+): 5 列横排 [44+200+1fr+220+120] (PATCH 7.3 改善列宽 + BATCH 21 PATCH B: 缩略图 40→32, col 52→44) */}
                       <div className="hidden lg:block">
-                        <div className="grid grid-cols-[52px_200px_1fr_220px_120px] items-center gap-5">
-                          {/* 1. EA 缩略图 (BATCH 21: 48→40px, 桌面 col 64→52, 移动同步) */}
+                        <div className="grid grid-cols-[44px_200px_1fr_220px_120px] items-center gap-5">
+                          {/* 1. EA 缩略图 (BATCH 21 PATCH B: 40→32px, 桌面 col 52→44, 移动同步, 跟 GitHub/Bloomberg 表格一致) */}
                           {getThumbnail(p.id) ? (
-                            <div className={`w-10 h-10 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${p.isFeatured ? 'border-accent-gold/40' : 'border-border'}`}>
-                              <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={40} height={40} className="w-full h-full object-cover" />
+                            <div className={`w-8 h-8 rounded border overflow-hidden bg-bg-secondary shrink-0 ${p.isFeatured ? 'border-accent-gold/40' : 'border-border'}`}>
+                              <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={32} height={32} className="w-full h-full object-cover" />
                             </div>
                           ) : (
-                            <div className={`w-10 h-10 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm ${p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'}`}>
+                            <div className={`w-8 h-8 rounded border bg-bg-secondary flex items-center justify-center font-mono font-bold text-xs ${p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'}`}>
                               {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
                             </div>
                           )}
