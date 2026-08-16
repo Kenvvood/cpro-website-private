@@ -35,6 +35,8 @@ const PLAN_LEVEL: Record<string, number> = { WEEKLY: 1, MONTHLY: 2, ANNUAL: 3 };
 // 5 王牌: 特殊 AI 生成独特图 (gold-*.jpg)
 // 46 mtt-*: 7 个 SVG 模板程序化生成 (mtt-{id}.jpg)
 // 总大小 ~270KB, 240x240 JPG
+// v22.0 BATCH 21 (2026-08-16 23:45): 缩略图 48→40px (PM 反馈: 48px 还偏大, 列表更紧凑)
+// 桌面 col 64→52, 移动 w-12→w-10, 列间距 gap-6→gap-5
 function getThumbnail(id: string): string | null {
   const aceMap: Record<string, string> = {
     'mtt-ace-dca-gold-grid-v1': '/products/gold-grid.jpg',
@@ -260,15 +262,15 @@ export default async function ProductsPage({ searchParams }: Props) {
                     >
                       {/* 移动端布局 (< lg): 卡片式 */}
                       <div className="flex items-center gap-3 lg:hidden">
-                        {/* EA 缩略图 (51 严选产品都有图) */}
+                        {/* EA 缩略图 (BATCH 21: 48→40px, 列表更紧凑) */}
                         {getThumbnail(p.id) ? (
-                          <div className={`w-12 h-12 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${
+                          <div className={`w-10 h-10 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${
                             p.isFeatured ? 'border-accent-gold/40' : 'border-border'
                           }`}>
-                            <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={48} height={48} className="w-full h-full object-cover" />
+                            <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={40} height={40} className="w-full h-full object-cover" />
                           </div>
                         ) : (
-                          <div className={`w-12 h-12 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm shrink-0 ${
+                          <div className={`w-10 h-10 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm shrink-0 ${
                             p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'
                           }`}>
                             {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
@@ -305,16 +307,16 @@ export default async function ProductsPage({ searchParams }: Props) {
                         />
                       </div>
 
-                      {/* 桌面布局 (lg+): 5 列横排 [64+200+1fr+220+120] (PATCH 7.3 改善列宽 + PATCH 7.4 缩略图 64→48) */}
+                      {/* 桌面布局 (lg+): 5 列横排 [52+200+1fr+220+120] (PATCH 7.3 改善列宽 + BATCH 21: 缩略图 64→52, 实际渲染 48→40) */}
                       <div className="hidden lg:block">
-                        <div className="grid grid-cols-[64px_200px_1fr_220px_120px] items-center gap-6">
-                          {/* 1. EA 缩略图 (PATCH 7.4: 64→48px, 跟移动端统一, 列表更紧凑) */}
+                        <div className="grid grid-cols-[52px_200px_1fr_220px_120px] items-center gap-5">
+                          {/* 1. EA 缩略图 (BATCH 21: 48→40px, 桌面 col 64→52, 移动同步) */}
                           {getThumbnail(p.id) ? (
-                            <div className={`w-12 h-12 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${p.isFeatured ? 'border-accent-gold/40' : 'border-border'}`}>
-                              <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={48} height={48} className="w-full h-full object-cover" />
+                            <div className={`w-10 h-10 rounded-md border overflow-hidden bg-bg-secondary shrink-0 ${p.isFeatured ? 'border-accent-gold/40' : 'border-border'}`}>
+                              <Image src={getThumbnail(p.id)!} alt={p.positioning ?? p.name} width={40} height={40} className="w-full h-full object-cover" />
                             </div>
                           ) : (
-                            <div className={`w-12 h-12 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm ${p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'}`}>
+                            <div className={`w-10 h-10 rounded-md border bg-bg-secondary flex items-center justify-center font-mono font-bold text-sm ${p.isFeatured ? 'border-accent-gold text-accent-gold' : 'border-border text-accent-purple'}`}>
                               {p.tier ? p.tier.match(/Tier (\d)/)?.[1] || '★' : '★'}
                             </div>
                           )}

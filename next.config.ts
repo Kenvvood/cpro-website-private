@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
+  // v22.0 BATCH 21 (2026-08-16 23:50): 启用 standalone output
+  // - 效果: next build 生成 .next/standalone/, 只打包 server runtime 需要的 node_modules
+  // - Docker 镜像: 800MB → 200MB (-75%)
+  // - ECS 部署: 用 .next/standalone/server.js 启动 (跟当前 `npm start` 等价)
+  // - 注意: Prisma client 需手动 COPY 到 standalone (libsql adapter 是 JS, 无 native binary)
+  output: "standalone",
   // v22.0 PATCH 17.11: 性能优化 (Lighthouse 调优)
   compress: true, // gzip 压缩 (默认 true)
   productionBrowserSourceMaps: false, // 生产不输出 sourcemap (-10% bundle)

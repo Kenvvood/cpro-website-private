@@ -5,19 +5,14 @@
 //  - 模板: tag + h1 + 副标 + 4 数字徽章 (跟 /, /products 一致)
 //  - 文案: 跟 PM 拍板"首批 50, 后续每周 10" + "5 王牌 + 46 严选" 对齐
 //  - 状态日期: 2026-08-16
+// v22.0 BATCH 21 (2026-08-16 23:50): 缩略图程序化重做
+//  - 旧: 大数字 emoji (𝟐𝟑.𝟔 / 𝐑/𝐒 / 𝟎.𝟎𝟐 / $𝟏 / 𝟏:𝟑 / 𝟗) — AI 艺术大字感
+//  - 新: 6 个程序化 SVG (黄金螺旋 / 枢轴点 / 圆环 / 阶梯柱 / 对比柱 / Venn)
+//  - 风格: 几何/数据图, 跟 fxssi 工具图一致, 干净清晰, 无 AI 艺术
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { TOOLS } from "./layout";
-
-// 每个工具的 emoji 图标 (钩子)
-const TOOL_ICON: Record<string, string> = {
-  fibonacci: "𝟐𝟑.𝟔",
-  "pivot-point": "𝐑/𝐒",
-  "position-size": "𝟎.𝟎𝟐",
-  "pip-value": "$𝟏",
-  "risk-reward": "𝟏:𝟑",
-  "forex-calculator": "𝟗",
-};
+import { ToolIcon } from "@/components/tools/ToolIcon";
 
 export default function ToolsPage() {
   return (
@@ -101,11 +96,9 @@ export default function ToolsPage() {
             href={`/tools/${t.slug}`}
             className="group block border border-border bg-bg-card hover:border-accent-blue transition-colors"
           >
-            {/* 缩略图块 (16:9 + 大数字钩子 + 类目徽章) */}
-            <div className="relative aspect-[16/9] flex items-center justify-center bg-bg-secondary overflow-hidden">
-              <div className="text-5xl lg:text-6xl font-bold text-text-muted opacity-40 group-hover:opacity-60 transition-opacity font-mono">
-                {TOOL_ICON[t.slug] ?? "•"}
-              </div>
+            {/* 缩略图块 (16:9 + 程序化 SVG 钩子 + 类目徽章) - v22.0 BATCH 21 重做 */}
+            <div className="relative aspect-[16/9] flex items-center justify-center bg-bg-secondary overflow-hidden p-3">
+              <ToolIcon slug={t.slug} className="w-full h-full" />
               <div className="absolute top-2 left-2">
                 <span className="inline-block px-2 py-0.5 border border-accent-blue/30 text-accent-blue text-[10px]">
                   {t.category}
