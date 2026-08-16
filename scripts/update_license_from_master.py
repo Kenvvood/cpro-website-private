@@ -1,11 +1,13 @@
 """
-v22.0 PATCH 18.5 (v2 修复): 从 mql-phase2 master.db 拉 License → UPDATE cpro-website Product
+v22.0 PATCH 18.5 (v3 修复): 从 mql-phase2 master.db 拉 License → UPDATE cpro-website Product
 
-修复历史 (v2 - 2026-08-16 22:50):
-  - master.db.mql_files **没有 id 列**, 实际是 file_id/internal_id/original_name/source_path
-  - cpro-website Product.id 是 cuid (如 cmssgzc34...), 不能跟 master.db 直接 id 匹配
-  - **改用 name 模糊匹配**: Product.name (中文) → 翻译/提取关键词 → master.db.original_name LIKE
-  - 5 王牌用 isFeatured=true 标识, 走 C 任务 (Proprietary), B 任务跳过
+修复历史:
+  v1 (2026-08-16 22:30 c796166): 用 mql_files.id 匹配, **FAIL** (mql_files 无 id 列)
+  v2 (2026-08-16 22:50 5a92a49): 改 Product.name 模糊匹配 mql_files.original_name
+  v3 (2026-08-16 22:45): 候选范围从 4,651 (全部 Tier 1/2) → 40 (mtt- 公网池)
+       - PM 策略: 每周上传 ~50 mtt- 商品, DB 11,293 是历史种子 (algo-forge- 等占位符, 不在公网页)
+       - /products page 过滤: id LIKE 'mtt-%' (src/app/products/page.tsx whereActive.id.startsWith('mtt-'))
+       - 5 王牌 isFeatured=true, 走 C 任务, B 任务跳过
 
 用法:
   python3 scripts/update_license_from_master.py
@@ -17,9 +19,12 @@ v22.0 PATCH 18.5 (v2 修复): 从 mql-phase2 master.db 拉 License → UPDATE cp
   3. schema.prisma 已含 license + licenseFileUrl 字段 (npx prisma db push 已应用)
 
 输出:
-  - 46 严选非王牌商品 (Tier 1/2 排除 5 王牌) 全部加 License 字段
+  - 40 mtt- 公网池商品 (Tier 1/2 排除 5 王牌) 加 License 字段
   - description 末尾自动追加 "License: XXX" 行 (不覆盖原 description)
   - 5 王牌 (isFeatured=true) 跳过, 由 update_ace5_copyright.py 单独处理
+  - 11,242 algo-forge- 等占位符 (历史, 不公网) **不动**
+
+每周新增 mtt- 商品后, 重跑此脚本 (幂等, 已 license 的会跳过)
 """
 import os
 import re
@@ -144,12 +149,16 @@ def main():
     for r in rows:
         log(f"  {r[0]}: {r[1]}")
 
-    # 5. 候选商品: Tier 1 + Tier 2 排除 5 王牌 (isFeatured=true)
+    # 5. 候选商品: mtt- 公网池 (id LIKE 'mtt-%') + Tier 1/2 + 排除 5 王牌 (isFeatured=true)
+    # PM 策略 (2026-08-16 22:45): 每周上传 ~50 mtt- 商品, DB 11,293 是历史 (algo-forge 等占位符不在公网页)
+    # /products page 过滤: id LIKE 'mtt-%' (src/app/products/page.tsx: where.id.startsWith('mtt-'))
     log("")
-    log("=== 候选商品: Tier 1/2 (排除 5 王牌 isFeatured) ===")
+    log("=== 候选商品: mtt- 公网池 + Tier 1/2 (排除 5 王牌) ===")
     high_value = cpro.execute(
         "SELECT id, name, description, isFeatured FROM Product "
-        "WHERE (tier LIKE 'Tier 1%' OR tier LIKE 'Tier 2%') "
+        "WHERE isActive = 1 "
+        "AND id LIKE 'mtt-%' "
+        "AND (tier LIKE 'Tier 1%' OR tier LIKE 'Tier 2%') "
         "AND (isFeatured = 0 OR isFeatured IS NULL) "
         "ORDER BY tier, id"
     ).fetchall()
@@ -157,8 +166,10 @@ def main():
 
     if len(high_value) == 0:
         log("[WARN] 没有候选商品 (本地 dev.db 可能只有 5 王牌, B 任务需在 ECS 跑)")
-        log("       ECS 候选: 5 王牌 + Tier 1 658 + Tier 2 3,998 = 4,656 高价值商品")
-        log("       5 王牌 isFeatured=true, 由 C 任务处理, B 任务匹配其他 ~4,651 商品")
+        log("       ECS 候选 (PM 每周上传 ~50 节奏):")
+        log("         5 王牌 (isFeatured=true) → C 任务处理")
+        log("         mtt- 公网池 Tier 1/2 → B 任务匹配")
+        log("         11,293 - 51 mtt- = 11,242 algo-forge- 等占位符 (历史, 不公网)")
 
     # 6. 逐个匹配 + UPDATE
     log("")
