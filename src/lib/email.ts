@@ -1,268 +1,351 @@
 /**
- * v22.0 BATCH 24 (2026-08-17 01:00): Resend 邮件集成
- *  - 选型: Resend (HTTP API, 3K/月免费, 域名 cprotrading.com 配置 DKIM/SPF 即可)
- *  - 用途: 注册验证 / 订单确认 / 订阅欢迎 (3 核心模板)
- *  - 后续接入: SMS 已用钉钉 webhook 替代, 邮件用于"重要时刻" (订单/订阅/密码重置)
+ * v22.0 BATCH 24 (2026-08-17 01:55): 邮件发送库 (Resend HTTP API)
  *
- * 用法:
- *   import { sendEmail, emailTemplates } from "@/lib/email"
- *   await sendEmail({ to: "user@example.com", template: "orderConfirmation", data: {...} })
+ * 架构:
+ *  - 主 Provider: Resend (推荐, HTTP API, 3K/月免费)
+ *  - 备 Provider: 直接 console.log (dev 模式, no RESEND_API_KEY)
+ *  - 3 模板: 验证码 / 订单确认 / 订阅欢迎
  *
- * env (从 .env.production 读):
- *   RESEND_API_KEY      re_xxx (Resend 控制台拿)
- *   EMAIL_FROM          "CProTrading 城诺科技 <noreply@cprotrading.com>" (需域名验证后改)
- *   EMAIL_REPLY_TO      "support@cprotrading.com" (用户回复会到这)
+ * 接入步骤 (PM 端):
+ *  1. 注册 Resend (https://resend.com)
+ *  2. 加域名 cprotrading.com, 配置 DKIM/SPF/DMARC (Resend 控制台)
+ *  3. 生成 API Key, 加到 ECS .env.production: RESEND_API_KEY=re_xxx
+ *  4. 验证: POST /api/email/test with { to: "you@gmail.com" } (需 admin 登录)
  */
-import { Resend } from "resend";
+import "server-only";
 import { BRAND } from "@/config/brand";
 
-// ===== 客户端初始化 (单例) =====
-let resendClient: Resend | null = null;
-function getResend(): Resend | null {
-  if (!process.env.RESEND_API_KEY) {
-    // 不报错, 返回 null, 调用方决定怎么处理 (开发环境)
+// ---- Resend SDK (动态 import, 避免 dev 模式无 API key 时报错) ----
+type ResendSendResponse = { id?: string; error?: { message: string } };
+type ResendClient = { emails: { send: (payload: any) => Promise<ResendSendResponse> } };
+
+let _client: ResendClient | null = null;
+async function getResend(): Promise<ResendClient | null> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  if (_client) return _client;
+  try {
+    // 动态 import: Resend 是 ESM, 兼容 server context
+    const { Resend } = await import("resend");
+    _client = new Resend(apiKey) as unknown as ResendClient;
+    return _client;
+  } catch (e) {
+    console.error("[email] Resend SDK 加载失败:", e);
     return null;
   }
-  if (!resendClient) {
-    resendClient = new Resend(process.env.RESEND_API_KEY);
-  }
-  return resendClient;
 }
 
-// ===== 邮件模板类型 =====
+// ---- 类型定义 ----
 export type EmailTemplateName =
-  | "verificationCode"      // 注册验证码
-  | "orderConfirmation"     // 订单确认
-  | "subscriptionWelcome"   // 订阅欢迎
-  | "passwordReset"         // 密码重置
-  | "refundApproved";       // 退款批准
+  | "verificationCode"
+  | "orderConfirmation"
+  | "subscriptionWelcome"
+  | "refundApproved"
+  | "ticketReply";
 
-interface VerificationCodeData {
-  code: string;
-  expireMinutes?: number;
-}
-interface OrderConfirmationData {
-  orderNo: string;
-  productName: string;
-  amount: string;
-  paymentMethod: "USDT" | "微信" | "支付宝";
-  downloadUrl: string;
-}
-interface SubscriptionWelcomeData {
-  plan: "WEEKLY" | "MONTHLY" | "ANNUAL" | "FOUNDER";
-  expireAt: string;  // ISO
-  manageUrl: string;
-}
-interface PasswordResetData {
-  resetUrl: string;
-  expireMinutes: number;
-}
-interface RefundApprovedData {
-  refundId: string;
-  amount: string;
-  reason: string;
-  arriveAt: string;  // 预计到账时间
+// 模板 data 类型 (按 template 选对应字段)
+export interface EmailTemplateData {
+  verificationCode?: { code: string; expiryMinutes?: number };
+  orderConfirmation?: { orderNo: string; plan: string; amount: string; payMethod: string; txHash?: string };
+  subscriptionWelcome?: { plan: string; expireAt: string; totalProducts: number };
+  refundApproved?: { orderNo: string; refundPct: number; refundAmount: string; note?: string };
+  ticketReply?: { ticketId: string; title: string; reply: string; adminName: string };
 }
 
-export type EmailData =
-  | VerificationCodeData
-  | OrderConfirmationData
-  | SubscriptionWelcomeData
-  | PasswordResetData
-  | RefundApprovedData;
-
-// ===== 统一发送接口 =====
 export interface SendEmailOptions {
   to: string | string[];
-  template: EmailTemplateName;
-  data: EmailData;
-  subject?: string;  // 可选覆盖默认 subject
+  // 通用模式 (必填 subject + html)
+  subject?: string;
+  html?: string;
+  text?: string;
+  from?: string;
   replyTo?: string;
+  // 模板模式 (新, BATCH 24 增强): 用 template 选模板 + data 填字段
+  // 当 template 存在时, 自动选对应模板函数 (内部 dispatch, 跟直接调用 sendVerificationCode 等效)
+  // 此时 subject + html 可省 (内部生成)
+  template?: EmailTemplateName;
+  data?: Record<string, any>;
 }
 
-export interface SendEmailResult {
+export interface SendResult {
   ok: boolean;
-  id?: string;       // Resend 返回的 message id
+  id?: string;
   error?: string;
-  skipped?: boolean; // 跳过原因 (如 RESEND_API_KEY 未配置)
+  mode: "resend" | "console" | "noop"; // 实际发送模式
 }
 
-/**
- * 发送邮件 - 主入口
- * 自动选择模板 + 渲染 HTML + 发送到 Resend API
- */
-export async function sendEmail({
-  to,
-  template,
-  data,
-  subject,
-  replyTo,
-}: SendEmailOptions): Promise<SendEmailResult> {
-  const resend = getResend();
-  if (!resend) {
-    console.warn("[email] RESEND_API_KEY 未配置, 跳过发送:", { to, template });
-    return { ok: false, skipped: true, error: "RESEND_API_KEY 未配置" };
+// ---- 主入口 ----
+export async function sendEmail(options: SendEmailOptions): Promise<SendResult> {
+  // 模板模式 (template + data): 自动 dispatch 到对应模板函数
+  if (options.template) {
+    const to = Array.isArray(options.to) ? options.to[0] : options.to;
+    if (!to) {
+      return { ok: false, error: "模板模式 to 必填", mode: "noop" };
+    }
+    const data = (options.data || {}) as any;
+    switch (options.template) {
+      case "verificationCode":
+        return sendVerificationCode(to, data.code || "000000", data.expiryMinutes || 10);
+      case "orderConfirmation":
+        if (!data.orderNo || !data.plan || !data.amount || !data.payMethod) {
+          return { ok: false, error: "orderConfirmation 缺字段", mode: "noop" };
+        }
+        return sendOrderConfirmation(to, data);
+      case "subscriptionWelcome":
+        if (!data.plan || !data.expireAt || !data.totalProducts) {
+          return { ok: false, error: "subscriptionWelcome 缺字段", mode: "noop" };
+        }
+        return sendSubscriptionWelcome(to, data);
+      case "refundApproved":
+        if (!data.orderNo || data.refundPct === undefined || !data.refundAmount) {
+          return { ok: false, error: "refundApproved 缺字段", mode: "noop" };
+        }
+        return sendRefundApproved(to, data);
+      case "ticketReply":
+        if (!data.ticketId || !data.title || !data.reply || !data.adminName) {
+          return { ok: false, error: "ticketReply 缺字段", mode: "noop" };
+        }
+        return sendTicketReply(to, data);
+      default:
+        return { ok: false, error: `未知模板: ${options.template}`, mode: "noop" };
+    }
   }
 
-  const from = process.env.EMAIL_FROM || `CProTrading 城诺科技 <noreply@cprotrading.com>`;
-  const reply = replyTo || process.env.EMAIL_REPLY_TO || BRAND.contact.email;
+  const from = options.from || process.env.EMAIL_FROM || `CProTrading <noreply@${BRAND.domain}>`;
+  const replyTo = options.replyTo || BRAND.contact.email;
 
-  const { subject: finalSubject, html, text } = emailTemplates[template](data as never);
+  // 通用模式要求 subject + html
+  if (!options.subject || !options.html) {
+    return { ok: false, error: "通用模式需 subject + html, 或用 template + data 模板模式", mode: "noop" };
+  }
+  const subject = options.subject;
+  const html = options.html;
+
+  const resend = await getResend();
+  if (!resend) {
+    // Dev 模式或 RESEND_API_KEY 未配置: 打印到 console
+    console.log("\n========== [email DEV MODE] ==========");
+    console.log(`From:    ${from}`);
+    console.log(`To:      ${Array.isArray(options.to) ? options.to.join(", ") : options.to}`);
+    console.log(`Subject: ${subject}`);
+    console.log(`Reply-To: ${replyTo}`);
+    console.log(`\n--- TEXT ---`);
+    console.log(options.text || "(no text version)");
+    console.log(`\n--- HTML (前 500 字符) ---`);
+    console.log(html.slice(0, 500) + (html.length > 500 ? "..." : ""));
+    console.log("========== [email DEV END] ==========\n");
+    return { ok: true, mode: "console", id: `console-${Date.now()}` };
+  }
 
   try {
     const result = await resend.emails.send({
       from,
-      to: Array.isArray(to) ? to : [to],
-      replyTo: reply,
-      subject: subject || finalSubject,
+      to: options.to,
+      subject,
       html,
-      text,
+      text: options.text,
+      reply_to: replyTo,
     });
-
     if (result.error) {
-      console.error("[email] Resend API 错误:", result.error);
-      return { ok: false, error: result.error.message };
+      return { ok: false, error: result.error.message, mode: "resend" };
     }
-
-    return { ok: true, id: result.data?.id };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error("[email] 发送异常:", message);
-    return { ok: false, error: message };
+    return { ok: true, id: result.id, mode: "resend" };
+  } catch (e: any) {
+    return { ok: false, error: e?.message || String(e), mode: "resend" };
   }
 }
 
-// ===== 邮件模板 (返回 subject + html + text) =====
-
-const emailTemplates: Record<EmailTemplateName, (data: any) => { subject: string; html: string; text: string }> = {
-  // 1. 注册验证码
-  verificationCode: (data: VerificationCodeData) => {
-    const expire = data.expireMinutes || 10;
-    return {
-      subject: `【${BRAND.name.zh}】您的注册验证码: ${data.code}`,
-      html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 480px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #1a1a1a; font-size: 20px; margin-bottom: 16px;">${BRAND.name.zh}</h2>
-          <p style="color: #4a4a4a; font-size: 14px; line-height: 1.6;">您好,</p>
-          <p style="color: #4a4a4a; font-size: 14px; line-height: 1.6;">您的注册验证码为:</p>
-          <div style="background: #f7f8fa; border: 1px solid #e5e7eb; padding: 24px; text-align: center; margin: 24px 0; border-radius: 8px;">
-            <span style="font-family: 'Arial Black', monospace; font-size: 36px; font-weight: 700; color: #2962FF; letter-spacing: 8px;">${data.code}</span>
-          </div>
-          <p style="color: #888888; font-size: 12px; line-height: 1.6;">验证码有效期 <strong>${expire} 分钟</strong>, 请尽快使用。</p>
-          <p style="color: #888888; font-size: 12px; line-height: 1.6;">如非您本人操作, 请忽略本邮件。</p>
-          <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
-          <p style="color: #888888; font-size: 11px;">${BRAND.entity} · <a href="https://${BRAND.domain}" style="color: #888888;">${BRAND.domain}</a></p>
+// ---- 模板: 验证码 (注册/重置密码) ----
+export async function sendVerificationCode(
+  to: string,
+  code: string,
+  expiryMinutes: number = 10
+): Promise<SendResult> {
+  const subject = `【CProTrading】您的验证码: ${code}`;
+  const html = `
+    <div style="font-family: -apple-system, 'Microsoft YaHei', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #ffffff; color: #1a1a1a;">
+      <div style="text-align: center; padding: 24px 0; border-bottom: 2px solid #D4AF37;">
+        <h1 style="margin: 0; font-size: 24px; color: #D4AF37;">CProTrading 城诺科技</h1>
+        <p style="margin: 8px 0 0; font-size: 12px; color: #888;">${BRAND.slogan.zh}</p>
+      </div>
+      <div style="padding: 32px 0;">
+        <p style="font-size: 16px; margin: 0 0 16px;">您好,</p>
+        <p style="font-size: 14px; line-height: 24px; color: #4a4a4a; margin: 0 0 24px;">
+          您正在 CProTrading 进行账户验证. 请使用以下验证码完成操作:
+        </p>
+        <div style="background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 24px; text-align: center; margin: 0 0 24px;">
+          <div style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #2962FF; font-family: 'Arial Black', monospace;">${code}</div>
         </div>
-      `,
-      text: `${BRAND.name.zh}\n\n您的注册验证码: ${data.code}\n有效期 ${expire} 分钟\n\n如非您本人操作, 请忽略本邮件。`,
-    };
-  },
-
-  // 2. 订单确认
-  orderConfirmation: (data: OrderConfirmationData) => ({
-    subject: `【${BRAND.name.zh}】订单确认 #${data.orderNo}`,
-    html: `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 480px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #1a1a1a; font-size: 20px; margin-bottom: 16px;">订单确认</h2>
-        <p style="color: #4a4a4a; font-size: 14px; line-height: 1.6;">感谢您的订购,</p>
-        <table style="width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px;">
-          <tr><td style="padding: 8px 0; color: #888888; width: 30%;">订单号</td><td style="padding: 8px 0; color: #1a1a1a; font-family: monospace;">${data.orderNo}</td></tr>
-          <tr><td style="padding: 8px 0; color: #888888;">商品</td><td style="padding: 8px 0; color: #1a1a1a;">${data.productName}</td></tr>
-          <tr><td style="padding: 8px 0; color: #888888;">金额</td><td style="padding: 8px 0; color: #1a1a1a; font-weight: 700;">${data.amount}</td></tr>
-          <tr><td style="padding: 8px 0; color: #888888;">支付方式</td><td style="padding: 8px 0; color: #1a1a1a;">${data.paymentMethod}</td></tr>
-        </table>
-        <a href="${data.downloadUrl}" style="display: inline-block; background: #2962FF; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; margin: 16px 0;">立即下载</a>
-        <p style="color: #888888; font-size: 12px; line-height: 1.6; margin-top: 24px;">下载链接 24 小时内有效, 过期请重新登录获取。</p>
-        <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
-        <p style="color: #888888; font-size: 11px;">${BRAND.entity} · <a href="https://${BRAND.domain}" style="color: #888888;">${BRAND.domain}</a></p>
+        <p style="font-size: 13px; line-height: 22px; color: #888; margin: 0 0 8px;">
+          ⏱️ 验证码有效期: <strong>${expiryMinutes} 分钟</strong>, 请尽快使用.
+        </p>
+        <p style="font-size: 13px; line-height: 22px; color: #888; margin: 0 0 24px;">
+          🔒 如果这不是您本人的操作, 请忽略此邮件.
+        </p>
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+        <p style="font-size: 12px; color: #888; margin: 0;">
+          遇到问题? 回复本邮件或联系 <a href="mailto:${BRAND.contact.email}" style="color: #2962FF;">${BRAND.contact.email}</a>
+        </p>
       </div>
-    `,
-    text: `${BRAND.name.zh} 订单确认\n\n订单号: ${data.orderNo}\n商品: ${data.productName}\n金额: ${data.amount}\n支付方式: ${data.paymentMethod}\n\n下载: ${data.downloadUrl}\n(24 小时内有效)`,
-  }),
+      <div style="text-align: center; padding: 16px 0; border-top: 1px solid #e5e7eb; font-size: 11px; color: #888;">
+        <p style="margin: 4px 0;">© 2026 ${BRAND.entity} · <a href="https://${BRAND.domain}" style="color: #888;">${BRAND.domain}</a></p>
+        <p style="margin: 4px 0;">${BRAND.copyright.icp}</p>
+      </div>
+    </div>
+  `.trim();
+  const text = `CProTrading 验证码: ${code} (${expiryMinutes} 分钟内有效). 如果不是您本人操作请忽略.`;
+  return sendEmail({ to, subject, html, text });
+}
 
-  // 3. 订阅欢迎
-  subscriptionWelcome: (data: SubscriptionWelcomeData) => {
-    const planLabel = { WEEKLY: "周付", MONTHLY: "月付", ANNUAL: "年付", FOUNDER: "创始" }[data.plan];
-    return {
-      subject: `【${BRAND.name.zh}】欢迎加入 ${planLabel}会员 🎉`,
-      html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 480px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #1a1a1a; font-size: 20px; margin-bottom: 16px;">欢迎加入 ${BRAND.name.zh} 🎉</h2>
-          <p style="color: #4a4a4a; font-size: 14px; line-height: 1.6;">您的 ${planLabel} 订阅已激活, 严选 ${BRAND.mtt.abbr} 服务正式解锁。</p>
-          <div style="background: #f7f8fa; border: 1px solid #e5e7eb; padding: 16px; margin: 24px 0; border-radius: 8px;">
-            <p style="color: #888888; font-size: 12px; margin: 0 0 8px 0;">订阅类型</p>
-            <p style="color: #1a1a1a; font-size: 18px; font-weight: 700; margin: 0;">${planLabel}会员</p>
-            <p style="color: #888888; font-size: 12px; margin: 12px 0 0 0;">到期时间</p>
-            <p style="color: #1a1a1a; font-size: 14px; margin: 0;">${new Date(data.expireAt).toLocaleString("zh-CN")}</p>
-          </div>
-          <p style="color: #4a4a4a; font-size: 14px; line-height: 1.6;">您现在可以:</p>
-          <ul style="color: #4a4a4a; font-size: 14px; line-height: 1.8; padding-left: 20px;">
-            <li>浏览 5 王牌 + 46 严选订阅 (全部 MQL4/MQL5 EA)</li>
-            <li>使用 6 款实战工具 (斐波那契 / 仓位 / R:R 等)</li>
-            <li>下载 5 部署教程 (EA 部署 / 服务器 / MTT 终端)</li>
-            <li>4 小时工单响应 + 终身质保</li>
-          </ul>
-          <a href="${data.manageUrl}" style="display: inline-block; background: #2962FF; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; margin: 16px 0;">管理订阅</a>
-          <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
-          <p style="color: #888888; font-size: 11px;">${BRAND.entity} · <a href="https://${BRAND.domain}" style="color: #888888;">${BRAND.domain}</a></p>
+// ---- 模板: 订单确认 (USDT 订阅成功) ----
+export async function sendOrderConfirmation(
+  to: string,
+  orderInfo: {
+    orderNo: string;
+    plan: string;
+    amount: string;
+    payMethod: string;
+    txHash?: string;
+  }
+): Promise<SendResult> {
+  const subject = `【CProTrading】订单确认 - ${orderInfo.plan} (${orderInfo.amount})`;
+  const html = `
+    <div style="font-family: -apple-system, 'Microsoft YaHei', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #ffffff; color: #1a1a1a;">
+      <div style="text-align: center; padding: 24px 0; border-bottom: 2px solid #D4AF37;">
+        <h1 style="margin: 0; font-size: 24px; color: #D4AF37;">CProTrading 城诺科技</h1>
+      </div>
+      <div style="padding: 32px 0;">
+        <p style="font-size: 16px; margin: 0 0 16px;">感谢您的订阅! 🎉</p>
+        <div style="background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 24px; margin: 0 0 24px;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <tr><td style="padding: 8px 0; color: #888;">订单号</td><td style="padding: 8px 0; text-align: right; font-family: monospace;">${orderInfo.orderNo}</td></tr>
+            <tr><td style="padding: 8px 0; color: #888;">订阅方案</td><td style="padding: 8px 0; text-align: right; font-weight: bold; color: #D4AF37;">${orderInfo.plan}</td></tr>
+            <tr><td style="padding: 8px 0; color: #888;">支付金额</td><td style="padding: 8px 0; text-align: right; font-weight: bold;">${orderInfo.amount}</td></tr>
+            <tr><td style="padding: 8px 0; color: #888;">支付方式</td><td style="padding: 8px 0; text-align: right;">${orderInfo.payMethod}</td></tr>
+            ${orderInfo.txHash ? `<tr><td style="padding: 8px 0; color: #888;">链上 Hash</td><td style="padding: 8px 0; text-align: right; font-family: monospace; font-size: 11px; word-break: break-all;">${orderInfo.txHash}</td></tr>` : ""}
+          </table>
         </div>
-      `,
-      text: `${BRAND.name.zh} 订阅欢迎\n\n${planLabel}会员已激活\n到期: ${data.expireAt}\n\n您可以浏览 5 王牌 + 46 严选 EA, 6 款工具, 5 部署教程。\n管理订阅: ${data.manageUrl}`,
-    };
-  },
-
-  // 4. 密码重置
-  passwordReset: (data: PasswordResetData) => ({
-    subject: `【${BRAND.name.zh}】密码重置`,
-    html: `
-      <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #1a1a1a;">密码重置</h2>
-        <p style="color: #4a4a4a; font-size: 14px; line-height: 1.6;">您请求重置密码, 点击下方链接继续:</p>
-        <a href="${data.resetUrl}" style="display: inline-block; background: #2962FF; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 6px; margin: 16px 0;">重置密码</a>
-        <p style="color: #888888; font-size: 12px;">链接有效期 <strong>${data.expireMinutes} 分钟</strong>, 仅可使用一次。</p>
-        <p style="color: #888888; font-size: 12px;">如非您本人操作, 请忽略本邮件, 您的账号安全。</p>
+        <p style="font-size: 14px; line-height: 24px; color: #4a4a4a;">
+          您现在可以访问 <a href="https://${BRAND.domain}/products" style="color: #2962FF;">产品中心</a> 下载严选可商用 EA.
+        </p>
+        <p style="font-size: 14px; line-height: 24px; color: #4a4a4a;">
+          4h 工单响应 · 终身质保 — 任何问题联系 <a href="mailto:${BRAND.contact.email}" style="color: #2962FF;">${BRAND.contact.email}</a>
+        </p>
       </div>
-    `,
-    text: `${BRAND.name.zh} 密码重置\n\n重置链接: ${data.resetUrl}\n有效期 ${data.expireMinutes} 分钟`,
-  }),
-
-  // 5. 退款批准
-  refundApproved: (data: RefundApprovedData) => ({
-    subject: `【${BRAND.name.zh}】退款已批准 #${data.refundId}`,
-    html: `
-      <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #1a1a1a;">退款已批准 ✓</h2>
-        <table style="width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px;">
-          <tr><td style="padding: 8px 0; color: #888888; width: 30%;">退款单号</td><td style="padding: 8px 0; font-family: monospace;">${data.refundId}</td></tr>
-          <tr><td style="padding: 8px 0; color: #888888;">退款金额</td><td style="padding: 8px 0; font-weight: 700;">${data.amount}</td></tr>
-          <tr><td style="padding: 8px 0; color: #888888;">退款原因</td><td style="padding: 8px 0;">${data.reason}</td></tr>
-          <tr><td style="padding: 8px 0; color: #888888;">预计到账</td><td style="padding: 8px 0;">${data.arriveAt}</td></tr>
-        </table>
-        <p style="color: #888888; font-size: 12px;">如有疑问, 请回复本邮件或联系客服。</p>
+      <div style="text-align: center; padding: 16px 0; border-top: 1px solid #e5e7eb; font-size: 11px; color: #888;">
+        <p style="margin: 4px 0;">© 2026 ${BRAND.entity} · <a href="https://${BRAND.domain}" style="color: #888;">${BRAND.domain}</a></p>
+        <p style="margin: 4px 0;">${BRAND.copyright.icp}</p>
       </div>
-    `,
-    text: `${BRAND.name.zh} 退款已批准\n\n退款单号: ${data.refundId}\n金额: ${data.amount}\n原因: ${data.reason}\n预计到账: ${data.arriveAt}`,
-  }),
-};
-
-// ===== 便利函数: 单模板直接 send =====
-
-export async function sendVerificationCode(to: string, code: string, expireMinutes = 10) {
-  return sendEmail({ to, template: "verificationCode", data: { code, expireMinutes } });
+    </div>
+  `.trim();
+  const text = `订单确认: ${orderInfo.plan} (${orderInfo.amount}) - 订单号 ${orderInfo.orderNo}. 支付方式: ${orderInfo.payMethod}.`;
+  return sendEmail({ to, subject, html, text });
 }
 
-export async function sendOrderConfirmation(to: string, data: OrderConfirmationData) {
-  return sendEmail({ to, template: "orderConfirmation", data });
+// ---- 模板: 订阅欢迎 (订阅激活后) ----
+export async function sendSubscriptionWelcome(
+  to: string,
+  info: { plan: string; expireAt: string; totalProducts: number }
+): Promise<SendResult> {
+  const subject = `【CProTrading】欢迎加入严选订阅 - ${info.plan}`;
+  const html = `
+    <div style="font-family: -apple-system, 'Microsoft YaHei', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #ffffff; color: #1a1a1a;">
+      <div style="text-align: center; padding: 24px 0; border-bottom: 2px solid #D4AF37;">
+        <h1 style="margin: 0; font-size: 24px; color: #D4AF37;">CProTrading 城诺科技</h1>
+      </div>
+      <div style="padding: 32px 0;">
+        <p style="font-size: 16px; margin: 0 0 16px;">欢迎加入 CProTrading 严选订阅! 🎉</p>
+        <p style="font-size: 14px; line-height: 24px; color: #4a4a4a;">
+          您的 <strong style="color: #D4AF37;">${info.plan}</strong> 订阅已激活, 有效期至 <strong>${info.expireAt}</strong>.
+        </p>
+        <p style="font-size: 14px; line-height: 24px; color: #4a4a4a;">
+          您现在可以解锁全部 <strong>${info.totalProducts}</strong> 款严选可商用 EA, 包括 5 王牌门面.
+        </p>
+        <p style="text-align: center; margin: 32px 0;">
+          <a href="https://${BRAND.domain}/products" style="display: inline-block; background: #2962FF; color: #ffffff; padding: 14px 32px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 15px;">立即浏览产品中心 →</a>
+        </p>
+        <p style="font-size: 13px; line-height: 22px; color: #888;">
+          💡 推荐首看: <a href="https://${BRAND.domain}/guides" style="color: #2962FF;">部署教程</a> 5 集实战手册
+        </p>
+      </div>
+      <div style="text-align: center; padding: 16px 0; border-top: 1px solid #e5e7eb; font-size: 11px; color: #888;">
+        <p style="margin: 4px 0;">© 2026 ${BRAND.entity} · <a href="https://${BRAND.domain}" style="color: #888;">${BRAND.domain}</a></p>
+        <p style="margin: 4px 0;">${BRAND.copyright.icp}</p>
+      </div>
+    </div>
+  `.trim();
+  const text = `欢迎加入 CProTrading 严选订阅! ${info.plan} 已激活, 有效期至 ${info.expireAt}.`;
+  return sendEmail({ to, subject, html, text });
 }
 
-export async function sendSubscriptionWelcome(to: string, data: SubscriptionWelcomeData) {
-  return sendEmail({ to, template: "subscriptionWelcome", data });
+// ---- 模板: 退款批准 ----
+export async function sendRefundApproved(
+  to: string,
+  info: { orderNo: string; refundPct: number; refundAmount: string; note?: string }
+): Promise<SendResult> {
+  const subject = `【CProTrading】退款已批准 - 订单 ${info.orderNo}`;
+  const html = `
+    <div style="font-family: -apple-system, 'Microsoft YaHei', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #ffffff; color: #1a1a1a;">
+      <div style="text-align: center; padding: 24px 0; border-bottom: 2px solid #26a69a;">
+        <h1 style="margin: 0; font-size: 24px; color: #26a69a;">退款批准通知</h1>
+      </div>
+      <div style="padding: 32px 0;">
+        <p style="font-size: 14px; line-height: 24px; color: #4a4a4a;">
+          您的退款申请已批准, 详情如下:
+        </p>
+        <div style="background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 24px; margin: 16px 0;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <tr><td style="padding: 8px 0; color: #888;">订单号</td><td style="padding: 8px 0; text-align: right; font-family: monospace;">${info.orderNo}</td></tr>
+            <tr><td style="padding: 8px 0; color: #888;">退款比例</td><td style="padding: 8px 0; text-align: right; font-weight: bold; color: #26a69a;">${info.refundPct}%</td></tr>
+            <tr><td style="padding: 8px 0; color: #888;">退款金额</td><td style="padding: 8px 0; text-align: right; font-weight: bold;">${info.refundAmount}</td></tr>
+            ${info.note ? `<tr><td style="padding: 8px 0; color: #888;">备注</td><td style="padding: 8px 0; text-align: right;">${info.note}</td></tr>` : ""}
+          </table>
+        </div>
+        <p style="font-size: 13px; line-height: 22px; color: #888;">
+          USDT 退款将通过原支付通道返还, 请在 24h 内查收.
+        </p>
+      </div>
+      <div style="text-align: center; padding: 16px 0; border-top: 1px solid #e5e7eb; font-size: 11px; color: #888;">
+        <p style="margin: 4px 0;">© 2026 ${BRAND.entity} · <a href="https://${BRAND.domain}" style="color: #888;">${BRAND.domain}</a></p>
+        <p style="margin: 4px 0;">${BRAND.copyright.icp}</p>
+      </div>
+    </div>
+  `.trim();
+  const text = `退款批准: 订单 ${info.orderNo} - ${info.refundAmount} (${info.refundPct}%) 已批准.`;
+  return sendEmail({ to, subject, html, text });
 }
 
-export async function sendPasswordReset(to: string, data: PasswordResetData) {
-  return sendEmail({ to, template: "passwordReset", data });
-}
-
-export async function sendRefundApproved(to: string, data: RefundApprovedData) {
-  return sendEmail({ to, template: "refundApproved", data });
+// ---- 模板: 工单回复 ----
+export async function sendTicketReply(
+  to: string,
+  info: { ticketId: string; title: string; reply: string; adminName: string }
+): Promise<SendResult> {
+  const subject = `【CProTrading】工单回复 - ${info.title}`;
+  const html = `
+    <div style="font-family: -apple-system, 'Microsoft YaHei', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #ffffff; color: #1a1a1a;">
+      <div style="text-align: center; padding: 24px 0; border-bottom: 2px solid #2962FF;">
+        <h1 style="margin: 0; font-size: 24px; color: #2962FF;">工单回复</h1>
+      </div>
+      <div style="padding: 32px 0;">
+        <p style="font-size: 14px; line-height: 24px; color: #4a4a4a; margin: 0 0 16px;">
+          您的工单 <strong>#${info.ticketId} - ${info.title}</strong> 有新回复:
+        </p>
+        <div style="background: #f7f8fa; border-left: 3px solid #2962FF; padding: 16px 20px; margin: 0 0 16px; font-size: 14px; line-height: 22px;">
+          ${info.reply.replace(/\n/g, "<br/>")}
+        </div>
+        <p style="font-size: 13px; color: #888; margin: 0 0 16px;">
+          回复人: <strong>${info.adminName}</strong>
+        </p>
+        <p style="text-align: center; margin: 24px 0;">
+          <a href="https://${BRAND.domain}/dashboard/tickets/${info.ticketId}" style="display: inline-block; background: #2962FF; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">查看完整工单 →</a>
+        </p>
+      </div>
+      <div style="text-align: center; padding: 16px 0; border-top: 1px solid #e5e7eb; font-size: 11px; color: #888;">
+        <p style="margin: 4px 0;">© 2026 ${BRAND.entity} · <a href="https://${BRAND.domain}" style="color: #888;">${BRAND.domain}</a></p>
+        <p style="margin: 4px 0;">${BRAND.copyright.icp}</p>
+      </div>
+    </div>
+  `.trim();
+  const text = `工单 #${info.ticketId} - ${info.title} 有新回复: ${info.reply}`;
+  return sendEmail({ to, subject, html, text });
 }
