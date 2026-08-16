@@ -25,6 +25,15 @@ const NAV_LINKS = [
   { href: "/about", label: "关于我们" },
 ];
 
+// v22.0 BATCH 22 (2026-08-17 00:30): 移动端额外加 /articles 入口
+//  - 桌面保持 8 项 (生财+大航海都必留, 不删项)
+//  - 移动菜单 9 项, /articles 放在 "部署教程" 后 (内容分类逻辑: 教程 > 文章)
+//  - 命名: 桌面 8 / 移动 9 = 不挤压桌面布局, 移动端有空间容纳
+const MOBILE_NAV_LINKS = [
+  ...NAV_LINKS,
+  { href: "/articles", label: "研报文章" },
+];
+
 interface SessionData {
   loggedIn: boolean;
   user?: {
@@ -171,11 +180,11 @@ export function Header() {
         </button>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Menu Dropdown - v22.0 BATCH 22: 移动端 9 项 (含 /articles) */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-border bg-white">
           <nav className="flex flex-col p-4 gap-1 max-h-[80vh] overflow-y-auto">
-            {NAV_LINKS.map((link) => {
+            {MOBILE_NAV_LINKS.map((link) => {
               const active = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
               return (
                 <Link
