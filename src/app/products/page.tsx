@@ -130,31 +130,66 @@ export default async function ProductsPage({ searchParams }: Props) {
   return (
     <div className="min-h-screen bg-bg-primary pt-2 sm:pt-12 lg:pt-14">
       {/* 1. 顶部紧凑标题 (借鉴 fxssi 小 hero + token-plan 钩子, 不要大留白) */}
+      {/* v22.0 BATCH 19 (2026-08-16 23:00): 3 营销页 hero 排版 + 文案统一
+          - 模板: tag + h1 + 副标 + 4 数字徽章 (跟 /, /tools 一致)
+          - 文案: 跟 PM 拍板"首批 50, 后续每周 10" + "5 王牌 + 46 严选" 对齐 */}
       <section className="border-b border-border">
-        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 3xl:px-24 py-3 max-w-[1920px] mx-auto flex items-start justify-between gap-6 flex-wrap">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] text-accent-purple tracking-widest uppercase">产品中心</span>
-              <span className="text-[10px] text-text-muted">MQL4 / MQL5 双版本 · 严选品质</span>
-            </div>
-            <h1 className="h1">
-              严选可商用 <span className="text-accent-blue">EA</span>
-              <span className="text-base font-normal text-text-muted ml-3">5 款热门门面 · 持续更新 · 4h 工单 · 终身质保</span>
-            </h1>
-            <p className="text-xs text-text-muted leading-relaxed">
-              <span className="text-text-secondary font-medium">商业授权贴牌</span>
-              <span className="mx-1.5">·</span>
-              源码可读可改 · 适配 MT4/MT5 双终端 · 配套策略说明 + 调参指导
-            </p>
+        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 3xl:px-24 py-6 max-w-[1920px] mx-auto space-y-3">
+          {/* 顶部 tag 行: 类目 + 状态徽章 (跟 / 一致) */}
+          <div className="flex items-center gap-3 text-xs">
+            <span className="text-accent-purple tracking-widest uppercase">产品中心 · PRODUCTS</span>
+            <span className="text-text-muted">MQL4/MQL5 双版本 · 严选可商用</span>
+            <span className="text-text-secondary">·</span>
+            <span className="inline-flex items-center gap-1.5 text-text-muted">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-up" />
+              <span className="num">2026-08-16</span>
+              <span>· 51 款严选在售 · 持续更新中</span>
+            </span>
           </div>
-          <div className="text-xs text-text-muted num flex items-center gap-3">
-            <span className="inline-flex items-center gap-1 px-2 py-1 bg-accent-up/10 text-accent-up text-[10px] font-semibold rounded">
-              游客可浏览全部
-            </span>
-            <span>
-              共 <span className="text-accent-purple font-semibold">{total}</span> 款 ·
-              第 <span className="text-text-primary font-semibold">{page}</span> / {totalPages} 页
-            </span>
+
+          {/* h1 + 副标 + 状态 (跟 / 一致, 3fr_2fr grid) */}
+          <div className="grid grid-cols-1 xl:grid-cols-[3fr_2fr] gap-6 xl:gap-10 items-end">
+            <div className="space-y-2">
+              <h1 className="h1">
+                严选可商用 <span className="text-accent-blue">EA</span>
+              </h1>
+              <p className="text-sm lg:text-base text-text-secondary leading-relaxed max-w-3xl">
+                <span className="text-text-primary font-semibold">5 王牌门面 + 46 严选订阅</span>
+                <span> · 商业授权贴牌 · 源码可读可改 · 适配 MT4/MT5 双终端</span>
+                <span className="block mt-1.5 text-text-muted text-xs">配套策略说明 + 调参指导 · 4h 工单 · 终身质保</span>
+              </p>
+            </div>
+            <div className="text-xs text-text-muted num flex items-center gap-3 xl:justify-end">
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-accent-up/10 text-accent-up text-[10px] font-semibold rounded">
+                游客可浏览全部
+              </span>
+              <span>
+                共 <span className="text-accent-purple font-semibold">{total}</span> 款 ·
+                第 <span className="text-text-primary font-semibold">{page}</span> / {totalPages} 页
+              </span>
+            </div>
+          </div>
+
+          {/* 4 数字徽章 (跟 / 一致) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-border">
+            {[
+              { value: "51+", label: "款严选策略" },
+              { value: "4h", label: "工单响应" },
+              { value: "严选", label: "可商用授权" },
+              { value: "终身", label: "质保" },
+            ].map((m, i) => (
+              <div
+                key={i}
+                className={`px-3 py-2.5 text-center ${i < 3 ? "border-r border-border" : ""}`}
+              >
+                <div className="text-base lg:text-lg font-bold text-text-primary num leading-tight">
+                  {m.value}
+                </div>
+                <div className="text-[10px] text-text-muted mt-0.5">
+                  {m.label}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

@@ -1,7 +1,12 @@
 // src/app/(marketing)/tools/page.tsx
 // v22.0 Phase 4.1: 工具区首页 (6 工具卡片网格入口)
 // v22.0 Phase 7.24 Batch 10 PATCH: 重做 - 跟 /guides v2 风格对齐 (大卡片 + 缩略图 + 钩子 + 实战场景)
+// v22.0 BATCH 19 (2026-08-16 23:00): 3 营销页 hero 排版 + 文案统一
+//  - 模板: tag + h1 + 副标 + 4 数字徽章 (跟 /, /products 一致)
+//  - 文案: 跟 PM 拍板"首批 50, 后续每周 10" + "5 王牌 + 46 严选" 对齐
+//  - 状态日期: 2026-08-16
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { TOOLS } from "./layout";
 
 // 每个工具的 emoji 图标 (钩子)
@@ -16,24 +21,80 @@ const TOOL_ICON: Record<string, string> = {
 
 export default function ToolsPage() {
   return (
-    <div className="space-y-8 pt-2 sm:pt-12 lg:pt-14 px-4 sm:px-6 lg:px-8 max-w-[1920px] mx-auto">
-      {/* 头部: 钩子 + 节奏 */}
-      <header className="border-b border-border pb-6">
-        <div className="text-xs uppercase tracking-wider text-text-muted mb-3">
-          6 款实战工具
+    <div className="pt-2 sm:pt-12 lg:pt-14 px-4 sm:px-6 lg:px-8 max-w-[1920px] mx-auto space-y-6 lg:space-y-8">
+      {/* v22.0 BATCH 19: 紧凑 hero (跟 / 和 /products 一致)
+          - 模板: tag + h1 + 副标 + 4 数字徽章
+          - 钩子: 6 款 / 客户端 / 数据安全 / 持续更新 */}
+      <header className="border-b border-border pb-6 space-y-3">
+        {/* 顶部 tag 行: 类目 + 状态徽章 (跟 /, /products 一致) */}
+        <div className="flex items-center gap-3 text-xs">
+          <span className="text-accent-purple tracking-widest uppercase">工具 · TOOLS</span>
+          <span className="text-text-muted">客户端计算 · 数据不上传</span>
+          <span className="text-text-secondary">·</span>
+          <span className="inline-flex items-center gap-1.5 text-text-muted">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-up" />
+            <span className="num">2026-08-16</span>
+            <span>· 6 款在线 · 持续打磨中</span>
+          </span>
         </div>
-        <h1 className="h1 mb-4">
-          6 款算得清楚的<br />
-          <span className="text-accent-blue">实战工具</span>。
-        </h1>
-        <p className="text-sm text-text-secondary max-w-2xl leading-[24px]">
-          严选 XAUUSD 黄金与黄金套利对日常交易场景的高频计算工具。
-          每个工具对应一个实战决策环节: 开仓前算仓位 / 持仓中算盈亏 / 平仓后复盘 R:R。
-        </p>
+
+        {/* h1 + 副标 + CTA (跟 /, /products 一致 3fr_2fr grid) */}
+        <div className="grid grid-cols-1 xl:grid-cols-[3fr_2fr] gap-6 xl:gap-10 items-end">
+          <div className="space-y-2">
+            <h1 className="h1">
+              算得清楚的<br />
+              <span className="text-accent-blue">6 款</span>实战工具
+            </h1>
+            <p className="text-sm lg:text-base text-text-secondary leading-relaxed max-w-3xl">
+              严选 XAUUSD 黄金 + 黄金套利对日常交易场景的高频计算工具。
+              <span className="block mt-1.5 text-text-muted text-xs">
+                每个工具对应一个实战决策环节: 开仓前算仓位 / 持仓中算盈亏 / 平仓后复盘 R:R。
+              </span>
+            </p>
+          </div>
+          {/* CTA 区域 (跟 / 一致, 主 + 副) */}
+          <div className="flex flex-col sm:flex-row gap-3 xl:justify-end">
+            <a
+              href="#tools-grid"
+              className="btn-primary inline-flex items-center justify-center gap-2 text-base px-7 py-3.5"
+            >
+              进入工具
+              <ArrowRight size={18} />
+            </a>
+            <Link
+              href="/products"
+              className="btn-outline inline-flex items-center justify-center gap-2 text-base px-7 py-3.5"
+            >
+              51 款可商用策略
+            </Link>
+          </div>
+        </div>
+
+        {/* 4 数字徽章 (跟 /, /products 一致) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-border">
+          {[
+            { value: "6", label: "款在线工具" },
+            { value: "客户端", label: "数据不上传" },
+            { value: "严选", label: "可商用授权" },
+            { value: "持续", label: "打磨中" },
+          ].map((m, i) => (
+            <div
+              key={i}
+              className={`px-3 py-2.5 text-center ${i < 3 ? "border-r border-border" : ""}`}
+            >
+              <div className="text-base lg:text-lg font-bold text-text-primary num leading-tight">
+                {m.value}
+              </div>
+              <div className="text-[10px] text-text-muted mt-0.5">
+                {m.label}
+              </div>
+            </div>
+          ))}
+        </div>
       </header>
 
       {/* 6 卡片 grid (2x3, 跟 /guides v2 风格对齐) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+      <div id="tools-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
         {TOOLS.map((t, idx) => (
           <Link
             key={t.slug}

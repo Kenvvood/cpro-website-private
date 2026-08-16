@@ -1,54 +1,57 @@
 import Link from "next/link";
 import { ArrowRight, Code2, Zap, Calculator, ShieldCheck } from "lucide-react";
-import { BRAND } from "@/config/brand";
 
-// L4 v1.7: 修回简洁 (PM 反馈 v1.6 过度拟合)
-// v22.0 Phase 7.24 Batch 10 PATCH: 1fr_1fr 平衡左右密度 (PM 反馈 2fr_1fr 左挤右空)
-// v22.0 Phase 7.24 Batch 10 PATCH2: 3:2 比例 + 4 钩子移到右侧 (PM 反馈 1:1 中间空, 左 5 块 vs 右 3 块密度差)
+// v22.0 BATCH 19 (2026-08-16 23:00): 3 营销页 hero 排版 + 文案统一
+//  - 模板: tag + h1 + 副标 + CTA + 4 数字徽章 (跟 /products, /tools 一致)
+//  - 文案: 跟 PM 拍板"首批 50, 后续每周 10" + "5 王牌 + 46 严选" 对齐
+//  - 状态日期: 2026-08-16
+// v22.0 Phase 7.24 Batch 10 PATCH2: 3fr_2fr 比例 + 4 钩子
+// v22.0 Phase 7.24 BATCH 15 PATCH 7: items-center → items-start (消除 280px 漏白)
+// v22.0 BATCH 19: 标题"看见市场/决策有据" → "看见严选可商用 EA", 副标加 "全 12 品种", 数字徽章 30+→51+
 export function Hero() {
   return (
     <section>
       <div className="w-full">
-        {/* v22.0 Phase 7.24 Batch 10 PATCH2: 3fr_2fr (60:40) 比例
-            - 左 60%: 状态 + 标题 + 副标 + 2 CTA (减 4 钩子)
-            - 右 40%: 小标 + MQL5 代码卡 + 4 数字徽章 + 4 钩子 (新增)
-            - 左右密度平衡, 中间不空 */}
-        {/* v22.0 Phase 7.24 BATCH 15 PATCH 5: items-center → items-start
-            (PM 反馈 PATCH 1-4 没消除 280px 漏白, 根因: items-center 把内容垂直居中到 750px 高 grid 父 div)
-            (Playwright 实测: Header 108 + items-center 居中 = h1 y=443, 漏白 335px)
-            (改 items-start 后 h1 紧跟 pt 顶部, 漏白立刻从 335 → 64px)
-            (PM 拍板: "LOGO 字号 11/20, 滚动条下空白能否消除" — 一行改, 不改 Hero 内部布局) */}
+        {/* v22.0 BATCH 19: 3fr_2fr 比例保持
+            - 左 60%: tag + h1 + 副标 + 2 CTA
+            - 右 40%: tag + MQL5 代码卡 + 4 数字徽章 + 4 钩子 */}
         <div className="grid grid-cols-1 xl:grid-cols-[3fr_2fr] gap-8 xl:gap-12 items-start">
           {/* 左: 文案 + CTA (60% 宽度) */}
           <div className="flex flex-col">
-            {/* 状态徽章 */}
-            <div className="flex items-center gap-2 mb-4 text-xs text-text-muted">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-up" />
-              <span className="num">2026-08-09</span>
+            {/* 顶部 tag 行: 类目 + 状态徽章 (跟 /products, /tools 一致) */}
+            <div className="flex items-center gap-3 text-xs mb-4">
+              <span className="text-accent-purple tracking-widest uppercase">首页 · HOME</span>
+              <span className="text-text-muted">严选订阅 · 链上 USDT 结算</span>
               <span className="text-text-secondary">·</span>
-              <span>首批精选 · 已上线 · 持续更新 · 严选订阅服务</span>
+              <span className="inline-flex items-center gap-1.5 text-text-muted">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-up" />
+                <span className="num">2026-08-16</span>
+                <span>· 首批 50 上线 · 后续每周 10 增量</span>
+              </span>
             </div>
 
-            {/* 巨型标题 */}
+            {/* 巨型标题 - v22.0 BATCH 19: 跟 /products "严选可商用 EA" 对齐 */}
             <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-5xl 2xl:text-6xl font-bold leading-[1.08] tracking-tight mb-4 text-text-primary">
-              看见<span className="text-accent-blue">市场</span>
+              看见<span className="text-accent-blue">严选</span>
               <br />
-              决策有据
+              可商用 <span className="text-accent-blue">EA</span>
             </h1>
 
-            {/* 副标: 2 句 (v22.0 Phase 7.24 Batch 11: EURUSD/GBPUSD → 套利对, 项目只涉猎 XAUUSD + 套利对) */}
+            {/* 副标: v22.0 BATCH 19: 跟品牌口径对齐 */}
             <p className="text-sm lg:text-base xl:text-lg text-text-secondary mb-6 leading-relaxed">
               <span className="text-text-primary font-semibold num">XAUUSD 黄金</span>
               <span> · </span>
               <span className="text-text-primary font-semibold num">XAUUSD/JPY · XAUUSD/CNH</span>
-              <span> 黄金套利对 · 严选合规再分发 · 持续更新中</span>
+              <span> 黄金套利对 · </span>
+              <span className="text-text-primary font-semibold num">全 12 品种</span>
+              <span> · 严选合规再分发 · 持续更新中</span>
               <span className="block mt-2 text-text-muted text-sm">
-                可商用 EA 策略 · 投研教程 / 工具 · 链上 USDT 订阅 — 一站覆盖
-                <span className="text-text-primary font-semibold"> 严选、再分发、可审计</span>
+                <span className="text-text-primary font-semibold num">5 王牌门面 + 46 严选订阅</span>
+                <span> · 投研教程 / 工具 · 链上 USDT 订阅 — 一站覆盖</span>
               </span>
             </p>
 
-            {/* 单 CTA (主) + 次 CTA */}
+            {/* CTA: 主 + 次 (跟 /products 一致) */}
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/membership"
@@ -62,7 +65,7 @@ export function Hero() {
                 className="btn-outline inline-flex items-center justify-center gap-2 text-base px-7 py-3.5"
               >
                 <Code2 size={18} />
-                浏览可商用策略
+                浏览 51 款可商用策略
               </Link>
             </div>
           </div>
@@ -121,10 +124,10 @@ export function Hero() {
               </div>
             </div>
 
-            {/* 4 数字徽章 (横向填满 40% 宽度) */}
+            {/* 4 数字徽章 (横向填满 40% 宽度) - v22.0 BATCH 19: 30+→51+, 4h 工单/严选授权/链上 USDT 保持 */}
             <div className="grid grid-cols-4 border-y border-border">
               {[
-                { value: "30+", label: "款策略" },
+                { value: "51+", label: "款严选策略" },
                 { value: "4h", label: "工单响应" },
                 { value: "严选", label: "可商用授权" },
                 { value: "链上", label: "USDT 结算" },
@@ -158,7 +161,7 @@ export function Hero() {
               <div className="flex items-center gap-1.5">
                 <Calculator size={12} className="text-accent-up" />
                 <Link href="/tools" className="hover:text-text-primary transition-colors">
-                  实战工具集
+                  6 款实战工具
                 </Link>
               </div>
               <div className="flex items-center gap-1.5">
