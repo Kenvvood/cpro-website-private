@@ -260,6 +260,10 @@ model Product {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  // ===== v22.0 BATCH 18.5: License 字段 (B+C 任务) =====
+  license           String? // 'GPL-3' | 'Apache-2.0' | 'MIT' | 'BSD' | 'Proprietary' | 'Unknown' (从 mql-phase2 master.db 拉)
+  licenseFileUrl    String? // License 文件下载 URL (5 王牌 PM 自家 License PDF)
+
   // 关系
   downloadRecords      DownloadRecord[]
   reviews              Review[]
