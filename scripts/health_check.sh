@@ -71,6 +71,44 @@ check_api_health() {
   fi
 }
 
+# v22.0 BATCH 26: 5xx 错误频率检测 (3 次连续 5xx 才告警, 防抖动)
+check_5xx_frequency() {
+  local STATE_DIR="/var/lib/cpro-alerts"
+  local STATE_FILE="$STATE_DIR/5xx-counter.json"
+  mkdir -p "$STATE_DIR" 2>/dev/null || STATE_DIR="/tmp/cpro-alerts" && mkdir -p "$STATE_DIR"
+
+  # 读现有计数
+  local COUNT=0
+  if [ -f "$STATE_FILE" ]; then
+    COUNT=$(cat "$STATE_FILE" 2>/dev/null || echo "0")
+  fi
+
+  # 试拉 /api/health 5 次 (5s 内)
+  local FIVE_XX_COUNT=0
+  for i in 1 2 3 4 5; do
+    CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 3 "http://127.0.0.1:3000/api/health" 2>/dev/null || echo "000")
+    if [ "${CODE:0:1}" = "5" ]; then
+      FIVE_XX_COUNT=$((FIVE_XX_COUNT + 1))
+    fi
+    sleep 1
+  done
+
+  # 累计 (重置 if no 5xx)
+  if [ "$FIVE_XX_COUNT" -gt 0 ]; then
+    COUNT=$((COUNT + FIVE_XX_COUNT))
+  else
+    COUNT=0
+  fi
+  echo "$COUNT" > "$STATE_FILE" 2>/dev/null
+
+  if [ "$COUNT" -ge 3 ]; then
+    echo "[$TIMESTAMP] ❌ 5xx 累计 $COUNT 次 (3+ 才告警, 避免抖动)"
+    ALERTS+=("5xx 累计 $COUNT 次 (1h 内)")
+  else
+    echo "[$TIMESTAMP] ✅ 5xx 累计 $COUNT 次"
+  fi
+}
+
 check_disk() {
   DISK_PCT=$(df /var | tail -1 | awk '{print $5}' | tr -d '%')
   if [ "$DISK_PCT" -lt 90 ]; then
@@ -139,6 +177,7 @@ check_pm2
 check_nginx
 check_https
 check_api_health
+check_5xx_frequency
 check_disk
 check_memory
 check_uptime
