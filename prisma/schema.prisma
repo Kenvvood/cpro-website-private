@@ -805,3 +805,74 @@ model PromotionLog {
   @@index([promotedById])
   @@index([createdAt])
 }
+
+// =============================================================================
+// v22.0 BATCH 28 (2026-08-17 11:40): 工单系统 (用户客服 + 管理员回复)
+// =============================================================================
+
+enum TicketStatus {
+  OPEN         // 用户刚开, 管理员未回复
+  IN_PROGRESS  // 管理员已回复, 等用户继续
+  WAITING_USER // 等待用户回复
+  RESOLVED     // 管理员标记已解决
+  CLOSED       // 用户或管理员关闭
+}
+
+enum TicketPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT       // 4h 内必响应
+}
+
+enum TicketCategory {
+  BILLING       // 订阅/退款/USDT
+  TECHNICAL     // EA 部署/使用问题
+  ACCOUNT       // 账号/登录
+  PRODUCT       // 产品建议/Bug
+  OTHER
+}
+
+/// 工单 (用户客服)
+model Ticket {
+  id          String          @id @default(cuid())
+  userId      String          // 工单创建人
+  title       String          // 简短标题 (10-100 字符)
+  content     String          // 详细描述 (max 5000 字符)
+  category    TicketCategory
+  priority    TicketPriority  @default(NORMAL)
+  status      TicketStatus    @default(OPEN)
+
+  // 关联回复 (1 工单 -> N 回复)
+  replies     TicketReply[]
+
+  // 关闭信息
+  closedAt    DateTime?       // 关闭时间
+  closedBy    String?         // 关闭人 (userId 或 adminId)
+
+  // 时间
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+}
+
+/// 工单回复 (用户/管理员, 树形不深究, 线性追加)
+model TicketReply {
+  id          String   @id @default(cuid())
+  ticketId    String
+  authorId    String   // 回复人 (userId 或 adminId)
+  authorRole  String   // "USER" | "ADMIN" - 区分身份
+  content     String   // 回复内容 (max 5000 字符)
+  isInternal  Boolean  @default(false) // 内部备注 (仅 admin 可见, 不发给用户邮件)
+  createdAt   DateTime @default(now())
+
+  ticket      Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+  @@index([authorId])
+  @@index([createdAt])
+}
