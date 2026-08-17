@@ -356,7 +356,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                               {p.positioning ?? p.name}
                             </div>
                             <div className="text-xs text-text-muted leading-[18px] line-clamp-1 mt-1">
-                              {tags.slice(0, 4).map(t.tag).join(' · ') || '—'}
+                              {tags.slice(0, 4).map((tag) => t.tag(tag)).join(' · ') || '—'}
                             </div>
                           </div>
                           {/* 4. 下载数 + 按钮 (100→220px, 按钮+数字更舒展) */}
